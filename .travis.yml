@@ -1,0 +1,8 @@
+language: dart
+
+dart_task:
+  - dartfmt
+  - dartanalyzer: --fatal-warnings
+
+services:
+  - redis-server
