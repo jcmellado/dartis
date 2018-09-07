@@ -2,7 +2,8 @@ language: dart
 
 dart_task:
   - dartfmt
-  - dartanalyzer: --fatal-warnings .
+  - dartanalyzer: --fatal-warnings --fatal-infos .
+  - test: --platform vm
 
 services:
   - redis-server
