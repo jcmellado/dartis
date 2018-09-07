@@ -8,6 +8,9 @@ services:
 install:
   - gem install coveralls-lcov
 
+before_script:
+  - chmod ugo+x ./tool/travis.sh
+
 script:
   - ./tool/travis.sh
 
