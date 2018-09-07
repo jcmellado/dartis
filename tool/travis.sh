@@ -24,7 +24,7 @@ pub run test:test --reporter expanded
 dart \
   --enable-vm-service=8888 \
   --pause-isolates-on-exit \
-  test/dartis_tests.dart &
+  test/dartis_test.dart &
 
 pub global activate coverage
 
