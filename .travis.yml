@@ -1,33 +1,15 @@
 language: dart
 
+sudo: false
+
 services:
   - redis-server
-
-dart_task:
-  - dartfmt
-  - dartanalyzer: --fatal-warnings --fatal-infos .
-  - test: --platform vm
 
 install:
   - gem install coveralls-lcov
 
 script:
-  - dart \
-    --enable-vm-service=8888 \
-    --pause-isolates-on-exit \
-    test/dartis_tests.dart &
-  - pub global activate coverage
-  - pub global run coverage:collect_coverage \
-    --port=8888 \
-    --out=var/coverage.json \
-    --wait-paused \
-    --resume-isolates
-  - pub global run coverage:format_coverage \
-    --lcov \
-    --in=var/coverage.json \
-    --out=var/lcov.info \
-    --packages=.packages \
-    --report-on=lib
+  - ./tool/travis.sh
 
 after_success:
-  - coveralls-lcov var/lcov.info
+  - coveralls-lcov --repo-token "$COVERALLS_REPO_TOKEN" var/lcov.info
