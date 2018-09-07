@@ -1,6 +1,6 @@
-# dartis
+# Redis client for Dart.
 
-Redis client for Dart.
+[![Build Status](https://travis-ci.org/jcmellado/dartis.svg?branch=master)](https://travis-ci.org/jcmellado/dartis)
 
 ## Features
 - Type-safe commands
