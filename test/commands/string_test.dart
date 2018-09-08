@@ -349,5 +349,41 @@ void main() {
       await commands.set(key, 'abc');
       expect(await commands.strlen(key), equals(3));
     });
+
+    group('support', () {
+      group('BitfieldCommand', () {
+        test('toString', () {
+          expect(
+              BitfieldCommand.get.toString(), startsWith('BitfieldCommand:'));
+        });
+      });
+
+      group('BitfieldOverflow', () {
+        test('toString', () {
+          expect(BitfieldOverflow.fail.toString(),
+              startsWith('BitfieldOverflow:'));
+        });
+
+        group('BitopOperation', () {
+          test('toString', () {
+            expect(
+                BitopOperation.and.toString(), startsWith('BitopOperation:'));
+          });
+        });
+
+        group('SetExistMode', () {
+          test('toString', () {
+            expect(SetExistMode.nx.toString(), startsWith('SetExistMode:'));
+          });
+        });
+
+        group('BitfieldOperation', () {
+          test('toString', () {
+            const value = BitfieldOperation(null, null, null);
+            expect(value.toString(), startsWith('BitfieldOperation:'));
+          });
+        });
+      });
+    });
   });
 }

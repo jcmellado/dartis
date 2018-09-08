@@ -493,5 +493,40 @@ void main() {
               storeDistKey: key3),
           isZero);
     });
+
+    group('support', () {
+      group('GeoUnit', () {
+        test('toString', () {
+          expect(GeoUnit.meter.toString(), startsWith('GeoUnit:'));
+        });
+      });
+
+      group('GeoOrder', () {
+        test('toString', () {
+          expect(GeoOrder.ascending.toString(), startsWith('GeoOrder:'));
+        });
+      });
+
+      group('GeoPosition', () {
+        test('toString', () {
+          const value = GeoPosition(null, null);
+          expect(value.toString(), startsWith('GeoPosition:'));
+        });
+      });
+
+      group('GeoItem', () {
+        test('toString', () {
+          const value = GeoItem<String>(null, null);
+          expect(value.toString(), startsWith('GeoItem<String>:'));
+        });
+      });
+
+      group('GeoradiusResult', () {
+        test('toString', () {
+          const value = GeoradiusResult<String>(null);
+          expect(value.toString(), startsWith('GeoradiusResult<String>:'));
+        });
+      });
+    });
   });
 }

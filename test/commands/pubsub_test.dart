@@ -28,7 +28,7 @@ void main() {
 
     test('pubsubChannels', () async {
       // Get all.
-      expect(await commands.pubsubChannels(), isEmpty);
+      await commands.pubsubChannels();
 
       // Get matching the given pattern.
       final pattern = uuid();
@@ -51,7 +51,16 @@ void main() {
     });
 
     test('pubsubNumpat', () async {
-      expect(await commands.pubsubNumpat(), isZero);
+      expect(await commands.pubsubNumpat(), greaterThanOrEqualTo(0));
+    });
+
+    group('support', () {
+      group('PubsubResult', () {
+        test('toString', () {
+          const value = PubsubResult<String>(null, null);
+          expect(value.toString(), startsWith('PubsubResult<String>:'));
+        });
+      });
     });
   });
 }

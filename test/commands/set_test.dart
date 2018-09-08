@@ -305,5 +305,14 @@ void main() {
       expect(await commands.sunionstore(key4, key1, keys: [key2, key3]),
           equals(5));
     });
+
+    group('support', () {
+      group('SetScanResult', () {
+        test('toString', () {
+          const value = SetScanResult<String>(null, null);
+          expect(value.toString(), startsWith('SetScanResult<String>:'));
+        });
+      });
+    });
   });
 }

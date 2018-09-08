@@ -18,4 +18,3 @@ abstract class RespToken {
   /// RESP error.
   static const int error = 45; // -
 }
- 

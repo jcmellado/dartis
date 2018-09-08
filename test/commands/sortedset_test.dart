@@ -51,7 +51,7 @@ void main() {
       // Try to pop from an empty or non existing sorted set.
       final key3 = uuid();
       expect(await commands.bzpopmax(key: key3, timeout: 1), isNull);
-    });
+    }, skip: 'Requires Redis 5.0.0.');
 
     test('bzpopmin', () async {
       // Add some elements.
@@ -86,7 +86,7 @@ void main() {
       // Try to pop from an empty or non existing sorted set.
       final key3 = uuid();
       expect(await commands.bzpopmin(key: key3, timeout: 1), isNull);
-    });
+    }, skip: 'Requires Redis 5.0.0.');
 
     test('zadd', () async {
       // Add one element.
@@ -226,7 +226,7 @@ void main() {
       expect(await commands.zpopmax(key, count: 2),
           allOf(containsPair('a', 1.0), containsPair('b', 2.0)));
       expect(await commands.zpopmax(key), isEmpty);
-    });
+    }, skip: 'Requires Redis 5.0.0.');
 
     test('zpopmin', () async {
       // Add some elements.
@@ -238,7 +238,7 @@ void main() {
       expect(await commands.zpopmin(key, count: 2),
           allOf(containsPair('b', 2.0), containsPair('c', 3.0)));
       expect(await commands.zpopmin(key), isEmpty);
-    });
+    }, skip: 'Requires Redis 5.0.0.');
 
     test('zrange', () async {
       // Add some elements.
@@ -576,6 +576,36 @@ void main() {
       expect(await commands.zscore(key3, 'a'), equals(3.0));
       expect(await commands.zscore(key3, 'b'), equals(40.0));
       expect(await commands.zscore(key3, 'c'), equals(9.0));
+    });
+
+    group('support', () {
+      group('SortedSetExistMode', () {
+        test('toString', () {
+          expect(SortedSetExistMode.nx.toString(),
+              startsWith('SortedSetExistMode:'));
+        });
+      });
+
+      group('AggregateMode', () {
+        test('toString', () {
+          expect(AggregateMode.max.toString(), startsWith('AggregateMode:'));
+        });
+      });
+
+      group('SortedSetPopResult', () {
+        test('toString', () {
+          const value = SortedSetPopResult<String, String>(null, null);
+          expect(value.toString(),
+              startsWith('SortedSetPopResult<String, String>:'));
+        });
+      });
+
+      group('SortedSetScanResult', () {
+        test('toString', () {
+          const value = SortedSetScanResult<String>(null, null);
+          expect(value.toString(), startsWith('SortedSetScanResult<String>:'));
+        });
+      });
     });
   });
 }

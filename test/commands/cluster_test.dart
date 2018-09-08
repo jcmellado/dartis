@@ -126,4 +126,93 @@ void main() {
       await commands.readwrite();
     });
   }, skip: 'Requires a Redis Cluster.');
+
+  group('support', () {
+    group('ClusterFailoverMode', () {
+      test('toString', () {
+        expect(ClusterFailoverMode.force.toString(),
+            startsWith('ClusterFailoverMode:'));
+      });
+    });
+
+    group('ClusterResetMode', () {
+      test('toString', () {
+        expect(
+            ClusterResetMode.soft.toString(), startsWith('ClusterResetMode:'));
+      });
+    });
+
+    group('ClusterSetslotCommand', () {
+      test('toString', () {
+        expect(ClusterSetslotCommand.node.toString(),
+            startsWith('ClusterSetslotCommand:'));
+      });
+    });
+
+    group('ClusterNode', () {
+      test('toString', () {
+        const value = ClusterNode(null, null);
+        expect(value.toString(), startsWith('ClusterNode:'));
+      });
+    });
+
+    group('ClusterSlotRange', () {
+      test('toString', () {
+        const value = ClusterSlotRange(null, null, null);
+        expect(value.toString(), startsWith('ClusterSlotRange:'));
+      });
+    });
+
+    group('ClusterInfoMapper', () {
+      test('map', () {
+        final reply = StringReply(
+            'cluster_state:ok\r\ncluster_slots_assigned:16384\r\n'.codeUnits);
+
+        // Map.
+        final results = clusterInfoMapper.map(reply, client.codec);
+
+        expect(results['cluster_state'], equals('ok'));
+        expect(results['cluster_slots_assigned'], equals('16384'));
+      });
+    });
+
+    group('ClusterSlotRangeMapper', () {
+      test('map', () {
+        const start1 = IntReply([48]);
+        const end1 = IntReply([49]);
+        const nodes1 = ArrayReply([
+          StringReply([65]),
+          IntReply([48])
+        ]);
+
+        const start2 = IntReply([50]);
+        const end2 = IntReply([51]);
+        const nodes2 = ArrayReply([
+          StringReply([66]),
+          IntReply([49]),
+          StringReply([67]) // Node ID
+        ]);
+
+        const range1 = ArrayReply([start1, end1, nodes1]);
+        const range2 = ArrayReply([start2, end2, nodes2]);
+
+        const reply = ArrayReply([range1, range2]);
+
+        // Map.
+        final results = clusterSlotRangeMapper.map(reply, client.codec);
+
+        expect(results[0].start, equals(0));
+        expect(results[0].end, equals(1));
+        expect(results[0].nodes[0].ip, equals('A'));
+        expect(results[0].nodes[0].port, equals(0));
+        expect(results[0].nodes[0].id, isNull);
+
+        expect(results[1].start, equals(2));
+        expect(results[1].end, equals(3));
+        expect(results[1].nodes[0].ip, equals('B'));
+        expect(results[1].nodes[0].port, equals(1));
+        expect(results[1].nodes[0].id, equals('C'));
+      });
+    });
+  });
 }

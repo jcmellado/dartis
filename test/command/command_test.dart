@@ -14,6 +14,13 @@ class _ReverseMapper implements Mapper<String> {
 void main() {
   final codec = RedisCodec();
 
+  group('CommandBase', () {
+    test('toString', () {
+      final command = Command<String>([]);
+      expect(command.toString(), startsWith('CommandBase<String>:'));
+    });
+  });
+
   group('Command', () {
     group('line', () {
       test('with non null values', () {
@@ -66,6 +73,12 @@ void main() {
 
         expect(command.future, throwsA(const TypeMatcher<RedisException>()));
       });
+    });
+  });
+
+  group('ReplyMode', () {
+    test('toString', () {
+      expect(ReplyMode.on.toString(), startsWith('ReplyMode:'));
     });
   });
 }

@@ -162,5 +162,34 @@ void main() {
       expect(ping.future, throwRedisException);
       expect(transaction.inProgress, isFalse);
     });
+
+    test('aborts because receives unexpected replies', () async {
+      final transaction = Transaction();
+      expect(transaction.inProgress, isFalse);
+
+      // MULTI
+      transaction.begin(MultiCommand(<Object>['MULTI']));
+
+      // QUEUED PING
+      final ping = Command<String>(<Object>['PING']);
+
+      // Try to end with a invalid bulk reply.
+      final xxx = BulkReply('XXX'.codeUnits);
+      expect(() => transaction.onReply(ping, xxx, codec), throwRedisException);
+
+      // Try to end with a invalid string reply.
+      final yyy = StringReply('YYY'.codeUnits);
+      expect(() => transaction.onReply(ping, yyy, codec), throwRedisException);
+
+      final queued = StringReply('QUEUED'.codeUnits);
+      transaction.onReply(ping, queued, codec);
+
+      // EXEC
+      final exec = ExecCommand(<Object>['EXEC']);
+
+      // Try to end with a invalid empty reply.
+      const zzz = ArrayReply([]);
+      expect(() => transaction.onReply(exec, zzz, codec), throwRedisException);
+    });
   });
 }

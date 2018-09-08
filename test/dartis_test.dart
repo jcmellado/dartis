@@ -30,6 +30,8 @@ import 'commands/sortedset_test.dart' as commands_sortedset_test;
 import 'commands/string_test.dart' as commands_string_test;
 import 'commands/transaction_test.dart' as commands_transaction_test;
 
+import 'exception_test.dart' as exception_test;
+
 import 'protocol/codec_test.dart' as protocol_codec_test;
 import 'protocol/reader_test.dart' as protocol_reader_test;
 import 'protocol/reply_test.dart' as protocol_reply_test;
@@ -69,4 +71,7 @@ void main() {
   protocol_reader_test.main();
   protocol_reply_test.main();
   protocol_writer_test.main();
+
+  // Exception
+  exception_test.main();
 }

@@ -11,6 +11,10 @@ void main() {
       test('value', () {
         expect(nullReply.value, isNull);
       });
+
+      test('toString', () {
+        expect(nullReply.toString(), startsWith('NullReply:'));
+      });
     });
 
     group('StringReply', () {
@@ -20,14 +24,26 @@ void main() {
         expect(reply.value, equals([65, 66, 67]));
         expect(reply.bytes, equals([65, 66, 67]));
       });
+
+      test('toString', () {
+        const reply = StringReply([]);
+
+        expect(reply.toString(), startsWith('StringReply:'));
+      });
     });
 
     group('IntReply', () {
       test('value', () {
-        const reply = StringReply([49, 50, 51]);
+        const reply = IntReply([49, 50, 51]);
 
         expect(reply.value, equals([49, 50, 51]));
         expect(reply.bytes, equals([49, 50, 51]));
+      });
+
+      test('toString', () {
+        const reply = IntReply([48]);
+
+        expect(reply.toString(), startsWith('IntReply:'));
       });
     });
 
@@ -37,6 +53,12 @@ void main() {
 
         expect(reply.value, equals([1, 2, 3]));
         expect(reply.bytes, equals([1, 2, 3]));
+      });
+
+      test('toString', () {
+        const reply = BulkReply(null);
+
+        expect(reply.toString(), startsWith('BulkReply:'));
       });
     });
 
@@ -63,6 +85,12 @@ void main() {
               [1, 2, 3]
             ]));
       });
+
+      test('toString', () {
+        const reply = ArrayReply(null);
+
+        expect(reply.toString(), startsWith('ArrayReply:'));
+      });
     });
 
     group('ErrorReply', () {
@@ -71,6 +99,12 @@ void main() {
 
         expect(reply.value, equals([69, 82, 82]));
         expect(reply.bytes, equals([69, 82, 82]));
+      });
+
+      test('toString', () {
+        const reply = ErrorReply([]);
+
+        expect(reply.toString(), startsWith('ErrorReply:'));
       });
     });
   });

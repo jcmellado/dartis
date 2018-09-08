@@ -208,14 +208,14 @@ class ClusterSlotRange {
   final int end;
 
   /// The Redis node instances.
-  final List<ClusterNode> instances;
+  final List<ClusterNode> nodes;
 
   /// Creates a [ClusterSlotRange] instance.
-  const ClusterSlotRange(this.start, this.end, this.instances);
+  const ClusterSlotRange(this.start, this.end, this.nodes);
 
   @override
   String toString() =>
-      'ClusterSlotRange: {start=$start, end=$end, instances=$instances}';
+      'ClusterSlotRange: {start=$start, end=$end, nodes=$nodes}';
 }
 
 /// A maper for the CLUSTER INFO command.

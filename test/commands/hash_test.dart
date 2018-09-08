@@ -268,5 +268,15 @@ void main() {
       final key2 = uuid();
       expect(await commands.hvals(key2), isEmpty);
     });
+
+    group('support', () {
+      group('HashScanResult', () {
+        test('toString', () {
+          const value = HashScanResult<String, String>(null, null);
+          expect(
+              value.toString(), startsWith('HashScanResult<String, String>:'));
+        });
+      });
+    });
   });
 }
