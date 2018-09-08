@@ -126,4 +126,41 @@ void main() {
       await commands.readwrite();
     });
   }, skip: 'Requires a Redis Cluster.');
+
+  group('support', () {
+    group('ClusterFailoverMode', () {
+      test('toString', () {
+        expect(ClusterFailoverMode.force.toString(),
+            startsWith('ClusterFailoverMode:'));
+      });
+    });
+
+    group('ClusterResetMode', () {
+      test('toString', () {
+        expect(
+            ClusterResetMode.soft.toString(), startsWith('ClusterResetMode:'));
+      });
+    });
+
+    group('ClusterSetslotCommand', () {
+      test('toString', () {
+        expect(ClusterSetslotCommand.node.toString(),
+            startsWith('ClusterSetslotCommand:'));
+      });
+    });
+
+    group('ClusterNode', () {
+      test('toString', () {
+        const value = ClusterNode(null, null);
+        expect(value.toString(), startsWith('ClusterNode:'));
+      });
+    });
+
+    group('ClusterSlotRange', () {
+      test('toString', () {
+        const value = ClusterSlotRange(null, null, null);
+        expect(value.toString(), startsWith('ClusterSlotRange:'));
+      });
+    });
+  });
 }

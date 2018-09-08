@@ -237,5 +237,33 @@ void main() {
             },
           ]));
     });
+
+    test('codec', () async {
+      expect(pubsub.codec.encode<List<int>>('abc'), equals([97, 98, 99]));
+      expect(pubsub.codec.decode<String>(const StringReply([97, 98, 99])),
+          equals('abc'));
+    });
+
+    group('support', () {
+      group('SubscriptionEvent', () {
+        test('toString', () {
+          const value = SubscriptionEvent<String>(null, null, null);
+          expect(value.toString(), startsWith('SubscriptionEvent<String>:'));
+        });
+      });
+      group('MessageEvent', () {
+        test('toString', () {
+          const value = MessageEvent<String, String>(null, null);
+          expect(value.toString(), startsWith('MessageEvent<String, String>:'));
+        });
+      });
+
+      group('PongEvent', () {
+        test('toString', () {
+          const value = PongEvent<String>(null);
+          expect(value.toString(), startsWith('PongEvent<String>:'));
+        });
+      });
+    });
   });
 }

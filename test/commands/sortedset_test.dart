@@ -577,5 +577,35 @@ void main() {
       expect(await commands.zscore(key3, 'b'), equals(40.0));
       expect(await commands.zscore(key3, 'c'), equals(9.0));
     });
+
+    group('support', () {
+      group('SortedSetExistMode', () {
+        test('toString', () {
+          expect(SortedSetExistMode.nx.toString(),
+              startsWith('SortedSetExistMode:'));
+        });
+      });
+
+      group('AggregateMode', () {
+        test('toString', () {
+          expect(AggregateMode.max.toString(), startsWith('AggregateMode:'));
+        });
+      });
+
+      group('SortedSetPopResult', () {
+        test('toString', () {
+          const value = SortedSetPopResult<String, String>(null, null);
+          expect(value.toString(),
+              startsWith('SortedSetPopResult<String, String>:'));
+        });
+      });
+
+      group('SortedSetScanResult', () {
+        test('toString', () {
+          const value = SortedSetScanResult<String>(null, null);
+          expect(value.toString(), startsWith('SortedSetScanResult<String>:'));
+        });
+      });
+    });
   });
 }

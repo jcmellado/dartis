@@ -52,7 +52,7 @@ class SubscriptionEvent<K> implements PubSubEvent {
   const SubscriptionEvent(this.command, this.channel, this.channelCount);
 
   @override
-  String toString() => '''SubscriptionEven<$K>: {command=$command,'''
+  String toString() => '''SubscriptionEvent<$K>: {command=$command,'''
       ''' channel=$channel, channelCount=$channelCount}''';
 }
 

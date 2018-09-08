@@ -324,5 +324,22 @@ void main() {
 
       expect(await commands.rpushx(key, 'three'), equals(2));
     });
+
+    group('support', () {
+      group('InsertPosition', () {
+        test('toString', () {
+          expect(
+              InsertPosition.after.toString(), startsWith('InsertPosition:'));
+        });
+      });
+
+      group('ListPopResult', () {
+        test('toString', () {
+          const value = ListPopResult<String, String>(null, null);
+          expect(
+              value.toString(), startsWith('ListPopResult<String, String>:'));
+        });
+      });
+    });
   });
 }

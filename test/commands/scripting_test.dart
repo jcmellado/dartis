@@ -115,5 +115,13 @@ void main() {
 
       expect(await commands.scriptExists(sha1: sha1), equals([1]));
     });
+
+    group('support', () {
+      group('ScriptDebugMode', () {
+        test('toString', () {
+          expect(ScriptDebugMode.no.toString(), startsWith('ScriptDebugMode:'));
+        });
+      });
+    });
   });
 }

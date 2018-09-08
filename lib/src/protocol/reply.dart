@@ -26,6 +26,9 @@ abstract class SingleReply implements Reply {
 class NullReply extends SingleReply {
   /// Creates a [NullReply] instance.
   const NullReply() : super(null);
+
+  @override
+  String toString() => 'NullReply: null';
 }
 
 /// RESP simple string.

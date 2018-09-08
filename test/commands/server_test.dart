@@ -283,11 +283,111 @@ void main() {
       await commands.slaveof('unknown', 999.toString());
     }, skip: 'Changes the replication settings.');
 
+    test('slowlogGet', () async {
+      await commands.configSet('slowlog-log-slower-than', '0');
+      await commands.ping();
+
+      expect(await commands.slowlogGet(), isNotEmpty);
+
+      await commands.configSet('slowlog-log-slower-than', '10000');
+    });
+
+    test('slowlogLen', () async {
+      expect(await commands.slowlogLen(), greaterThanOrEqualTo(0));
+    });
+
+    test('slowlogReset', () async {
+      await commands.slowlogReset();
+    });
+
     test('time', () async {
       final result = await commands.time();
 
       expect(result.timestamp, greaterThanOrEqualTo(0));
       expect(result.microseconds, greaterThanOrEqualTo(0));
+    });
+
+    group('support', () {
+      group('ClientType', () {
+        test('toString', () {
+          expect(ClientType.master.toString(), startsWith('ClientType:'));
+        });
+      });
+
+      group('InfoSection', () {
+        test('toString', () {
+          expect(InfoSection.all.toString(), startsWith('InfoSection:'));
+        });
+      });
+
+      group('ShutdownMode', () {
+        test('toString', () {
+          expect(ShutdownMode.save.toString(), startsWith('ShutdownMode:'));
+        });
+      });
+
+      group('ClientFilter', () {
+        test('toString', () {
+          const value = ClientFilter();
+          expect(value.toString(), startsWith('ClientFilter:'));
+        });
+      });
+
+      group('ClientCommand', () {
+        test('toString', () {
+          const value = ClientCommand(null, null, null, null, null, null);
+          expect(value.toString(), startsWith('ClientCommand:'));
+        });
+      });
+
+      group('ServerTime', () {
+        test('toString', () {
+          const value = ServerTime(null, null);
+          expect(value.toString(), startsWith('ServerTime:'));
+        });
+      });
+
+      group('Slave', () {
+        test('toString', () {
+          const value = Slave(null, null, null);
+          expect(value.toString(), startsWith('Slave:'));
+        });
+      });
+
+      group('MasterRole', () {
+        test('toString', () {
+          const value = MasterRole(null, null);
+          expect(value.toString(), startsWith('MasterRole:'));
+        });
+      });
+
+      group('SlaveRole', () {
+        test('toString', () {
+          const value = SlaveRole(null, null, null, null);
+          expect(value.toString(), startsWith('SlaveRole:'));
+        });
+      });
+
+      group('SentinelRole', () {
+        test('toString', () {
+          const value = SentinelRole(null);
+          expect(value.toString(), startsWith('SentinelRole:'));
+        });
+      });
+
+      group('Role', () {
+        test('toString', () {
+          const value = Role(null);
+          expect(value.toString(), startsWith('Role:'));
+        });
+      });
+
+      group('SlowLogEntry', () {
+        test('toString', () {
+          const value = SlowLogEntry(null, null, null, null, null, null);
+          expect(value.toString(), startsWith('SlowLogEntry:'));
+        });
+      });
     });
   });
 }

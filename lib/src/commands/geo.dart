@@ -151,24 +151,24 @@ class GeoPosition {
 }
 
 /// A item to be added with the GEOADD command.
-class GeoItem<T> {
+class GeoItem<V> {
   /// The position.
   final GeoPosition position;
 
   /// The member.
-  final T member;
+  final V member;
 
   /// Creates a [GeoItem] instance.
   const GeoItem(this.position, this.member);
 
   @override
-  String toString() => 'GeoItem<$T>: {position=$position, member=$member}';
+  String toString() => 'GeoItem<$V>: {position=$position, member=$member}';
 }
 
 /// A result from the GEORADIUS command.
-class GeoradiusResult<T> {
+class GeoradiusResult<V> {
   /// The member.
-  final T member;
+  final V member;
 
   /// The distance.
   final double distance;
@@ -183,7 +183,7 @@ class GeoradiusResult<T> {
   const GeoradiusResult(this.member, {this.distance, this.hash, this.position});
 
   @override
-  String toString() => '''GeoradiusResult<$T>: {member=$member,'''
+  String toString() => '''GeoradiusResult<$V>: {member=$member,'''
       ''' distance=$distance, hash=$hash, position=$position}''';
 }
 
@@ -215,7 +215,7 @@ class GeoPositionMapper implements Mapper<List<GeoPosition>> {
 }
 
 /// A mapper to be used with the GEORADIUS family commands.
-class GeoRadiusMapper<T> implements Mapper<List<GeoradiusResult<T>>> {
+class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V>>> {
   /// Return the distance of the returned items from the specified center.
   final bool withCoord;
 
@@ -230,8 +230,8 @@ class GeoRadiusMapper<T> implements Mapper<List<GeoradiusResult<T>>> {
       {this.withCoord = false, this.withDist = false, this.withHash = false});
 
   @override
-  List<GeoradiusResult<T>> map(covariant ArrayReply reply, RedisCodec codec) {
-    final results = <GeoradiusResult<T>>[];
+  List<GeoradiusResult<V>> map(covariant ArrayReply reply, RedisCodec codec) {
+    final results = <GeoradiusResult<V>>[];
 
     for (final reply in reply.array) {
       if (withCoord || withDist || withHash) {
@@ -239,8 +239,8 @@ class GeoRadiusMapper<T> implements Mapper<List<GeoradiusResult<T>>> {
         final result = _mapResult(reply as ArrayReply, codec);
         results.add(result);
       } else {
-        final member = codec.decode<T>(reply);
-        results.add(GeoradiusResult<T>(member));
+        final member = codec.decode<V>(reply);
+        results.add(GeoradiusResult<V>(member));
       }
     }
 
@@ -248,11 +248,11 @@ class GeoRadiusMapper<T> implements Mapper<List<GeoradiusResult<T>>> {
   }
 
   /// Maps a [reply] to a [GeoradiusResult] instance.
-  GeoradiusResult<T> _mapResult(ArrayReply reply, RedisCodec codec) {
+  GeoradiusResult<V> _mapResult(ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
     var index = 0;
 
-    final member = codec.decode<T>(array[index++]);
+    final member = codec.decode<V>(array[index++]);
 
     double distance;
     if (withDist) {
@@ -270,7 +270,7 @@ class GeoRadiusMapper<T> implements Mapper<List<GeoradiusResult<T>>> {
       position = _mapPosition(array[index++] as ArrayReply, codec);
     }
 
-    return GeoradiusResult<T>(member,
+    return GeoradiusResult<V>(member,
         distance: distance, hash: hash, position: position);
   }
 

@@ -529,5 +529,27 @@ void main() {
       // Wait.
       expect(await commands.wait(1, 1), greaterThanOrEqualTo(0));
     });
+
+    group('support', () {
+      group('SortOrder', () {
+        test('toString', () {
+          expect(SortOrder.ascending.toString(), startsWith('SortOrder:'));
+        });
+      });
+
+      group('ObjectSubcommand', () {
+        test('toString', () {
+          expect(ObjectSubcommand.encoding.toString(),
+              startsWith('ObjectSubcommand:'));
+        });
+      });
+
+      group('KeyScanResult', () {
+        test('toString', () {
+          const value = KeyScanResult<String>(null, null);
+          expect(value.toString(), startsWith('KeyScanResult<String>:'));
+        });
+      });
+    });
   });
 }

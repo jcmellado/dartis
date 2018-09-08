@@ -53,5 +53,14 @@ void main() {
     test('pubsubNumpat', () async {
       expect(await commands.pubsubNumpat(), greaterThanOrEqualTo(0));
     });
+
+    group('support', () {
+      group('PubsubResult', () {
+        test('toString', () {
+          const value = PubsubResult<String>(null, null);
+          expect(value.toString(), startsWith('PubsubResult<String>:'));
+        });
+      });
+    });
   });
 }
