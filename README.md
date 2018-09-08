@@ -1,6 +1,7 @@
 # Redis client for Dart
 
 [![Build Status](https://travis-ci.org/jcmellado/dartis.svg?branch=master)](https://travis-ci.org/jcmellado/dartis)
+[![Coverage Status](https://coveralls.io/repos/github/jcmellado/dartis/badge.svg?branch=master)](https://coveralls.io/github/jcmellado/dartis?branch=master)
 
 ## Features
 - Type-safe commands
