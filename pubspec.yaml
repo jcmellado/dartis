@@ -1,9 +1,9 @@
 name: dartis
-version: 0.1.0
+version: 0.2.0
 author: Juan Mellado <jcmellado@gmail.com>
 homepage: https://github.com/jcmellado/dartis
 description: >-
-  Redis client for Dart featuring type-safe commands, pipelining,
+  Redis client featuring type-safe commands, pipelining,
   fire and forget, publish/subscribe, monitor mode, inline
   commands, transactions, Lua scripting, modules, and much more.
 documentation:
