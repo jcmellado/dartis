@@ -409,7 +409,7 @@ Logger.root.onRecord.listen((LogRecord record) {
 
 Set the log level according your needs. Most times, `INFO` is what you want. `ALL` is good for filling issues.
 
-## Development
+## Testing
 Dependencies of this packages can installed with `pub get` and test cases can
 be run with `pub run test`. These test cases requires a redis running on
 `localhost:6379`, for local development this can be created with docker:
