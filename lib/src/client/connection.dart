@@ -58,9 +58,14 @@ class Connection {
 
   /// Closes the socket.
   Future<void> disconnect() async {
-    await _socket.flush();
-    await _socket.close();
-    _socket.destroy();
+    try {
+      await _socket.flush();
+      await _socket.close();
+    } finally {
+      // Always destroy the socket to avoid leaking. Just in case there is an
+      // error during flush for some reason.
+      _socket.destroy();
+    }
 
     log.info('Disconnected.');
   }
