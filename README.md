@@ -320,7 +320,7 @@ A decoder that decodes lists of bytes to instances of `DateTime`.
 class DateTimeDecoder extends Decoder<SingleReply, DateTime> {
   @override
   DateTime convert(SingleReply value, [RedisCodec codec]) =>
-      value == null ? null : DateTime.parse(utf8.decode(value.bytes));
+      value.bytes == null ? null : DateTime.parse(utf8.decode(value.bytes));
 }
 ```
 
