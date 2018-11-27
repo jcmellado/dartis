@@ -414,7 +414,7 @@ Dependencies of this packages can installed with `pub get` and test cases can
 be run with `pub run test`. These test cases requires a redis running on
 `localhost:6379`, for local development this can be created with docker:
 
- * `docker run --rm -p 6379:6379 redis`
+ * `docker run --rm -p 127.0.0.1:6379:6379 redis`
 
 This starts a container running redis and exposes port `6379` localhost, when
 killed using `ctrl+c` the container will be deleted.
