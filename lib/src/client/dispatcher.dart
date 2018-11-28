@@ -21,7 +21,7 @@ abstract class DispatcherBase {
 
   /// Creates a [DispatcherBase] with the given connection.
   DispatcherBase(this._connection) {
-    _connection.listen(onData, onDone);
+    _connection.listen(onData, onError, onDone);
   }
 
   /// Sends [data] through the network connection.
@@ -34,6 +34,13 @@ abstract class DispatcherBase {
 
   /// Overwrite this method for receiving incoming [data].
   void onData(List<int> data);
+
+  /// Overwrite this method to handle errors that occured reading or writing
+  /// to the connection.
+  void onError(Object e, [StackTrace stackStrace]) {
+    // Default to rethrow the error
+    throw e; // ignore: only_throw_errors
+  }
 
   /// Overwrite this method for receiving on done signal.
   void onDone();

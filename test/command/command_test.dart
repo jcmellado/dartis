@@ -69,7 +69,7 @@ void main() {
         final command = Command<String>(<Object>['CMD']);
 
         final reply = ErrorReply('ERR'.codeUnits);
-        command.completeError(reply, codec);
+        command.completeErrorReply(reply, codec);
 
         expect(command.future, throwsA(const TypeMatcher<RedisException>()));
       });

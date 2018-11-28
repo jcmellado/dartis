@@ -1,9 +1,10 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-import 'dart:async' show Future, StreamSubscription;
+import 'dart:async' show Completer, Future, StreamSubscription, Zone;
 import 'dart:io' show Socket, SocketOption;
 
+import '../exception.dart';
 import '../logger.dart';
 
 /// A connection for communicating over a TCP socket with a Redis server.
@@ -13,11 +14,63 @@ class Connection {
   /// The stream socket subscription.
   final StreamSubscription<List<int>> _subscription;
 
+  /// Error handler from the latest listener.
+  void Function(Object, StackTrace) _onErrorListener;
+
+  /// Implementation of done.
+  final Completer<void> _done = Completer<void>();
+
   /// Creates a [Connection] instance with the given socket.
   ///
   /// [connect()] provides a more convenient way for creating instances
   /// of this class.
-  Connection(this._socket) : _subscription = _socket.listen(null);
+  Connection(this._socket) : _subscription = _socket.listen(null) {
+    // If the out-going half of the socket closes, we mark the connection as
+    // closed for sending. If there is an error, either when listening or when
+    // sending we forward it as an error to the listener.
+    // ignore: strong_mode_implicit_dynamic_parameter
+    _socket.done.then(_done.complete, onError: _onError);
+    _subscription.onError(_onError);
+  }
+
+  /// Future that is resolved when the connection is closed.
+  ///
+  /// If the connection closes gracefully this future will be completed and
+  /// future attempts to use the connection will throw a
+  /// [RedisConnectionClosedException].
+  ///
+  /// If the connection is broken, an error occurs writing/reading to/from the
+  /// connection this future will be resolved with error. If unhandled this
+  /// will propogate to the encapsulating [Zone] where it may be handled.
+  /// If using the default root [Zone] this will cause the isolate to crash.
+  /// If not implementing custom reconnection logic it might be desirable to
+  /// simply restart the process when it crashes.
+  ///
+  /// If implementing custom reconnection logic, consumers should stop using a
+  /// connection once [done] have been resolved, as all future commands will
+  /// will throw an error. If an error occurs reading or writing all outstanding
+  /// commands will be resolved with an exception.
+  Future<void> get done => _done.future;
+
+  void _onError(Object e, [StackTrace stackTrace]) {
+    log.info('an error read/write to socket occured', e, stackTrace);
+    // Stop trying to send anything new
+    if (!_done.isCompleted) {
+      _done.completeError(e, stackTrace);
+    }
+
+    try {
+      // If an onErrorHandler have been set we forward the error, otherwise, we
+      // rethrow the error into the ether and let the wrapping zone capture it.
+      if (_onErrorListener == null) {
+        throw e; // ignore: only_throw_errors
+      }
+      _onErrorListener(e, stackTrace);
+    } finally {
+      // Ensure we cleanup, by destroying the socket.
+      _socket.destroy();
+    }
+  }
 
   /// Creates a new connection according to the host and port specified
   /// in the [connectionString].
@@ -43,7 +96,11 @@ class Connection {
   }
 
   /// Replaces the current event handlers.
-  void listen(void Function(List<int> data) onData, void Function() onDone) {
+  void listen(void Function(List<int> data) onData,
+      void Function(Object, [StackTrace]) onError, void Function() onDone) {
+    // We use _onErrorListener because we also want to call this if there was
+    // errors sending data.
+    _onErrorListener = onError;
     _subscription
       ..onData(onData)
       ..onDone(onDone);
@@ -51,6 +108,11 @@ class Connection {
 
   /// Sends raw [data] through the socket.
   void send(List<int> data) {
+    if (_done.isCompleted) {
+      // This could just be graceful shutdown from the server
+      log.info('Attempted to send data after outgoing connection closed');
+      throw const RedisConnectionClosedException();
+    }
     log.finest(() => 'Sent data: $data.');
 
     _socket.add(data);
