@@ -61,8 +61,7 @@ void main() {
       await proxy.closeConnectionsAndServer();
 
       // We now expect an exception from the connection.
-      expect(connection.done,
-          throwsA(const TypeMatcher<RedisConnectionClosedException>()));
+      expect(connection.done, throwsA(isException));
 
       // Try to send something to get an error.
       connection.send([
