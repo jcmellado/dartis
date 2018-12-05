@@ -37,9 +37,9 @@ abstract class DispatcherBase {
 
   /// Overwrite this method to handle errors that occured reading or writing
   /// to the connection.
-  void onError(Object e, [StackTrace stackStrace]) {
-    // Default to rethrow the error
-    throw e; // ignore: only_throw_errors
+  void onError(Object error, [StackTrace stackTrace]) {
+    // Default to rethrow the error.
+    throw error; // ignore: only_throw_errors
   }
 
   /// Overwrite this method for receiving on done signal.

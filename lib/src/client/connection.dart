@@ -17,7 +17,7 @@ class Connection {
   /// Error handler from the latest listener.
   void Function(Object, StackTrace) _onErrorListener;
 
-  /// Implementation of done.
+  /// Implementation of [done].
   final Completer<void> _done = Completer<void>();
 
   /// Creates a [Connection] instance with the given socket.
@@ -28,7 +28,6 @@ class Connection {
     // If the out-going half of the socket closes, we mark the connection as
     // closed for sending. If there is an error, either when listening or when
     // sending we forward it as an error to the listener.
-    // ignore: strong_mode_implicit_dynamic_parameter
     _socket.done.then(_done.complete, onError: _onError);
     _subscription.onError(_onError);
   }
@@ -41,8 +40,9 @@ class Connection {
   ///
   /// If the connection is broken, an error occurs writing/reading to/from the
   /// connection this future will be resolved with error. If unhandled this
-  /// will propogate to the encapsulating [Zone] where it may be handled.
+  /// will propagate to the encapsulating [Zone] where it may be handled.
   /// If using the default root [Zone] this will cause the isolate to crash.
+  ///
   /// If not implementing custom reconnection logic it might be desirable to
   /// simply restart the process when it crashes.
   ///
@@ -51,26 +51,6 @@ class Connection {
   /// will throw an error. If an error occurs reading or writing all outstanding
   /// commands will be resolved with an exception.
   Future<void> get done => _done.future;
-
-  void _onError(Object e, [StackTrace stackTrace]) {
-    log.info('an error read/write to socket occured', e, stackTrace);
-    // Stop trying to send anything new
-    if (!_done.isCompleted) {
-      _done.completeError(e, stackTrace);
-    }
-
-    try {
-      // If an onErrorHandler have been set we forward the error, otherwise, we
-      // rethrow the error into the ether and let the wrapping zone capture it.
-      if (_onErrorListener == null) {
-        throw e; // ignore: only_throw_errors
-      }
-      _onErrorListener(e, stackTrace);
-    } finally {
-      // Ensure we cleanup, by destroying the socket.
-      _socket.destroy();
-    }
-  }
 
   /// Creates a new connection according to the host and port specified
   /// in the [connectionString].
@@ -98,21 +78,22 @@ class Connection {
   /// Replaces the current event handlers.
   void listen(void Function(List<int> data) onData,
       void Function(Object, [StackTrace]) onError, void Function() onDone) {
-    // We use _onErrorListener because we also want to call this if there was
-    // errors sending data.
-    _onErrorListener = onError;
     _subscription
       ..onData(onData)
       ..onDone(onDone);
+    // We use _onErrorListener because we also want to call this if there was
+    // errors sending data.
+    _onErrorListener = onError;
   }
 
   /// Sends raw [data] through the socket.
   void send(List<int> data) {
     if (_done.isCompleted) {
       // This could just be graceful shutdown from the server
-      log.info('Attempted to send data after outgoing connection closed');
+      log.info('Attempted to send data after outgoing connection closed.');
       throw const RedisConnectionClosedException();
     }
+
     log.finest(() => 'Sent data: $data.');
 
     _socket.add(data);
@@ -130,6 +111,26 @@ class Connection {
     }
 
     log.info('Disconnected.');
+  }
+
+  void _onError(Object error, [StackTrace stackTrace]) {
+    log.info('An error read/write to socket occured.', error, stackTrace);
+    // Stop trying to send anything new.
+    if (!_done.isCompleted) {
+      _done.completeError(error, stackTrace);
+    }
+
+    try {
+      // If an onErrorHandler have been set we forward the error, otherwise, we
+      // rethrow the error into the ether and let the wrapping zone capture it.
+      if (_onErrorListener == null) {
+        throw error; // ignore: only_throw_errors
+      }
+      _onErrorListener(error, stackTrace);
+    } finally {
+      // Ensure we cleanup, by destroying the socket.
+      _socket.destroy();
+    }
   }
 }
 

@@ -18,5 +18,5 @@ class RedisException implements Exception {
 class RedisConnectionClosedException extends RedisException {
   /// Creates a [RedisConnectionClosedException] instance.
   const RedisConnectionClosedException()
-      : super('attempted to send data after connection was closed');
+      : super('Attempted to send data after connection was closed.');
 }

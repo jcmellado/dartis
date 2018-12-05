@@ -56,7 +56,7 @@ class Transaction {
   }
 
   /// Completes all commands in the transaction with [error].
-  void onError(Object error, StackTrace st) {
+  void onError(Object error, StackTrace stackTrace) {
     assert(_inProgress);
 
     for (final command in _queued) {

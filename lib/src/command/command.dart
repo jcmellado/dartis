@@ -33,7 +33,7 @@ abstract class Command<T> {
   void completeErrorReply(ErrorReply reply, RedisCodec codec);
 
   /// Completes this command with an error, typically due to socket errors.
-  void completeError(Object e, [StackTrace st]);
+  void completeError(Object error, [StackTrace stackTrace]);
 }
 
 /// Base class for implementing commands.
@@ -75,8 +75,8 @@ class CommandBase<T> implements Command<T> {
   }
 
   @override
-  void completeError(Object e, [StackTrace st]) =>
-      _completer.completeError(e, st);
+  void completeError(Object error, [StackTrace stackTrace]) =>
+      _completer.completeError(error, stackTrace);
 
   /// Completes this command with the value in the given [reply].
   T _complete(Reply reply, RedisCodec codec) {

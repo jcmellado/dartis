@@ -110,7 +110,8 @@ void main() {
       await proxy.closeConnectionsAndServer();
 
       // We now expect an exception from the connection.
-      expect(connection.done, throwsA(isException));
+      expect(connection.done,
+          throwsA(const TypeMatcher<RedisConnectionClosedException>()));
 
       // Check that ping again will cause an exception.
       final ping2 = Command<String>(<Object>['PING']);

@@ -279,17 +279,17 @@ class _ClientDispatcher extends ReplyDispatcher {
   }
 
   @override
-  void onError(Object e, [StackTrace stackStrace]) {
+  void onError(Object error, [StackTrace stackStrace]) {
     try {
       for (var command in _unreplied) {
-        command.completeError(e, stackStrace);
+        command.completeError(error, stackStrace);
       }
       _unreplied.clear();
       if (_transaction.inProgress) {
-        _transaction.onError(e, stackStrace);
+        _transaction.onError(error, stackStrace);
       }
     } finally {
-      // Disconnect to ensure the socket is destroyed.
+      // Disconnects to ensure the socket is destroyed.
       disconnect();
     }
   }
