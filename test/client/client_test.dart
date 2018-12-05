@@ -7,6 +7,7 @@ import 'package:test/test.dart';
 
 import 'package:dartis/dartis.dart';
 
+import '../redisproxy.dart';
 import '../util.dart' show uuid;
 
 void main() {
@@ -94,6 +95,26 @@ void main() {
       expect(await commands.ping(), equals('PONG'));
 
       await client.disconnect();
+    });
+
+    test('throws on broken connection', () async {
+      final proxy = await RedisProxy.create();
+      final connection = await Connection.connect(proxy.connectionString);
+      final client = Client(connection);
+
+      // Check that ping works.
+      final ping1 = Command<String>(<Object>['PING']);
+      expect(await client.run<String>(ping1), equals('PONG'));
+
+      // Close the connection on the remote side.
+      await proxy.closeConnectionsAndServer();
+
+      // We now expect an exception from the connection.
+      expect(connection.done, throwsA(isException));
+
+      // Check that ping again will cause an exception.
+      final ping2 = Command<String>(<Object>['PING']);
+      expect(client.run<String>(ping2), throwsA(isException));
     });
   });
 }

@@ -81,6 +81,11 @@ class _MonitorDispatcher extends DispatcherBase {
   }
 
   @override
+  void onError(Object e, [StackTrace st]) {
+    _controller.addError(e, st);
+  }
+
+  @override
   void onDone() {
     _controller.close();
   }

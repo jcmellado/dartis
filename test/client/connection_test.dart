@@ -1,11 +1,13 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-import 'dart:async' show Completer;
+import 'dart:async';
 
 import 'package:test/test.dart';
 
 import 'package:dartis/dartis.dart';
+
+import '../redisproxy.dart';
 
 void main() {
   group('Connection', () {
@@ -26,7 +28,7 @@ void main() {
 
       // Set the handler and send some raw data.
       connection
-        ..listen(onData, null)
+        ..listen(onData, null, null)
         ..send([
           RespToken.array, 49, 13, 10, // *1
           RespToken.bulk, 52, 13, 10, 80, 73, 78, 71, 13, 10 // $4 PING
@@ -34,6 +36,41 @@ void main() {
 
       await completer.future.timeout(Duration(seconds: 5),
           onTimeout: () => throw StateError('Timeout'));
+    });
+
+    test('test broken connections', () async {
+      final redis = await RedisProxy.create();
+      final connection = await Connection.connect(redis.connectionString);
+
+      final onData = Completer<List<int>>();
+      final onError = Completer<Object>();
+
+      // Send a PING
+      connection
+        ..listen(onData.complete, (e, [st]) => onError.complete(e), null)
+        ..send([
+          RespToken.array, 49, 13, 10, // *1
+          RespToken.bulk, 52, 13, 10, 80, 73, 78, 71, 13, 10 // $4 PING
+        ]);
+
+      // Wait for data
+      final data = await onData.future;
+      expect(data, equals([RespToken.string, 80, 79, 78, 71, 13, 10])); // PONG
+
+      // Close the connection on the remote side.
+      await redis.closeConnectionsAndServer();
+
+      // We now expect an exception from the connection.
+      expect(connection.done, throwsA(isException));
+
+      // Try to send something to get an error.
+      connection.send([
+        RespToken.array, 49, 13, 10, // *1
+        RespToken.bulk, 52, 13, 10, 80, 73, 78, 71, 13, 10 // $4 PING
+      ]);
+
+      // Ensure that onError happens
+      await onError.future;
     });
   });
 
