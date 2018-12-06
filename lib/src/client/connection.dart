@@ -66,7 +66,7 @@ class Connection {
 
     log.fine(() => 'Attempting to connect to "$uri".');
 
-    /// ignore: close_sinks
+    // ignore: close_sinks
     final socket = await Socket.connect(uri.host, uri.port)
       ..setOption(SocketOption.tcpNoDelay, true);
 
@@ -115,6 +115,7 @@ class Connection {
 
   void _onError(Object error, [StackTrace stackTrace]) {
     log.info('An error read/write to socket occured.', error, stackTrace);
+
     // Stop trying to send anything new.
     if (!_done.isCompleted) {
       _done.completeError(error, stackTrace);

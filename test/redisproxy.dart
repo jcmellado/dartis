@@ -1,3 +1,6 @@
+// Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
+// is governed by a MIT-style license that can be found in the LICENSE file.
+
 import 'dart:async';
 import 'dart:io';
 
@@ -11,6 +14,19 @@ class RedisProxy {
 
   RedisProxy(this._server) {
     _server.forEach(_handle);
+  }
+
+  static Future<RedisProxy> create() async {
+    final server = await ServerSocket.bind('localhost', 0);
+    return RedisProxy(server);
+  }
+
+  String get connectionString => 'redis://localhost:${_server.port}';
+
+  /// Close server and connections.
+  Future closeConnectionsAndServer() async {
+    _done.complete();
+    await _server.close();
   }
 
   void _handle(Socket client) async {
@@ -29,18 +45,5 @@ class RedisProxy {
       client.destroy();
       redis.destroy();
     }
-  }
-
-  /// Close server and connections.
-  Future closeConnectionsAndServer() async {
-    _done.complete();
-    await _server.close();
-  }
-
-  String get connectionString => 'redis://localhost:${_server.port}';
-
-  static Future<RedisProxy> create() async {
-    final server = await ServerSocket.bind('localhost', 0);
-    return RedisProxy(server);
   }
 }
