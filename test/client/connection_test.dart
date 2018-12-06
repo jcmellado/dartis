@@ -38,6 +38,35 @@ void main() {
           onTimeout: () => throw StateError('Timeout'));
     });
 
+    test('test connection done', () async {
+      final connection = await Connection.connect('redis://localhost:6379');
+      final completer = Completer<void>();
+
+      connection.done.then(completer.complete); // ignore: unawaited_futures
+      connection.disconnect(); // ignore: unawaited_futures
+
+      await completer.future.timeout(Duration(seconds: 5),
+          onTimeout: () => throw StateError('Timeout'));
+    });
+
+    test('attempt to send data after connection was closed', () async {
+      final connection = await Connection.connect('redis://localhost:6379');
+      final completer = Completer<void>();
+
+      connection.done.then(completer.complete); // ignore: unawaited_futures
+      connection.disconnect(); // ignore: unawaited_futures
+
+      await completer.future.timeout(Duration(seconds: 5),
+          onTimeout: () => throw StateError('Timeout'));
+
+      expect(
+          () => connection.send([
+                RespToken.array, 49, 13, 10, // *1
+                RespToken.bulk, 52, 13, 10, 80, 73, 78, 71, 13, 10 // $4 PING
+              ]),
+          throwsA(const TypeMatcher<RedisConnectionClosedException>()));
+    });
+
     test('test broken connections', () async {
       final proxy = await RedisProxy.create();
       final connection = await Connection.connect(proxy.connectionString);
