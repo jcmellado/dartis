@@ -2,12 +2,13 @@
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
 import 'dart:async' show Future;
+import 'dart:io' show SocketException;
 
 import 'package:test/test.dart';
 
 import 'package:dartis/dartis.dart';
 
-import '../redisproxy.dart';
+import '../fakesocket.dart';
 import '../util.dart' show uuid;
 
 void main() {
@@ -98,16 +99,16 @@ void main() {
     });
 
     test('throws on broken connection', () async {
-      final proxy = await RedisProxy.create();
-      final connection = await Connection.connect(proxy.connectionString);
+      // ignore: close_sinks
+      final socket = FakeSocket([
+        [RespToken.string, 80, 79, 78, 71, 13, 10]
+      ], const SocketException('bad fake connnection'));
+      final connection = Connection(socket);
       final client = Client(connection);
 
       // Check that ping works.
       final ping1 = Command<String>(<Object>['PING']);
       expect(await client.run<String>(ping1), equals('PONG'));
-
-      // Close the connection on the remote side.
-      await proxy.closeConnectionsAndServer();
 
       // We now expect an exception from the connection.
       expect(connection.done, throwsA(isException));
