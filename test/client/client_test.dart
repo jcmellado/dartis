@@ -101,7 +101,7 @@ void main() {
     test('throws on broken connection', () async {
       // ignore: close_sinks
       final socket = FakeSocket([
-        [RespToken.string, 80, 79, 78, 71, 13, 10]
+        [RespToken.string, 80, 79, 78, 71, 13, 10] // PONG
       ], const SocketException('bad fake connnection'));
       final connection = Connection(socket);
       final client = Client(connection);

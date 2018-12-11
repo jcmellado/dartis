@@ -1,3 +1,6 @@
+// Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
+// is governed by a MIT-style license that can be found in the LICENSE file.
+
 import 'dart:async';
 import 'dart:io';
 
@@ -14,12 +17,16 @@ class FakeSocket extends Stream<List<int>> with IOSink implements Socket {
   final List<int> written = [];
   final Stream<List<int>> _output;
   final Completer<void> _done = Completer();
+  
   @override
   InternetAddress address;
+  
   @override
   InternetAddress remoteAddress;
+  
   @override
   int remotePort;
+
   @override
   int port;
 
@@ -39,7 +46,7 @@ class FakeSocket extends Stream<List<int>> with IOSink implements Socket {
   @override
   void add(List<int> data) {
     if (_done.isCompleted) {
-      throw const SocketException('FakeSocket is closed');
+      throw const SocketException('FakeSocket is closed.');
     }
     written.addAll(data);
   }
@@ -64,14 +71,13 @@ class FakeSocket extends Stream<List<int>> with IOSink implements Socket {
 
   @override
   StreamSubscription<List<int>> listen(void Function(List<int> event) onData,
-      {Function onError, void Function() onDone, bool cancelOnError}) {
-    return _output.listen(
+      {Function onError, void Function() onDone, bool cancelOnError}) =>
+    _output.listen(
       onData,
       onError: onError,
       onDone: onDone,
       cancelOnError: cancelOnError,
     );
-  }
 
   @override
   void write(Object obj) {
