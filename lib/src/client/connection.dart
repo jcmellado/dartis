@@ -28,7 +28,9 @@ class Connection {
     // If the out-going half of the socket closes, we mark the connection as
     // closed for sending. If there is an error, either when listening or when
     // sending we forward it as an error to the listener.
-    _socket.done.then(_done.complete, onError: _onError);
+    _socket.done
+        .catchError(_onError)
+        .whenComplete(() => _done.isCompleted ? null : _done.complete());
     _subscription.onError(_onError);
   }
 

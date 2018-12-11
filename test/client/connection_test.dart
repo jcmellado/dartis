@@ -2,12 +2,13 @@
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
 import 'dart:async' show Completer;
+import 'dart:io' show SocketException;
 
 import 'package:test/test.dart';
 
 import 'package:dartis/dartis.dart';
 
-import '../redisproxy.dart';
+import '../fakesocket.dart';
 
 void main() {
   group('Connection', () {
@@ -67,9 +68,35 @@ void main() {
           throwsA(const TypeMatcher<RedisConnectionClosedException>()));
     });
 
-    test('test broken connections', () async {
-      final proxy = await RedisProxy.create();
-      final connection = await Connection.connect(proxy.connectionString);
+    test('ping/pong using FakeSocket', () async {
+      // ignore: close_sinks
+      final socket = FakeSocket([
+        [RespToken.string, 80, 79, 78, 71, 13, 10]
+      ], null);
+      final connection = Connection(socket);
+
+      final onData = Completer<List<int>>();
+      // Sends a PING.
+      connection
+        ..listen(onData.complete, null, null)
+        ..send([
+          RespToken.array, 49, 13, 10, // *1
+          RespToken.bulk, 52, 13, 10, 80, 73, 78, 71, 13, 10 // $4 PING
+        ]);
+
+      // Waits for data.
+      final data = await onData.future;
+      expect(data, equals([RespToken.string, 80, 79, 78, 71, 13, 10])); // PONG
+
+      await connection.disconnect();
+    });
+
+    test('broken connection using FakeSocket', () async {
+      // ignore: close_sinks
+      final socket = FakeSocket([
+        [RespToken.string, 80, 79, 78, 71, 13, 10]
+      ], const SocketException('bad fake connnection'));
+      final connection = Connection(socket);
 
       final onData = Completer<List<int>>();
       final onError = Completer<Object>();
@@ -86,9 +113,6 @@ void main() {
       final data = await onData.future;
       expect(data, equals([RespToken.string, 80, 79, 78, 71, 13, 10])); // PONG
 
-      // Closes the connection on the remote side.
-      await proxy.closeConnectionsAndServer();
-
       // We now expect an exception from the connection.
       expect(connection.done, throwsA(isException));
 
@@ -99,7 +123,7 @@ void main() {
       ]);
 
       // Ensure that onError happens.
-      await onError.future;
+      expect(await onError.future, const TypeMatcher<SocketException>());
     });
   });
 
