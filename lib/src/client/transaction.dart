@@ -52,7 +52,18 @@ class Transaction {
       _abort(reply, codec);
     }
 
-    command.completeError(reply, codec);
+    command.completeErrorReply(reply, codec);
+  }
+
+  /// Completes all commands in the transaction with [error].
+  void onError(Object error, StackTrace stackTrace) {
+    assert(_inProgress);
+
+    for (final command in _queued) {
+      command.completeError(error);
+    }
+
+    end();
   }
 
   /// Completes all the queued commands.
@@ -71,7 +82,7 @@ class Transaction {
     final error = ErrorReply('Transaction discarded.'.codeUnits);
 
     for (final command in _queued) {
-      command.completeError(error, codec);
+      command.completeErrorReply(error, codec);
     }
 
     command.complete(reply, codec);
@@ -82,7 +93,7 @@ class Transaction {
   /// Completes all the queued commands with the given error [reply].
   void _abort(ErrorReply reply, RedisCodec codec) {
     for (final command in _queued) {
-      command.completeError(reply, codec);
+      command.completeErrorReply(reply, codec);
     }
 
     end();
@@ -129,7 +140,7 @@ class Transaction {
       final reply = array[i];
 
       if (reply is ErrorReply) {
-        command.completeError(reply, codec);
+        command.completeErrorReply(reply, codec);
       } else {
         command.complete(reply, codec);
       }

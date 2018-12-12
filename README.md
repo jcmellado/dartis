@@ -320,7 +320,7 @@ A decoder that decodes lists of bytes to instances of `DateTime`.
 class DateTimeDecoder extends Decoder<SingleReply, DateTime> {
   @override
   DateTime convert(SingleReply value, [RedisCodec codec]) =>
-      value == null ? null : DateTime.parse(utf8.decode(value.bytes));
+      value.bytes == null ? null : DateTime.parse(utf8.decode(value.bytes));
 }
 ```
 
@@ -408,3 +408,13 @@ Logger.root.onRecord.listen((LogRecord record) {
 ```
 
 Set the log level according your needs. Most times, `INFO` is what you want. `ALL` is good for filling issues.
+
+## Testing
+Dependencies of this packages can installed with `pub get` and test cases can
+be run with `pub run test`. These test cases requires a redis running on
+`localhost:6379`, for local development this can be created with docker:
+
+ * `docker run --rm -p 127.0.0.1:6379:6379 redis`
+
+This starts a container running redis and exposes port `6379` localhost, when
+killed using `ctrl+c` the container will be deleted.

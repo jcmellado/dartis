@@ -220,6 +220,11 @@ class _PubSubDispatcher<K, V> extends ReplyDispatcher {
   }
 
   @override
+  void onError(Object error, [StackTrace stackTrace]) {
+    _controller.addError(error, stackTrace);
+  }
+
+  @override
   void onDone() {
     _controller.close();
   }

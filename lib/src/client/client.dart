@@ -274,7 +274,23 @@ class _ClientDispatcher extends ReplyDispatcher {
     if (_transaction.inProgress) {
       _transaction.onErrorReply(command, reply, codec);
     } else {
-      command.completeError(reply, codec);
+      command.completeErrorReply(reply, codec);
+    }
+  }
+
+  @override
+  void onError(Object error, [StackTrace stackStrace]) {
+    try {
+      for (var command in _unreplied) {
+        command.completeError(error, stackStrace);
+      }
+      _unreplied.clear();
+      if (_transaction.inProgress) {
+        _transaction.onError(error, stackStrace);
+      }
+    } finally {
+      // Disconnects to ensure the socket is destroyed.
+      disconnect();
     }
   }
 

@@ -75,6 +75,11 @@ class _TerminalDispatcher extends DispatcherBase {
   }
 
   @override
+  void onError(Object error, [StackTrace stackTrace]) {
+    _controller.addError(error, stackTrace);
+  }
+
+  @override
   void onDone() {
     _controller.close();
   }

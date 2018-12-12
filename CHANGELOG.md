@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.3.0] - 2018-12-12
+- Added some logic for handling broken connections
+
 ## [0.2.0] - 2018-09-08
 - Changed description, it was too long
 

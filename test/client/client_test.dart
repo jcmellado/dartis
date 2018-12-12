@@ -2,11 +2,13 @@
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
 import 'dart:async' show Future;
+import 'dart:io' show SocketException;
 
 import 'package:test/test.dart';
 
 import 'package:dartis/dartis.dart';
 
+import '../fakesocket.dart';
 import '../util.dart' show uuid;
 
 void main() {
@@ -59,6 +61,7 @@ void main() {
         ..pipeline();
 
       // Run some commands.
+      // ignore: unawaited_futures
       client.asCommands<String, String>()..ping()..ping()..ping();
 
       // Flush.
@@ -93,6 +96,26 @@ void main() {
       expect(await commands.ping(), equals('PONG'));
 
       await client.disconnect();
+    });
+
+    test('throws on broken connection', () async {
+      // ignore: close_sinks
+      final socket = FakeSocket([
+        [RespToken.string, 80, 79, 78, 71, 13, 10] // PONG
+      ], const SocketException('bad fake connnection'));
+      final connection = Connection(socket);
+      final client = Client(connection);
+
+      // Check that ping works.
+      final ping1 = Command<String>(<Object>['PING']);
+      expect(await client.run<String>(ping1), equals('PONG'));
+
+      // We now expect an exception from the connection.
+      expect(connection.done, throwsA(isException));
+
+      // Check that ping again will cause an exception.
+      final ping2 = Command<String>(<Object>['PING']);
+      expect(client.run<String>(ping2), throwsA(isException));
     });
   });
 }

@@ -12,3 +12,11 @@ class RedisException implements Exception {
   @override
   String toString() => 'RedisException: $message';
 }
+
+/// Exception thrown if there was an attempt to send a command after the
+/// connection was closed.
+class RedisConnectionClosedException extends RedisException {
+  /// Creates a [RedisConnectionClosedException] instance.
+  const RedisConnectionClosedException()
+      : super('Attempted to send data after connection was closed.');
+}

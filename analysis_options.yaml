@@ -4,6 +4,7 @@ analyzer:
     implicit-dynamic: false
   errors:
     always_specify_types: ignore
+    sort_constructors_first: ignore
 
 linter:
   rules:
