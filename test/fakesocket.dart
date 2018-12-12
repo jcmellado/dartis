@@ -17,13 +17,13 @@ class FakeSocket extends Stream<List<int>> with IOSink implements Socket {
   final List<int> written = [];
   final Stream<List<int>> _output;
   final Completer<void> _done = Completer();
-  
+
   @override
   InternetAddress address;
-  
+
   @override
   InternetAddress remoteAddress;
-  
+
   @override
   int remotePort;
 
@@ -71,13 +71,13 @@ class FakeSocket extends Stream<List<int>> with IOSink implements Socket {
 
   @override
   StreamSubscription<List<int>> listen(void Function(List<int> event) onData,
-      {Function onError, void Function() onDone, bool cancelOnError}) =>
-    _output.listen(
-      onData,
-      onError: onError,
-      onDone: onDone,
-      cancelOnError: cancelOnError,
-    );
+          {Function onError, void Function() onDone, bool cancelOnError}) =>
+      _output.listen(
+        onData,
+        onError: onError,
+        onDone: onDone,
+        cancelOnError: cancelOnError,
+      );
 
   @override
   void write(Object obj) {
