@@ -35,7 +35,7 @@ void main() {
           RespToken.bulk, 52, 13, 10, 80, 73, 78, 71, 13, 10 // $4 PING
         ]);
 
-      await completer.future.timeout(Duration(seconds: 5),
+      await completer.future.timeout(const Duration(seconds: 5),
           onTimeout: () => throw StateError('Timeout'));
     });
 
@@ -46,7 +46,7 @@ void main() {
       connection.done.then(completer.complete); // ignore: unawaited_futures
       connection.disconnect(); // ignore: unawaited_futures
 
-      await completer.future.timeout(Duration(seconds: 5),
+      await completer.future.timeout(const Duration(seconds: 5),
           onTimeout: () => throw StateError('Timeout'));
     });
 
@@ -57,7 +57,7 @@ void main() {
       connection.done.then(completer.complete); // ignore: unawaited_futures
       connection.disconnect(); // ignore: unawaited_futures
 
-      await completer.future.timeout(Duration(seconds: 5),
+      await completer.future.timeout(const Duration(seconds: 5),
           onTimeout: () => throw StateError('Timeout'));
 
       expect(

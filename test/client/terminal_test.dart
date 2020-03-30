@@ -29,7 +29,7 @@ void main() {
 
       terminal.run(<int>[80, 73, 78, 71, 13, 10]); // PING
 
-      await completer.future.timeout(Duration(seconds: 5),
+      await completer.future.timeout(const Duration(seconds: 5),
           onTimeout: () => throw StateError('Timeout'));
     });
   });
