@@ -99,6 +99,19 @@ pubsub.stream.listen(print, onError: print);
 
 See `pubsub.dart` in the `example` folder.
 
+If the Redis server is protected with a password then a client connection must be created in order to run the Redis AUTH command.
+
+```dart
+final client = await Client.connect('redis://localhost:6379');
+
+final commands = client.asCommands<String, String>();
+
+await commands.auth('password');
+
+// Create the PubSub object using the client connection
+final broker = PubSub<String, String>(client.connection);
+```
+
 ### Inline Commands
 In this mode the commands are sent to the server using the "inline command" format. Ideal to use in interactive sessions, like a Telnet session.
 

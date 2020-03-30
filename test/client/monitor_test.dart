@@ -29,7 +29,7 @@ void main() {
 
       monitor.start();
 
-      await completer.future.timeout(Duration(seconds: 5),
+      await completer.future.timeout(const Duration(seconds: 5),
           onTimeout: () => throw StateError('Timeout'));
     });
   });

@@ -4,18 +4,20 @@
 import 'dart:async';
 import 'dart:io';
 
-Stream<List<int>> _stream(List<List<int>> data, Exception error) async* {
+import 'dart:typed_data';
+
+Stream<Uint8List> _stream(List<List<int>> data, Exception error) async* {
   for (final b in data) {
-    yield b;
+    yield Uint8List.fromList(b);
   }
   if (error != null) {
     throw error;
   }
 }
 
-class FakeSocket extends Stream<List<int>> with IOSink implements Socket {
+class FakeSocket extends Stream<Uint8List> with IOSink implements Socket {
   final List<int> written = [];
-  final Stream<List<int>> _output;
+  final Stream<Uint8List> _output;
   final Completer<void> _done = Completer();
 
   @override
@@ -70,7 +72,7 @@ class FakeSocket extends Stream<List<int>> with IOSink implements Socket {
   void destroy() => close();
 
   @override
-  StreamSubscription<List<int>> listen(void Function(List<int> event) onData,
+  StreamSubscription<Uint8List> listen(void Function(Uint8List event) onData,
           {Function onError, void Function() onDone, bool cancelOnError}) =>
       _output.listen(
         onData,
@@ -106,4 +108,10 @@ class FakeSocket extends Stream<List<int>> with IOSink implements Socket {
     write(obj);
     write('\n');
   }
+
+  @override
+  Uint8List getRawOption(RawSocketOption option) => option.value;
+
+  @override
+  void setRawOption(RawSocketOption option) {}
 }

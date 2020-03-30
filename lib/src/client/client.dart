@@ -33,6 +33,10 @@ import 'transaction.dart';
 ///
 /// See `client.dart` in the `example` folder.
 class Client implements CommandRunner {
+  /// The underlying raw connection object.
+  final Connection _connection;
+
+  // Dispatcher.
   final _ClientDispatcher _dispatcher;
 
   /// Delayed commands.
@@ -41,11 +45,11 @@ class Client implements CommandRunner {
   /// Whether this is in the pipelined mode.
   bool _pipelined = false;
 
-  /// Creates a [Client] instance with the given [connection].
+  /// Creates a [Client] instance with the given [_connection].
   ///
   /// [connect()] provides a more convenient way for creating instances of
   /// this class.
-  Client(Connection connection) : _dispatcher = _ClientDispatcher(connection);
+  Client(this._connection) : _dispatcher = _ClientDispatcher(_connection);
 
   /// Creates a new connection according to the host and port specified
   /// in the [connectionString].
@@ -61,6 +65,9 @@ class Client implements CommandRunner {
 
     return Client(connection);
   }
+
+  /// The undelying raw connection object.
+  Connection get connection => _connection;
 
   /// The converter used to serialize/deserialize all the values.
   ///
