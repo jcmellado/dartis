@@ -23,6 +23,7 @@ pub run test:test --reporter expanded
 # Gathers coverage data.
 dart \
   --enable-vm-service=8888 \
+  --disable-service-auth-codes \
   --pause-isolates-on-exit \
   test/dartis_test.dart &
 

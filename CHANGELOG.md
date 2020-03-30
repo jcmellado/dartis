@@ -1,9 +1,10 @@
 # Changelog
 
 ## [0.4.0] - 2020-03-30
-- Exposed connection object in Client
+- Exposed connection object in Client [#24](https://github.com/jcmellado/dartis/issues/24)
 - Fixed errors and warning with latest Dart SDK
 - Removed deprecated linter rules
+- Fixed coverage configuration
 - Updated logging to 0.11.4
 - Updated test to 1.14.2
 - Updated uuid to 2.0.4
