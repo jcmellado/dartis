@@ -13,5 +13,6 @@ export 'commands/scripting.dart';
 export 'commands/server.dart';
 export 'commands/set.dart';
 export 'commands/sortedset.dart';
+export 'commands/stream.dart';
 export 'commands/string.dart';
 export 'commands/transaction.dart';

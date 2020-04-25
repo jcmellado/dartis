@@ -22,6 +22,7 @@ class Commands<K, V> extends ModuleBase
         ServerCommands<K>,
         SetCommands<K, V>,
         SortedSetCommands<K, V>,
+        StreamCommands<K, V>,
         StringCommands<K, V>,
         TransactionCommands<K> {
   /// Creates a [Commands] instance.
@@ -1099,6 +1100,150 @@ class Commands<K, V> extends ModuleBase
         ..addAll(weights)
         ..add(mode == null ? null : r'AGGREGATE')
         ..add(mode?.name));
+
+  // Streams.
+
+  @override
+  Future<int> xack(K key, K group, {K id, Iterable<K> ids = const []}) =>
+      run<int>(<Object>[r'XACK', key, group, id]..addAll(ids));
+
+  @override
+  Future<K> xadd(K key,
+          {K id,
+          K field,
+          V value,
+          Map<K, V> fields = const {},
+          int maxlen,
+          bool roughly = false}) =>
+      run<K>(<Object>[r'XADD', key]
+        ..add(maxlen == null ? null : r'MAXLEN')
+        ..add(roughly ? r'~' : null)
+        ..add(maxlen)
+        ..add(id == null ? r'*' : id)
+        ..add(field)
+        ..add(value)
+        ..addAll(fields.entries.expand((entry) => [entry.key, entry.value])));
+
+  @override
+  Future<Object> xclaim(K key, K group, K consumer, int minIdleTime,
+          {K id,
+          Iterable<K> ids = const [],
+          int idle,
+          int idleTimestamp,
+          int retryCount,
+          bool force = false,
+          bool justId = false}) =>
+      run<Object>(
+          <Object>[r'XCLAIM', key, group, consumer, minIdleTime, id]
+            ..addAll(ids)
+            ..add(idle == null ? null : r'IDLE')
+            ..add(idle)
+            ..add(idleTimestamp == null ? null : r'TIME')
+            ..add(idleTimestamp)
+            ..add(retryCount == null ? null : r'RETRYCOUNT')
+            ..add(retryCount)
+            ..add(force ? r'FORCE' : null)
+            ..add(justId ? r'JUSTID' : null),
+          mapper: StreamClaimMapper<K, V>(justId: justId));
+
+  @override
+  Future<int> xdel(K key, {K id, Iterable<K> ids = const []}) =>
+      run<int>(<Object>[r'XDEL', key, id]..addAll(ids));
+
+  @override
+  Future<Object> xgroup(StreamGroupSubcommand subcommand,
+          {K key, K group, K id, K consumer, bool mkstream = false}) =>
+      run<Object>(
+          <Object>[r'XGROUP', subcommand.name, key, group, id, consumer]
+            ..add(mkstream ? r'MKSTREAM' : null),
+          mapper: streamGroupMapper);
+
+  @override
+  Future<Object> xinfo(StreamInfoSubcommand subcommand, {K key, K group}) =>
+      run<Object>(<Object>[r'XINFO', subcommand.name, key, group],
+          mapper: StreamInfoMapper<K, V>(subcommand));
+
+  @override
+  Future<int> xlen(K key) => run<int>(<Object>[r'XLEN', key]);
+
+  @override
+  Future<Object> xpending(K key, K group,
+      {K start, K end, int count, K consumer}) {
+    assert((start == null && end == null && count == null) ||
+        (start != null && end != null && count != null) ||
+        (start != null && end != null && count != null && consumer != null));
+
+    return run<Object>(
+        <Object>[r'XPENDING', key, group, start, end, count, consumer],
+        mapper: StreamPendingMapper<K, V>(justSummary: start == null));
+  }
+
+  @override
+  Future<List<StreamEntry<K, V>>> xrange(K key, K start, K end, {int count}) =>
+      run<List<StreamEntry<K, V>>>(
+          <Object>[r'XRANGE', key, start, end]
+            ..add(count == null ? null : r'COUNT')
+            ..add(count),
+          mapper: StreamMapper<K, V>());
+
+  @override
+  Future<Map<K, List<StreamEntry<K, V>>>> xread(
+          {K key,
+          K id,
+          Iterable<K> keys = const [],
+          Iterable<K> ids = const [],
+          int count,
+          int timeout}) =>
+      run<Map<K, List<StreamEntry<K, V>>>>(
+          <Object>[r'XREAD']
+            ..add(count == null ? null : r'COUNT')
+            ..add(count)
+            ..add(timeout == null ? null : r'BLOCK')
+            ..add(timeout)
+            ..add(r'STREAMS')
+            ..add(key)
+            ..addAll(keys)
+            ..add(id)
+            ..addAll(ids),
+          mapper: StreamsMapper<K, V>());
+
+  @override
+  Future<Map<K, List<StreamEntry<K, V>>>> xreadgroup(K group, K consumer,
+          {K key,
+          K id,
+          Iterable<K> keys = const [],
+          Iterable<K> ids = const [],
+          int count,
+          int timeout,
+          bool noack = false}) =>
+      run<Map<K, List<StreamEntry<K, V>>>>(
+          <Object>[r'XREADGROUP', 'GROUP', group, consumer]
+            ..add(count == null ? null : r'COUNT')
+            ..add(count)
+            ..add(timeout == null ? null : r'BLOCK')
+            ..add(timeout)
+            ..add(noack ? 'NOACK' : null)
+            ..add(r'STREAMS')
+            ..add(key)
+            ..addAll(keys)
+            ..add(id)
+            ..addAll(ids),
+          mapper: StreamsMapper<K, V>());
+
+  @override
+  Future<List<StreamEntry<K, V>>> xrevrange(K key, K end, K start,
+          {int count}) =>
+      run<List<StreamEntry<K, V>>>(
+          <Object>[r'XREVRANGE', key, end, start]
+            ..add(count == null ? null : r'COUNT')
+            ..add(count),
+          mapper: StreamMapper<K, V>());
+
+  @override
+  Future<int> xtrim(K key, int maxlen, {bool roughly = false}) =>
+      run<int>(<Object>[r'XTRIM', key, r'MAXLEN']
+        ..add(roughly ? r'~' : null)
+        ..add(maxlen));
 
   // Strings.
 

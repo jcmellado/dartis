@@ -27,6 +27,7 @@ import 'commands/scripting_test.dart' as commands_scripting_test;
 import 'commands/server_test.dart' as commands_server_test;
 import 'commands/set_test.dart' as commands_set_test;
 import 'commands/sortedset_test.dart' as commands_sortedset_test;
+import 'commands/stream_test.dart' as commands_stream_test;
 import 'commands/string_test.dart' as commands_string_test;
 import 'commands/transaction_test.dart' as commands_transaction_test;
 
@@ -63,6 +64,7 @@ void main() {
   commands_server_test.main();
   commands_set_test.main();
   commands_sortedset_test.main();
+  commands_stream_test.main();
   commands_string_test.main();
   commands_transaction_test.main();
 
