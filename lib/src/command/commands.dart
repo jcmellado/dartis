@@ -1217,12 +1217,12 @@ class Commands<K, V> extends ModuleBase
           int timeout,
           bool noack = false}) =>
       run<Map<K, List<StreamEntry<K, V>>>>(
-          <Object>[r'XREADGROUP', 'GROUP', group, consumer]
+          <Object>[r'XREADGROUP', r'GROUP', group, consumer]
             ..add(count == null ? null : r'COUNT')
             ..add(count)
             ..add(timeout == null ? null : r'BLOCK')
             ..add(timeout)
-            ..add(noack ? 'NOACK' : null)
+            ..add(noack ? r'NOACK' : null)
             ..add(r'STREAMS')
             ..add(key)
             ..addAll(keys)
