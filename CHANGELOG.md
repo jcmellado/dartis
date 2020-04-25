@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.5.0] - 2020-04-25
+- Added Redis streams commands [#26](https://github.com/jcmellado/dartis/issues/26)
+
 ## [0.4.0] - 2020-03-30
 - Exposed connection object in Client [#24](https://github.com/jcmellado/dartis/issues/24)
 - Fixed errors and warning with latest Dart SDK
