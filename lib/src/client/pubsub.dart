@@ -151,27 +151,27 @@ class PubSub<K, V> {
   ///
   /// See https://redis.io/commands/subscribe
   void subscribe({K channel, Iterable<K> channels = const []}) =>
-      _run(<Object>[r'SUBSCRIBE', channel]..addAll(channels));
+      _run(<Object>[r'SUBSCRIBE', channel, ...channels]);
 
   /// Unsubscribes the client from the given [channel] or [channels], or
   /// from all of them if none is given.
   ///
   /// See https://redis.io/commands/unsubscribe
   void unsubscribe({K channel, Iterable<K> channels = const []}) =>
-      _run(<Object>[r'UNSUBSCRIBE', channel]..addAll(channels));
+      _run(<Object>[r'UNSUBSCRIBE', channel, ...channels]);
 
   /// Subscribes the client to the given [pattern] or [patterns].
   ///
   /// See https://redis.io/commands/psubscribe
   void psubscribe({K pattern, Iterable<K> patterns = const []}) =>
-      _run(<Object>[r'PSUBSCRIBE', pattern]..addAll(patterns));
+      _run(<Object>[r'PSUBSCRIBE', pattern, ...patterns]);
 
   /// Unsubscribes the client from the given [pattern] or [patterns], or
   /// from all of them if none is given.
   ///
   /// See https://redis.io/commands/punsubscribe
   void punsubscribe({K pattern, Iterable<K> patterns = const []}) =>
-      _run(<Object>[r'PUNSUBSCRIBE', pattern]..addAll(patterns));
+      _run(<Object>[r'PUNSUBSCRIBE', pattern, ...patterns]);
 
   /// Returns an empty string if no [message] is provided, otherwise returns
   /// a copy of the [message].
