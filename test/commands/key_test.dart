@@ -105,7 +105,7 @@ void main() {
       await commands.set(key, 'abc');
 
       // Search.
-      expect(await commands.keys('$key'), equals([key]));
+      expect(await commands.keys(key), equals([key]));
       expect(await commands.keys('$key*'), isNotEmpty);
       expect(await commands.keys('${key}_'), isEmpty);
     });

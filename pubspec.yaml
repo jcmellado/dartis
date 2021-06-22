@@ -6,14 +6,14 @@ description: >-
   Redis client featuring type-safe commands, pipelining,
   fire and forget, publish/subscribe, monitor mode, inline
   commands, transactions, Lua scripting, modules, and much more.
-documentation:
 
 environment:
-  sdk: '>=2.0.0 <3.0.0'
+  sdk: ">=2.10.0 <3.0.0"
 
 dependencies:
-  logging: ^0.11.4
+  logging: ^1.0.1
 
 dev_dependencies:
   test: ^1.14.2
-  uuid: ^2.0.4
+  uuid: ^3.0.4
+  lints: ^1.0.0

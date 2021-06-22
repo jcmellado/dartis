@@ -211,7 +211,6 @@ class _DoubleReplyDecoder extends Decoder<SingleReply, double> {
 /// instances of type [T].
 class _ArrayReplyDecoder<T> extends Decoder<ArrayReply, List<T>> {
   @override
-  List<T> convert(ArrayReply value, RedisCodec codec) => value.array == null
-      ? null
-      : value.array.map((reply) => codec.decode<T>(reply)).toList();
+  List<T> convert(ArrayReply value, RedisCodec codec) =>
+      value.array?.map((reply) => codec.decode<T>(reply))?.toList();
 }
