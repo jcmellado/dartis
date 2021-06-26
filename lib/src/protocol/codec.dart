@@ -175,7 +175,7 @@ class _RawReplyDecoder extends Decoder<SingleReply, List<int>> {
 class _StringReplyDecoder extends Decoder<SingleReply, String> {
   @override
   String convert(SingleReply value, RedisCodec codec) =>
-      value.bytes == null ? null : utf8.decode(value.bytes);
+      value.bytes == null ? null : utf8.decode(value.bytes,allowMalformed: true);
 }
 
 /// A decoder that converts a server reply into an [int].
