@@ -75,8 +75,9 @@ abstract class ReplyDispatcher extends DispatcherBase {
       // Consumes the reply.
       if (_reader.done) {
         final reply = _reader.consume();
-        _dispatch(reply);
         _reader = null;
+        _dispatch(reply);
+
       }
     }
   }
