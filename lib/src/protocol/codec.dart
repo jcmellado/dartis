@@ -17,21 +17,31 @@ abstract class Converter<S, T> {
   Type get targetType => T;
 
   /// Converts an instance of type [S] into an instance of type [T].
-  T convert(S value, RedisCodec codec);
+  T? convert(S value, RedisCodec codec);
 
   /// Checks if this can converts a [value] into an instance of type [U].
-  bool supports<U>(Object? value) => value is S && U == targetType;
+  bool supports<U>(Object? value) =>
+      value != null && value is S && U == targetType;
 }
 
 /// A converter that converts an instance of type [S] into a list of bytes.
 ///
 /// Extend from this class for building your own encoders.
-abstract class Encoder<S> extends Converter<S, List<int>?> {}
+abstract class Encoder<S> extends Converter<S, List<int>> {}
 
 /// A converter that converts a server reply into an instance of type [T].
 ///
 /// Extend from this class for building your own decoders.
 abstract class Decoder<S extends Reply?, T> extends Converter<S, T> {}
+
+abstract class ArrayDecoder<S extends Reply?, T>
+    extends Converter<S, List<T?>> {
+  @override
+
+  /// Checks if this can converts a [value] into an instance of type [List<U>].
+  bool supports<U>(Object? value) =>
+      value != null && value is S && U.toString() == 'List<$T>';
+}
 
 /// A generic converter that encodes instances of any type to lists of bytes
 /// and decodes lists of server replies to instances of any type.
@@ -47,7 +57,8 @@ class RedisCodec {
 
   /// Registers a new [encoder] or a new [decoder], or both.
   void register(
-      {Converter<Object?, Object?>? encoder, Converter<Object?, Object?>? decoder}) {
+      {Converter<Object?, Object?>? encoder,
+      Converter<Object?, Object?>? decoder}) {
     assert(encoder != null || decoder != null);
 
     if (encoder != null) {
@@ -166,27 +177,28 @@ class _DoubleEncoder extends Encoder<double?> {
 }
 
 /// A decoder that returns the raw value of a server reply.
-class _RawReplyDecoder extends Decoder<SingleReply?, List<int>?> {
+class _RawReplyDecoder extends Decoder<SingleReply?, List<int>> {
   @override
   List<int>? convert(SingleReply? value, RedisCodec codec) => value!.bytes;
 }
 
 /// A decoder that converts a server reply into an [String].
-class _StringReplyDecoder extends Decoder<SingleReply?, String?> {
+class _StringReplyDecoder extends Decoder<SingleReply?, String> {
   @override
   String? convert(SingleReply? value, RedisCodec codec) =>
       value!.bytes == null ? null : utf8.decode(value.bytes!);
 }
 
 /// A decoder that converts a server reply into an [int].
-class _IntReplyDecoder extends Decoder<SingleReply?, int?> {
+class _IntReplyDecoder extends Decoder<SingleReply?, int> {
   @override
-  int? convert(SingleReply? value, RedisCodec codec) =>
-      value!.bytes == null ? null : int.parse(String.fromCharCodes(value.bytes!));
+  int? convert(SingleReply? value, RedisCodec codec) => value!.bytes == null
+      ? null
+      : int.parse(String.fromCharCodes(value.bytes!));
 }
 
 /// A decoder that converts a server reply into a [double].
-class _DoubleReplyDecoder extends Decoder<SingleReply?, double?> {
+class _DoubleReplyDecoder extends Decoder<SingleReply?, double> {
   @override
   double? convert(SingleReply? value, RedisCodec codec) {
     if (value!.bytes == null) {
@@ -209,7 +221,7 @@ class _DoubleReplyDecoder extends Decoder<SingleReply?, double?> {
 
 /// A decoder that converts an array of server replies into a list of
 /// instances of type [T].
-class _ArrayReplyDecoder<T> extends Decoder<ArrayReply?, List<T?>?> {
+class _ArrayReplyDecoder<T> extends ArrayDecoder<ArrayReply?, T> {
   @override
   List<T?>? convert(ArrayReply? value, RedisCodec codec) => value!.array == null
       ? null

@@ -115,7 +115,7 @@ void main() {
         codec.register(decoder: _Int999Decoder());
 
         expect(codec.decode<int>(const IntReply([49, 50, 51])), equals(999));
-      });
+      }, skip: 'Wait for tests to be fully null safe to match types correctly');
     });
 
     group('encode', () {
