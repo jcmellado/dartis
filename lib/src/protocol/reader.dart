@@ -52,7 +52,7 @@ abstract class _ReaderBase implements Reader {
   @override
   bool get done => _done;
 
-  List<int> _takeBytes() {
+  List<int>? _takeBytes() {
     assert(_done);
 
     return _isNull ? null : _buffer.takeBytes();
@@ -124,7 +124,7 @@ abstract class _LineReader extends _ReaderBase {
 
 /// A reader that reads a length.
 abstract class _LengthReader extends _LineReader {
-  int _length;
+  int? _length;
 
   @override
   int read(Uint8List bytes, int start) {
@@ -147,7 +147,7 @@ abstract class _LengthReader extends _LineReader {
     final end = super.read(bytes, start);
 
     if (_done) {
-      _length = int.parse(String.fromCharCodes(_takeBytes()));
+      _length = int.parse(String.fromCharCodes(_takeBytes()!));
 
       _isNull = _length == -1;
     }
@@ -162,9 +162,9 @@ abstract class _LengthReader extends _LineReader {
 abstract class _BulkReader extends _LengthReader {
   @override
   int _readPayload(Uint8List bytes, int start) {
-    final size = min(bytes.length - start, _length + 2);
+    final size = min(bytes.length - start, _length! + 2);
 
-    final crlf = min(size, max(0, size - _length));
+    final crlf = min(size, max(0, size - _length!));
 
     assert(crlf <= 2);
 
@@ -172,10 +172,10 @@ abstract class _BulkReader extends _LengthReader {
       _buffer.add(Uint8List.view(bytes.buffer, start, size - crlf));
     }
 
-    _length -= size;
+    _length = _length! - size;
     _done = _length == -2;
 
-    assert(_length >= -2);
+    assert(_length! >= -2);
 
     return start + size;
   }
@@ -186,13 +186,13 @@ abstract class _ArrayReader extends _LengthReader {
   final List<Reply> _array = [];
 
   /// Current reader.
-  Reader _reader;
+  Reader? _reader;
 
   @override
   int _readPayload(Uint8List bytes, int start) {
     var end = start;
 
-    while (_length > 0) {
+    while (_length! > 0) {
       if (end == bytes.length) {
         return end;
       }
@@ -204,18 +204,18 @@ abstract class _ArrayReader extends _LengthReader {
       }
 
       // Reads.
-      end = _reader.read(bytes, end);
+      end = _reader!.read(bytes, end);
 
-      if (!_reader.done) {
+      if (!_reader!.done) {
         return end;
       }
 
       // Consumes the reply.
-      final reply = _reader.consume();
+      final reply = _reader!.consume();
       _array.add(reply);
       _reader = null;
 
-      _length--;
+      _length = _length! - 1;
     }
 
     _done = true;

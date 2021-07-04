@@ -13,7 +13,7 @@ abstract class KeyCommands<K, V> {
   /// Returns the number of keys that were removed.
   ///
   /// See https://redis.io/commands/del
-  Future<int> del({K key, Iterable<K> keys = const []});
+  Future<int> del({K? key, Iterable<K> keys = const []});
 
   /// Returns a serialized version of the value stored at [key] in a
   /// Redis-specific format.
@@ -26,7 +26,7 @@ abstract class KeyCommands<K, V> {
   /// Returns the number of keys existing among the ones specified as arguments.
   ///
   /// See https://redis.io/commands/exists
-  Future<int> exists({K key, Iterable<K> keys = const []});
+  Future<int> exists({K? key, Iterable<K> keys = const []});
 
   /// Sets a [key]'s time to live in [seconds].
   ///
@@ -57,7 +57,7 @@ abstract class KeyCommands<K, V> {
   Future<String> migrate(String host, int port, int destinationDb, int timeout,
       {bool copy = false,
       bool replace = false,
-      K key,
+      K? key,
       Iterable<K> keys = const []});
 
   /// Moves [key] from the currently selected database to the specified
@@ -138,7 +138,7 @@ abstract class KeyCommands<K, V> {
   /// Incrementally iterates the keys space.
   ///
   /// See https://redis.io/commands/scan
-  Future<KeyScanResult<K>> scan(int cursor, {K pattern, int count});
+  Future<KeyScanResult<K>> scan(int cursor, {K? pattern, int? count});
 
   /// Sort the elements in a list, set or sorted set.
   ///
@@ -148,11 +148,11 @@ abstract class KeyCommands<K, V> {
   ///
   /// See https://redis.io/commands/sort
   Future<List<V>> sort(K key,
-      {K by,
-      int offset,
-      int count,
+      {K? by,
+      int? offset,
+      int? count,
       Iterable<K> get = const [],
-      SortOrder order,
+      SortOrder? order,
       bool alpha = false});
 
   /// Sort the elements in a list, set or sorted set and stores the result
@@ -164,11 +164,11 @@ abstract class KeyCommands<K, V> {
   ///
   /// See https://redis.io/commands/sort
   Future<int> sortStore(K key, K destination,
-      {K by,
-      int offset,
-      int count,
+      {K? by,
+      int? offset,
+      int? count,
       Iterable<K> get = const [],
-      SortOrder order,
+      SortOrder? order,
       bool alpha = false});
 
   /// Alters the last access time of a key.
@@ -176,7 +176,7 @@ abstract class KeyCommands<K, V> {
   /// Returns the number of keys that were touched.
   ///
   /// See https://redis.io/commands/touch
-  Future<int> touch({K key, Iterable<K> keys = const []});
+  Future<int> touch({K? key, Iterable<K> keys = const []});
 
   /// Returns the remaining time to live of a [key].
   ///
@@ -194,7 +194,7 @@ abstract class KeyCommands<K, V> {
   /// Returns the number of keys that were unlinked.
   ///
   /// See https://redis.io/commands/unlink
-  Future<int> unlink({K key, Iterable<K> keys = const []});
+  Future<int> unlink({K? key, Iterable<K> keys = const []});
 
   /// Blocks the current client until all the previous write commands
   /// are successfully transferred and acknowledged by at least the
@@ -254,10 +254,10 @@ class ObjectSubcommand {
 /// Result of the SCAN command.
 class KeyScanResult<K> {
   /// The cursor.
-  final int cursor;
+  final int? cursor;
 
   /// The keys.
-  final List<K> keys;
+  final List<K>? keys;
 
   /// Creates a [KeyScanResult] instance.
   const KeyScanResult(this.cursor, this.keys);
@@ -270,8 +270,8 @@ class KeyScanResult<K> {
 class KeyScanMapper<K> implements Mapper<KeyScanResult<K>> {
   @override
   KeyScanResult<K> map(covariant ArrayReply reply, RedisCodec codec) {
-    final cursor = codec.decode<int>(reply.array[0]);
-    final keys = codec.decode<List<K>>(reply.array[1]);
+    final cursor = codec.decode<int>(reply.array![0]);
+    final keys = codec.decode<List<K>>(reply.array![1]);
 
     return KeyScanResult<K>(cursor, keys);
   }

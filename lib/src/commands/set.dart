@@ -13,7 +13,7 @@ abstract class SetCommands<K, V> {
   /// Returns the number of elements that were added to the set.
   ///
   /// See https://redis.io/commands/sadd
-  Future<int> sadd(K key, {V member, Iterable<V> members = const []});
+  Future<int> sadd(K key, {V? member, Iterable<V> members = const []});
 
   /// Returns the set cardinality (number of elements) of the set stored
   /// at [key].
@@ -102,12 +102,12 @@ abstract class SetCommands<K, V> {
   /// Returns the number of members that were removed from the set.
   ///
   /// See https://redis.io/commands/srem
-  Future<int> srem(K key, {V member, Iterable<V> members = const []});
+  Future<int> srem(K key, {V? member, Iterable<V> members = const []});
 
   /// Incrementally iterates the members of a set stored at [key].
   ///
   /// See https://redis.io/commands/sscan
-  Future<SetScanResult<V>> sscan(K key, int cursor, {K pattern, int count});
+  Future<SetScanResult<V>> sscan(K key, int cursor, {K? pattern, int? count});
 
   /// Returns the members of the set resulting from the union of all the
   /// given sets.
@@ -124,10 +124,10 @@ abstract class SetCommands<K, V> {
 /// Result of the SSCAN command.
 class SetScanResult<V> {
   /// The cursor.
-  final int cursor;
+  final int? cursor;
 
   /// The members.
-  final List<V> members;
+  final List<V>? members;
 
   /// Creates a [SetScanResult] instance.
   const SetScanResult(this.cursor, this.members);
@@ -140,8 +140,8 @@ class SetScanResult<V> {
 class SetScanMapper<V> implements Mapper<SetScanResult<V>> {
   @override
   SetScanResult<V> map(covariant ArrayReply reply, RedisCodec codec) {
-    final cursor = codec.decode<int>(reply.array[0]);
-    final members = codec.decode<List<V>>(reply.array[1]);
+    final cursor = codec.decode<int>(reply.array![0]);
+    final members = codec.decode<List<V>>(reply.array![1]);
 
     return SetScanResult<V>(cursor, members);
   }
