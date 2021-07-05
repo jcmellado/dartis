@@ -8,7 +8,7 @@ import '../protocol.dart';
 /// A transaction.
 class Transaction {
   /// Queued commands.
-  final List<Command<Object>> _queued = [];
+  final List<Command<Object?>> _queued = [];
 
   /// Whether this transaction is in progress.
   bool _inProgress = false;
@@ -17,7 +17,7 @@ class Transaction {
   bool get inProgress => _inProgress;
 
   /// Starts this transaction.
-  void begin(Command<Object> command) {
+  void begin(Command<Object?> command) {
     _inProgress = command is MultiCommand;
   }
 
@@ -28,14 +28,14 @@ class Transaction {
   }
 
   /// Completes a [command] with a [reply] in the context of this transaction.
-  void onReply(Command<Object> command, Reply reply, RedisCodec codec) {
+  void onReply(Command<Object?> command, Reply reply, RedisCodec codec) {
     assert(_inProgress);
     assert(command is! MultiCommand);
 
     if (command is ExecCommand) {
-      _exec(command, reply, codec);
+      _exec(command as Command<Object>, reply, codec);
     } else if (command is DiscardCommand) {
-      _discard(command, reply, codec);
+      _discard(command as Command<Object>, reply, codec);
     } else {
       _enqueue(command, reply, codec);
     }
@@ -44,7 +44,7 @@ class Transaction {
   /// Completes a [command] with an error [reply] in the context of
   /// this transaction.
   void onErrorReply(
-      Command<Object> command, ErrorReply reply, RedisCodec codec) {
+      Command<Object?> command, ErrorReply reply, RedisCodec codec) {
     assert(_inProgress);
 
     // Failed EXEC command?
@@ -56,7 +56,7 @@ class Transaction {
   }
 
   /// Completes all commands in the transaction with [error].
-  void onError(Object error, StackTrace stackTrace) {
+  void onError(Object error, StackTrace? stackTrace) {
     assert(_inProgress);
 
     for (final command in _queued) {
@@ -100,7 +100,7 @@ class Transaction {
   }
 
   /// Enqueues a [command].
-  void _enqueue(Command<Object> command, Reply reply, RedisCodec codec) {
+  void _enqueue(Command<Object?> command, Reply reply, RedisCodec codec) {
     if (reply is! StringReply) {
       throw RedisException(
           'Expected "StringReply", but "${reply.runtimeType}" found instead.');
@@ -118,7 +118,7 @@ class Transaction {
 
   /// Completes the queued commands with the array of replies in [reply].
   void _dequeue(Command<Object> command, ArrayReply reply, RedisCodec codec) {
-    final array = reply.array;
+    final array = reply.array!;
 
     if (array.length != _queued.length) {
       throw RedisException('''Expected ${_queued.length} replies,'''

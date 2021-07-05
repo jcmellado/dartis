@@ -37,7 +37,7 @@ abstract class DispatcherBase {
 
   /// Overwrite this method to handle errors that occured reading or writing
   /// to the connection.
-  void onError(Object error, [StackTrace stackTrace]) {
+  void onError(Object error, [StackTrace? stackTrace]) {
     // Default to rethrow the error.
     throw error; // ignore: only_throw_errors
   }
@@ -49,7 +49,7 @@ abstract class DispatcherBase {
 /// A dispatcher that analyzes incoming raw data and streams reply objects.
 abstract class ReplyDispatcher extends DispatcherBase {
   /// Current reply reader.
-  Reader _reader;
+  Reader? _reader;
 
   /// Creates a [ReplyDispatcher] instance with the given [connection].
   ReplyDispatcher(Connection connection) : super(connection);
@@ -70,11 +70,11 @@ abstract class ReplyDispatcher extends DispatcherBase {
       }
 
       // Reads.
-      index = _reader.read(bytes, index);
+      index = _reader!.read(bytes, index);
 
       // Consumes the reply.
-      if (_reader.done) {
-        final reply = _reader.consume();
+      if (_reader!.done) {
+        final reply = _reader!.consume();
         _dispatch(reply);
         _reader = null;
       }

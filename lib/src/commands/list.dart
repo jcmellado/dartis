@@ -12,15 +12,15 @@ abstract class ListCommands<K, V> {
   /// available.
   ///
   /// See https://redis.io/commands/blpop
-  Future<ListPopResult<K, V>> blpop(
-      {K key, Iterable<K> keys = const [], int timeout = 0});
+  Future<ListPopResult<K, V>?> blpop(
+      {K? key, Iterable<K> keys = const [], int timeout = 0});
 
   /// Removes and gets the last element in a list, or blocks until one is
   /// available.
   ///
   /// See https://redis.io/commands/brpop.
-  Future<ListPopResult<K, V>> brpop(
-      {K key, Iterable<K> keys = const [], int timeout = 0});
+  Future<ListPopResult<K, V>?> brpop(
+      {K? key, Iterable<K> keys = const [], int timeout = 0});
 
   /// Pops a value from a list, push it to another list and return it; or
   /// blocks until one is available.
@@ -60,7 +60,7 @@ abstract class ListCommands<K, V> {
   /// Returns the length of the list after the push operations.
   ///
   /// See https://redis.io/commands/lpush
-  Future<int> lpush(K key, {V value, Iterable<V> values = const []});
+  Future<int> lpush(K key, {V? value, Iterable<V> values = const []});
 
   /// Inserts [value] at the head of the list stored at [key], only if [key]
   /// already exists and holds a list.
@@ -110,7 +110,7 @@ abstract class ListCommands<K, V> {
   /// Returns the length of the list after the push operation.
   ///
   /// See https://redis.io/commands/rpush
-  Future<int> rpush(K key, {V value, Iterable<V> values = const []});
+  Future<int> rpush(K key, {V? value, Iterable<V> values = const []});
 
   /// Appends a value to a list stored at [key], only if the list exists.
   ///
@@ -153,9 +153,9 @@ class ListPopResult<K, V> {
 }
 
 /// A mapper for the BLPOP and BRPOP commands.
-class ListPopResultMapper<K, V> implements Mapper<ListPopResult<K, V>> {
+class ListPopResultMapper<K, V> implements Mapper<ListPopResult<K?, V?>?> {
   @override
-  ListPopResult<K, V> map(covariant ArrayReply reply, RedisCodec codec) {
+  ListPopResult<K?, V?>? map(covariant ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
     if (array == null) {
@@ -165,14 +165,14 @@ class ListPopResultMapper<K, V> implements Mapper<ListPopResult<K, V>> {
     final key = codec.decode<K>(array[0]);
     final value = codec.decode<V>(array[1]);
 
-    return ListPopResult<K, V>(key, value);
+    return ListPopResult<K?, V?>(key, value);
   }
 }
 
 /// A mapper for the BRPOPLPUSH command.
-class BrpoplpushMapper<V> implements Mapper<V> {
+class BrpoplpushMapper<V> implements Mapper<V?> {
   @override
-  V map(Reply reply, RedisCodec codec) {
+  V? map(Reply reply, RedisCodec codec) {
     // BRPOPLPUSH returns a null [ArrayReply] instead of a null [BulkReply].
     if (reply is ArrayReply) {
       return null;

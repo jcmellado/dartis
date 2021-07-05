@@ -29,5 +29,5 @@ abstract class TransactionCommands<K> {
   /// transaction.
   ///
   /// See https://redis.io/commands/watch
-  Future<void> watch({K key, Iterable<K> keys = const []});
+  Future<void> watch({K? key, Iterable<K> keys = const []});
 }

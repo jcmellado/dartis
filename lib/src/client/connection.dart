@@ -2,7 +2,7 @@
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
 import 'dart:async' show Completer, Future, StreamSubscription, Zone;
-import 'dart:io' show Socket, SocketOption;
+import 'dart:io' show SecureSocket, Socket, SocketOption;
 
 import '../exception.dart';
 import '../logger.dart';
@@ -15,7 +15,7 @@ class Connection {
   final StreamSubscription<List<int>> _subscription;
 
   /// Error handler from the latest listener.
-  void Function(Object, StackTrace) _onErrorListener;
+  void Function(Object, StackTrace?)? _onErrorListener;
 
   /// Implementation of [done].
   final Completer<void> _done = Completer<void>();
@@ -69,7 +69,9 @@ class Connection {
     log.fine(() => 'Attempting to connect to "$uri".');
 
     // ignore: close_sinks
-    final socket = await Socket.connect(uri.host, uri.port)
+    final socket = (uri.isTls
+        ? await SecureSocket.connect(uri.host, uri.port)
+        : await Socket.connect(uri.host, uri.port))
       ..setOption(SocketOption.tcpNoDelay, true);
 
     log.info('Connected to "$uri".');
@@ -79,7 +81,7 @@ class Connection {
 
   /// Replaces the current event handlers.
   void listen(void Function(List<int> data) onData,
-      void Function(Object, [StackTrace]) onError, void Function() onDone) {
+      void Function(Object, [StackTrace?])? onError, void Function()? onDone) {
     _subscription
       ..onData(onData)
       ..onDone(onDone);
@@ -115,7 +117,7 @@ class Connection {
     log.info('Disconnected.');
   }
 
-  void _onError(Object error, [StackTrace stackTrace]) {
+  void _onError(Object error, [StackTrace? stackTrace]) {
     log.info('An error read/write to socket occured.', error, stackTrace);
 
     // Stop trying to send anything new.
@@ -129,7 +131,7 @@ class Connection {
       if (_onErrorListener == null) {
         throw error; // ignore: only_throw_errors
       }
-      _onErrorListener(error, stackTrace);
+      _onErrorListener!(error, stackTrace);
     } finally {
       // Ensure we cleanup, by destroying the socket.
       _socket.destroy();
@@ -153,6 +155,9 @@ class RedisUri {
   /// Returns the port number.
   int get port => _uri.port;
 
+  /// Returns if the scheme is rediss.
+  bool get isTls => _uri.scheme == 'rediss';
+
   /// Creates a new [RedisUri] object by parsing a URI string.
   // ignore: prefer_constructors_over_static_methods
   static RedisUri parse(String connectionString) {
@@ -169,7 +174,9 @@ class RedisUri {
   }
 
   static bool _isValid(Uri uri) =>
-      uri.scheme == 'redis' && uri.host.isNotEmpty && uri.hasPort;
+      (uri.scheme == 'redis' || uri.scheme == 'rediss') &&
+      uri.host.isNotEmpty &&
+      uri.hasPort;
 
   @override
   String toString() => _uri.toString();

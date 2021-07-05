@@ -13,14 +13,14 @@ class Writer {
   final BytesBuilder _buffer = BytesBuilder(copy: false);
 
   /// Encodes a Redis command [line] to a list of bytes.
-  List<int> write(Iterable<Object> line, RedisCodec codec) {
+  List<int> write(Iterable<Object?> line, RedisCodec codec) {
     _write(line, codec);
 
     return _buffer.takeBytes();
   }
 
   /// Encodes a list of Redis command [lines] to a list of bytes.
-  List<int> writeAll(Iterable<Iterable<Object>> lines, RedisCodec codec) {
+  List<int> writeAll(Iterable<Iterable<Object?>> lines, RedisCodec codec) {
     for (final line in lines) {
       _write(line, codec);
     }
@@ -28,8 +28,8 @@ class Writer {
     return _buffer.takeBytes();
   }
 
-  void _write(Iterable<Object> line, RedisCodec codec) {
-    final length = codec.encode<List<int>>(line.length);
+  void _write(Iterable<Object?> line, RedisCodec codec) {
+    final length = codec.encode<List<int>>(line.length)!;
 
     _buffer
       ..addByte(RespToken.array)
@@ -37,8 +37,8 @@ class Writer {
       ..add(_crlf);
 
     for (final value in line) {
-      final bytes = codec.encode<List<int>>(value);
-      final length = codec.encode<List<int>>(bytes.length);
+      final bytes = codec.encode<List<int>>(value)!;
+      final length = codec.encode<List<int>>(bytes.length)!;
 
       _buffer
         ..addByte(RespToken.bulk)

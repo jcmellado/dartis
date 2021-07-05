@@ -1,6 +1,8 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
+// @dart=2.9
+
 // ignore_for_file: avoid_as
 
 import 'dart:typed_data' show Uint8List;

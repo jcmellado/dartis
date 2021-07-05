@@ -18,7 +18,7 @@ abstract class ScriptingCommands<K> {
   Future<T> eval<T>(String script,
       {Iterable<K> keys = const [],
       Iterable<Object> args = const [],
-      Mapper<T> mapper});
+      Mapper<T>? mapper});
 
   /// Evaluates a script cached on the server side by its SHA1 digest.
   ///
@@ -28,7 +28,7 @@ abstract class ScriptingCommands<K> {
   Future<T> evalsha<T>(String sha1,
       {Iterable<K> keys = const [],
       Iterable<Object> args = const [],
-      Mapper<T> mapper});
+      Mapper<T>? mapper});
 
   /// Sets the debug [mode] for subsequent scripts executed with [eval].
   ///
@@ -40,7 +40,7 @@ abstract class ScriptingCommands<K> {
   ///
   /// See https://redis.io/commands/script-exists
   Future<List<int>> scriptExists(
-      {String sha1, Iterable<String> sha1s = const []});
+      {String? sha1, Iterable<String> sha1s = const []});
 
   /// Flushes the Lua scripts cache.
   ///

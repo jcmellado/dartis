@@ -44,7 +44,7 @@ abstract class ModuleBase {
 
   /// Runs a Redis command [line], with an optional [mapper] for
   /// processing of the results.
-  Future<T> run<T>(Iterable<Object> line, {Mapper<T> mapper}) {
+  Future<T> run<T>(Iterable<Object?> line, {Mapper<T>? mapper}) {
     final command = Command<T>(line, mapper: mapper);
 
     return execute<T>(command);
