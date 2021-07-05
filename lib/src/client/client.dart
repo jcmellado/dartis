@@ -190,7 +190,7 @@ class Client implements CommandRunner {
 /// A dispatcher for a client.
 class _ClientDispatcher extends ReplyDispatcher {
   /// Commands waiting for a server reply.
-  final Queue<Command<Object?>> _unreplied = Queue<Command<Object>>();
+  final Queue<Command<Object?>> _unreplied = Queue<Command<Object?>>();
 
   /// Transaction in progress, if any.
   final Transaction _transaction = Transaction();
