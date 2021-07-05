@@ -174,7 +174,9 @@ class RedisUri {
   }
 
   static bool _isValid(Uri uri) =>
-      uri.scheme == 'redis' && uri.host.isNotEmpty && uri.hasPort;
+      (uri.scheme == 'redis' || uri.scheme == 'rediss') &&
+      uri.host.isNotEmpty &&
+      uri.hasPort;
 
   @override
   String toString() => _uri.toString();
