@@ -21,7 +21,9 @@ abstract class Converter<S, T> {
 
   /// Checks if this can converts a [value] into an instance of type [U].
   bool supports<U>(Object? value) =>
-      value != null && value is S && U == targetType;
+      value != null &&
+      value is S &&
+      (U == targetType || U.toString() == '${targetType.toString()}?');
 }
 
 /// A converter that converts an instance of type [S] into a list of bytes.
