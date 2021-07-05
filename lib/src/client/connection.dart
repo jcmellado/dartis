@@ -2,7 +2,7 @@
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
 import 'dart:async' show Completer, Future, StreamSubscription, Zone;
-import 'dart:io' show Socket, SocketOption;
+import 'dart:io' show SecureSocket, Socket, SocketOption;
 
 import '../exception.dart';
 import '../logger.dart';
@@ -69,7 +69,9 @@ class Connection {
     log.fine(() => 'Attempting to connect to "$uri".');
 
     // ignore: close_sinks
-    final socket = await Socket.connect(uri.host, uri.port)
+    final socket = (uri.isTls
+        ? await SecureSocket.connect(uri.host, uri.port)
+        : await Socket.connect(uri.host, uri.port))
       ..setOption(SocketOption.tcpNoDelay, true);
 
     log.info('Connected to "$uri".');
@@ -152,6 +154,9 @@ class RedisUri {
 
   /// Returns the port number.
   int get port => _uri.port;
+
+  /// Returns if the scheme is rediss.
+  bool get isTls => _uri.scheme == 'rediss';
 
   /// Creates a new [RedisUri] object by parsing a URI string.
   // ignore: prefer_constructors_over_static_methods
