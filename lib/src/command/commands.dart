@@ -32,7 +32,7 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<void> clusterAddslots({int? slot, Iterable<int> slots = const []}) =>
-      run<void>(<Object?>[r'CLUSTER', r'ADDSLOTS', slot]..addAll(slots));
+      run<void>(<Object?>[r'CLUSTER', r'ADDSLOTS', slot, ...slots]);
 
   @override
   Future<int> clusterCountFailureReports(String nodeId) =>
@@ -44,7 +44,7 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<void> clusterDelslots({int? slot, Iterable<int> slots = const []}) =>
-      run<void>(<Object?>[r'CLUSTER', r'DELSLOTS', slot]..addAll(slots));
+      run<void>(<Object?>[r'CLUSTER', r'DELSLOTS', slot, ...slots]);
 
   @override
   Future<void> clusterFailover([ClusterFailoverMode? mode]) =>
@@ -138,13 +138,16 @@ class Commands<K, V> extends ModuleBase
   @override
   Future<int> geoadd(K key,
           {GeoItem<V?>? item, Iterable<GeoItem<V?>> items = const []}) =>
-      run<int>(<Object?>[r'GEOADD', key]
-        ..addAll(_expandGeoItem(item))
-        ..addAll(items.expand(_expandGeoItem)));
+      run<int>(<Object?>[
+        r'GEOADD', key,
+        ..._expandGeoItem(item),
+        ...items.expand(_expandGeoItem)
+      ]);
 
   List<Object?> _expandGeoItem(GeoItem<Object?>? item) => item == null
       ? <Object>[]
-      : <Object?>[item.position!.longitude, item.position!.latitude, item.member];
+      : <Object?>[item.position!.longitude,
+    item.position!.latitude, item.member];
 
   @override
   Future<double> geodist(K key, V? member1, V? member2, {GeoUnit? unit}) =>
@@ -153,12 +156,12 @@ class Commands<K, V> extends ModuleBase
   @override
   Future<List<String>> geohash(K key,
           {V? member, Iterable<V?> members = const []}) =>
-      run<List<String>>(<Object?>[r'GEOHASH', key, member]..addAll(members));
+      run<List<String>>(<Object?>[r'GEOHASH', key, member, ...members]);
 
   @override
   Future<List<GeoPosition?>> geopos(K key,
           {V? member, Iterable<V?> members = const []}) =>
-      run<List<GeoPosition?>>(<Object?>[r'GEOPOS', key, member]..addAll(members),
+      run<List<GeoPosition?>>(<Object?>[r'GEOPOS', key, member, ...members],
           mapper: geoPositionMapper);
 
   @override
@@ -253,7 +256,7 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<int> hdel(K? key, {K? field, Iterable<K?> fields = const []}) =>
-      run<int>(<Object?>[r'HDEL', key, field]..addAll(fields));
+      run<int>(<Object?>[r'HDEL', key, field, ...fields]);
 
   @override
   Future<int> hexists(K? key, K? field) =>
@@ -282,12 +285,13 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<List<V>> hmget(K? key, {K? field, Iterable<K?> fields = const []}) =>
-      run<List<V>>(<Object?>[r'HMGET', key, field]..addAll(fields));
+      run<List<V>>(<Object?>[r'HMGET', key, field, ...fields]);
 
   @override
-  Future<void> hmset(K? key, {K? field, V? value, Map<K?, V?> hash = const {}}) =>
-      run<void>(<Object?>[r'HMSET', key, field, value]
-        ..addAll(hash.entries.expand((entry) => [entry.key, entry.value])));
+  Future<void> hmset(K? key, {K? field, V? value,
+    Map<K?, V?> hash = const {}}) =>
+      run<void>(<Object?>[r'HMSET', key, field, value,
+        ...hash.entries.expand((entry) => [entry.key, entry.value])]);
 
   @override
   Future<HashScanResult<K?, V?>> hscan(K? key, int cursor,
@@ -321,29 +325,29 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<int> pfadd(K key, {V? element, Iterable<V> elements = const []}) =>
-      run<int>(<Object?>[r'PFADD', key, element]..addAll(elements));
+      run<int>(<Object?>[r'PFADD', key, element, ...elements]);
 
   @override
   Future<int> pfcount({K? key, Iterable<K> keys = const []}) =>
-      run<int>(<Object?>[r'PFCOUNT', key]..addAll(keys));
+      run<int>(<Object?>[r'PFCOUNT', key, ...keys]);
 
   @override
   Future<void> pfmerge(K destkey,
           {K? sourcekey, Iterable<K> sourcekeys = const []}) =>
-      run<void>(<Object?>[r'PFMERGE', destkey, sourcekey]..addAll(sourcekeys));
+      run<void>(<Object?>[r'PFMERGE', destkey, sourcekey, ...sourcekeys]);
 
   // Keys.
 
   @override
   Future<int> del({K? key, Iterable<K> keys = const []}) =>
-      run<int>(<Object?>[r'DEL', key]..addAll(keys));
+      run<int>(<Object?>[r'DEL', key, ...keys]);
 
   @override
   Future<List<int>> dump(K key) => run<List<int>>(<Object?>[r'DUMP', key]);
 
   @override
   Future<int> exists({K? key, Iterable<K> keys = const []}) =>
-      run<int>(<Object?>[r'EXISTS', key]..addAll(keys));
+      run<int>(<Object?>[r'EXISTS', key, ...keys]);
 
   @override
   Future<int> expire(K key, int seconds) =>
@@ -371,8 +375,9 @@ class Commands<K, V> extends ModuleBase
         timeout,
         copy ? r'COPY' : null,
         replace ? r'REPLACE' : null,
-        keys.isNotEmpty ? r'KEYS' : null
-      ]..addAll(keys));
+        keys.isNotEmpty ? r'KEYS' : null,
+        ...keys
+      ]);
 
   @override
   Future<int> move(K key, int db) => run<int>(<Object?>[r'MOVE', key, db]);
@@ -450,11 +455,11 @@ class Commands<K, V> extends ModuleBase
       by,
       offset == null ? null : r'LIMIT',
       offset,
-      count
-    ]
-      ..addAll(get.expand((pattern) => <Object?>[r'GET', pattern]))
-      ..add(order?.name)
-      ..add(alpha ? r'ALPHA' : null));
+      count,
+      ...get.expand((pattern) => <Object?>[r'GET', pattern]),
+      order?.name,
+      alpha ? r'ALPHA' : null
+    ]);
   }
 
   @override
@@ -475,18 +480,18 @@ class Commands<K, V> extends ModuleBase
       by,
       offset == null ? null : r'LIMIT',
       offset,
-      count
-    ]
-      ..addAll(get.expand((pattern) => <Object?>[r'GET', pattern]))
-      ..add(order?.name)
-      ..add(alpha ? r'ALPHA' : null)
-      ..add(r'STORE')
-      ..add(destination));
+      count,
+      ...get.expand((pattern) => <Object?>[r'GET', pattern]),
+      order?.name,
+      alpha ? r'ALPHA' : null,
+      r'STORE',
+      destination
+    ]);
   }
 
   @override
   Future<int> touch({K? key, Iterable<K> keys = const []}) =>
-      run<int>(<Object?>[r'TOUCH', key]..addAll(keys));
+      run<int>(<Object?>[r'TOUCH', key, ...keys]);
 
   @override
   Future<int> ttl(K key) => run<int>(<Object?>[r'TTL', key]);
@@ -496,7 +501,7 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<int> unlink({K? key, Iterable<K> keys = const []}) =>
-      run<int>(<Object?>[r'UNLINK', key]..addAll(keys));
+      run<int>(<Object?>[r'UNLINK', key, ...keys]);
 
   @override
   Future<int> wait(int numslaves, int timeout) =>
@@ -508,18 +513,14 @@ class Commands<K, V> extends ModuleBase
   Future<ListPopResult<K?, V?>?> blpop(
           {K? key, Iterable<K?> keys = const [], int timeout = 0}) =>
       run<ListPopResult<K?, V?>?>(
-          <Object?>[r'BLPOP', key]
-            ..addAll(keys)
-            ..add(timeout),
+          <Object?>[r'BLPOP', key, ...keys, timeout],
           mapper: ListPopResultMapper<K, V>());
 
   @override
   Future<ListPopResult<K?, V?>?> brpop(
           {K? key, Iterable<K?> keys = const [], int timeout = 0}) =>
       run<ListPopResult<K?, V?>?>(
-          <Object?>[r'BRPOP', key]
-            ..addAll(keys)
-            ..add(timeout),
+          <Object?>[r'BRPOP', key, ...keys, timeout],
           mapper: ListPopResultMapper<K, V>());
 
   @override
@@ -528,7 +529,8 @@ class Commands<K, V> extends ModuleBase
           mapper: BrpoplpushMapper<V>());
 
   @override
-  Future<V> lindex(K? key, int index) => run<V>(<Object?>[r'LINDEX', key, index]);
+  Future<V> lindex(K? key, int index) => run<V>(
+      <Object?>[r'LINDEX', key, index]);
 
   @override
   Future<int> linsert(K? key, InsertPosition position, V? pivot, V? value) =>
@@ -542,7 +544,7 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<int> lpush(K? key, {V? value, Iterable<V?> values = const []}) =>
-      run<int>(<Object?>[r'LPUSH', key, value]..addAll(values));
+      run<int>(<Object?>[r'LPUSH', key, value, ...values]);
 
   @override
   Future<int> lpushx(K? key, V? value) =>
@@ -573,7 +575,7 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<int> rpush(K? key, {V? value, Iterable<V?> values = const []}) =>
-      run<int>(<Object?>[r'RPUSH', key, value]..addAll(values));
+      run<int>(<Object?>[r'RPUSH', key, value, ...values]);
 
   @override
   Future<int> rpushx(K? key, V? value) =>
@@ -593,7 +595,7 @@ class Commands<K, V> extends ModuleBase
   Future<List<PubsubResult<K?>>> pubsubNumsub(
           {Iterable<K?> channels = const []}) =>
       run<List<PubsubResult<K?>>>(
-          <Object?>[r'PUBSUB', r'NUMSUB']..addAll(channels),
+          <Object?>[r'PUBSUB', r'NUMSUB', ...channels],
           mapper: PubsubResultMapper<K>());
 
   @override
@@ -606,7 +608,7 @@ class Commands<K, V> extends ModuleBase
           {Iterable<K> keys = const [],
           Iterable<Object> args = const [],
           Mapper<T>? mapper}) =>
-      run<T>(<Object?>[r'EVAL', script, keys.length]..addAll(keys)..addAll(args),
+      run<T>(<Object?>[r'EVAL', script, keys.length, ...keys, ...args],
           mapper: mapper);
 
   @override
@@ -615,7 +617,7 @@ class Commands<K, V> extends ModuleBase
           Iterable<Object> args = const [],
           Mapper<T>? mapper}) =>
       run<T>(
-          <Object?>[r'EVALSHA', sha1, keys.length]..addAll(keys)..addAll(args),
+          <Object?>[r'EVALSHA', sha1, keys.length, ...keys, ...args],
           mapper: mapper);
 
   @override
@@ -625,7 +627,7 @@ class Commands<K, V> extends ModuleBase
   @override
   Future<List<int>> scriptExists(
           {String? sha1, Iterable<String> sha1s = const []}) =>
-      run<List<int>>(<Object?>[r'SCRIPT', r'EXISTS', sha1]..addAll(sha1s));
+      run<List<int>>(<Object?>[r'SCRIPT', r'EXISTS', sha1, ...sha1s]);
 
   @override
   Future<void> scriptFlush() => run<void>(<Object>[r'SCRIPT', r'FLUSH']);
@@ -657,8 +659,8 @@ class Commands<K, V> extends ModuleBase
             r'CLIENT',
             r'KILL',
             ipPort,
-          ]..addAll(filters.expand(_expandClientFilter)),
-          mapper: clientKillMapper);
+          ...filters.expand(_expandClientFilter)
+          ], mapper: clientKillMapper);
 
   List<Object?> _expandClientFilter(ClientFilter filter) => <Object?>[
         filter.clientId == null ? null : r'ID',
@@ -701,13 +703,13 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<List<K>> commandGetkeys(List<Object> commandLine) =>
-      run<List<K>>(<Object>[r'COMMAND', r'GETKEYS']..addAll(commandLine));
+      run<List<K>>(<Object>[r'COMMAND', r'GETKEYS', commandLine]);
 
   @override
   Future<List<ClientCommand?>> commandInfo(
           {String? commandName, Iterable<String> commandNames = const []}) =>
       run<List<ClientCommand?>>(
-          <Object?>[r'COMMAND', r'INFO', commandName]..addAll(commandNames),
+          <Object?>[r'COMMAND', r'INFO', commandName, ...commandNames],
           mapper: commandMapper);
 
   @override
@@ -812,27 +814,27 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<int> sadd(K key, {V? member, Iterable<V> members = const []}) =>
-      run<int>(<Object?>[r'SADD', key, member]..addAll(members));
+      run<int>(<Object?>[r'SADD', key, member, ...members]);
 
   @override
   Future<int> scard(K key) => run<int>([r'SCARD', key]);
 
   @override
   Future<List<V>> sdiff(K key, {Iterable<K> keys = const []}) =>
-      run<List<V>>(<Object?>[r'SDIFF', key]..addAll(keys));
+      run<List<V>>(<Object?>[r'SDIFF', key, ...keys]);
 
   @override
   Future<int> sdiffstore(K destination, K key, {Iterable<K> keys = const []}) =>
-      run<int>(<Object?>[r'SDIFFSTORE', destination, key]..addAll(keys));
+      run<int>(<Object?>[r'SDIFFSTORE', destination, key, ...keys]);
 
   @override
   Future<List<V>> sinter(K key, {Iterable<K> keys = const []}) =>
-      run<List<V>>(<Object?>[r'SINTER', key]..addAll(keys));
+      run<List<V>>(<Object?>[r'SINTER', key, ...keys]);
 
   @override
   Future<int> sinterstore(K destination, K key,
           {Iterable<K> keys = const []}) =>
-      run<int>(<Object?>[r'SINTERSTORE', destination, key]..addAll(keys));
+      run<int>(<Object?>[r'SINTERSTORE', destination, key, ...keys]);
 
   @override
   Future<int> sismember(K key, V member) =>
@@ -861,7 +863,7 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<int> srem(K key, {V? member, Iterable<V> members = const []}) =>
-      run<int>(<Object?>[r'SREM', key, member]..addAll(members));
+      run<int>(<Object?>[r'SREM', key, member, ...members]);
 
   @override
   Future<SetScanResult<V>> sscan(K key, int cursor, {K? pattern, int? count}) =>
@@ -877,12 +879,12 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<List<V>> sunion(K key, {Iterable<K> keys = const []}) =>
-      run<List<V>>(<Object?>[r'SUNION', key]..addAll(keys));
+      run<List<V>>(<Object?>[r'SUNION', key, ...keys]);
 
   @override
   Future<int> sunionstore(K destination, K key,
           {Iterable<K> keys = const []}) =>
-      run<int>(<Object?>[r'SUNIONSTORE', destination, key]..addAll(keys));
+      run<int>(<Object?>[r'SUNIONSTORE', destination, key, ...keys]);
 
   // Sorted sets.
 
@@ -890,18 +892,14 @@ class Commands<K, V> extends ModuleBase
   Future<SortedSetPopResult<K?, V?>?> bzpopmax(
           {K? key, Iterable<K?> keys = const [], int timeout = 0}) =>
       run<SortedSetPopResult<K?, V?>?>(
-          <Object?>[r'BZPOPMAX', key]
-            ..addAll(keys)
-            ..add(timeout),
+          <Object?>[r'BZPOPMAX', key, ...keys, timeout ],
           mapper: SortedSetPopResultMapper<K, V>());
 
   @override
   Future<SortedSetPopResult<K?, V?>?> bzpopmin(
           {K? key, Iterable<K?> keys = const [], int timeout = 0}) =>
       run<SortedSetPopResult<K?, V?>?>(
-          <Object?>[r'BZPOPMIN', key]
-            ..addAll(keys)
-            ..add(timeout),
+          <Object?>[r'BZPOPMIN', key, ...keys, timeout],
           mapper: SortedSetPopResultMapper<K, V>());
 
   @override
@@ -917,8 +915,9 @@ class Commands<K, V> extends ModuleBase
         mode?.name,
         changed ? r'CH' : null,
         score,
-        member
-      ]..addAll(set.entries.expand((entry) => [entry.value, entry.key])));
+        member,
+        ...set.entries.expand((entry) => [entry.value, entry.key])
+      ]);
 
   @override
   Future<double> zaddIncr(K? key, double score, V? member,
@@ -939,12 +938,16 @@ class Commands<K, V> extends ModuleBase
   @override
   Future<int> zinterstore(K? destination, List<K?> keys,
           {Iterable<double> weights = const [], AggregateMode? mode}) =>
-      run<int>(<Object?>[r'ZINTERSTORE', destination, keys.length]
-        ..addAll(keys)
-        ..add(weights.isEmpty ? null : r'WEIGHTS')
-        ..addAll(weights)
-        ..add(mode == null ? null : r'AGGREGATE')
-        ..add(mode?.name));
+      run<int>(<Object?>[
+        r'ZINTERSTORE',
+        destination,
+        keys.length,
+        ...keys,
+        weights.isEmpty ? null : r'WEIGHTS',
+        ...weights,
+        mode == null ? null : r'AGGREGATE',
+        mode?.name
+      ]);
 
   @override
   Future<int> zlexcount(K? key, V? min, V? max) =>
@@ -972,7 +975,8 @@ class Commands<K, V> extends ModuleBase
       ], mapper: SortedSetMapper<V>(withScores: withScores));
 
   @override
-  Future<List<V>> zrangebylex(K? key, V? min, V? max, {int? offset, int? count}) {
+  Future<List<V>> zrangebylex(K? key, V? min, V? max,
+      {int? offset, int? count}) {
     assert(
         (offset == null && count == null) || (offset != null && count != null));
 
@@ -1011,7 +1015,7 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<int> zrem(K? key, {V? member, Iterable<V?> members = const []}) =>
-      run<int>(<Object?>[r'ZREM', key, member]..addAll(members));
+      run<int>(<Object?>[r'ZREM', key, member, ...members]);
 
   @override
   Future<int> zremrangebylex(K? key, V? min, V? max) =>
@@ -1037,7 +1041,8 @@ class Commands<K, V> extends ModuleBase
       ], mapper: SortedSetMapper<V>(withScores: withScores));
 
   @override
-  Future<List<V>> zrevrangebylex(K? key, V? max, V? min, {int? offset, int? count}) {
+  Future<List<V>> zrevrangebylex(K? key, V? max, V? min,
+      {int? offset, int? count}) {
     assert(
         (offset == null && count == null) || (offset != null && count != null));
 
@@ -1094,18 +1099,22 @@ class Commands<K, V> extends ModuleBase
   @override
   Future<int> zunionstore(K? destination, List<K?> keys,
           {Iterable<double> weights = const [], AggregateMode? mode}) =>
-      run<int>(<Object?>[r'ZUNIONSTORE', destination, keys.length]
-        ..addAll(keys)
-        ..add(weights.isEmpty ? null : r'WEIGHTS')
-        ..addAll(weights)
-        ..add(mode == null ? null : r'AGGREGATE')
-        ..add(mode?.name));
+      run<int>(<Object?>[
+        r'ZUNIONSTORE',
+        destination,
+        keys.length,
+        ...keys,
+        weights.isEmpty ? null : r'WEIGHTS',
+        ...weights,
+        mode == null ? null : r'AGGREGATE',
+        mode?.name
+      ]);
 
   // Streams.
 
   @override
   Future<int> xack(K? key, K? group, {K? id, Iterable<K?> ids = const []}) =>
-      run<int>(<Object?>[r'XACK', key, group, id]..addAll(ids));
+      run<int>(<Object?>[r'XACK', key, group, id, ...ids]);
 
   @override
   Future<K> xadd(K? key,
@@ -1115,14 +1124,16 @@ class Commands<K, V> extends ModuleBase
           Map<K?, V?> fields = const {},
           int? maxlen,
           bool roughly = false}) =>
-      run<K>(<Object?>[r'XADD', key]
-        ..add(maxlen == null ? null : r'MAXLEN')
-        ..add(roughly ? r'~' : null)
-        ..add(maxlen)
-        ..add(id == null ? r'*' : id)
-        ..add(field)
-        ..add(value)
-        ..addAll(fields.entries.expand((entry) => [entry.key, entry.value])));
+      run<K>(<Object?>[
+        r'XADD', key,
+        maxlen == null ? null : r'MAXLEN',
+        roughly ? r'~' : null,
+        maxlen,
+        id == null ? r'*' : id,
+        field,
+        value,
+        ...fields.entries.expand((entry) => [entry.key, entry.value])
+        ]);
 
   @override
   Future<Object> xclaim(K? key, K? group, K? consumer, int minIdleTime,
@@ -1134,28 +1145,35 @@ class Commands<K, V> extends ModuleBase
           bool force = false,
           bool justId = false}) =>
       run<Object>(
-          <Object?>[r'XCLAIM', key, group, consumer, minIdleTime, id]
-            ..addAll(ids)
-            ..add(idle == null ? null : r'IDLE')
-            ..add(idle)
-            ..add(idleTimestamp == null ? null : r'TIME')
-            ..add(idleTimestamp)
-            ..add(retryCount == null ? null : r'RETRYCOUNT')
-            ..add(retryCount)
-            ..add(force ? r'FORCE' : null)
-            ..add(justId ? r'JUSTID' : null),
+          <Object?>[
+            r'XCLAIM',
+            key,
+            group,
+            consumer,
+            minIdleTime,
+            id,
+            ...ids,
+            idle == null ? null : r'IDLE',
+            idle,
+            idleTimestamp == null ? null : r'TIME',
+            idleTimestamp,
+            retryCount == null ? null : r'RETRYCOUNT',
+            retryCount,
+            force ? r'FORCE' : null,
+            justId ? r'JUSTID' : null
+          ],
           mapper: StreamClaimMapper<K, V>(justId: justId));
 
   @override
   Future<int> xdel(K? key, {K? id, Iterable<K?> ids = const []}) =>
-      run<int>(<Object?>[r'XDEL', key, id]..addAll(ids));
+      run<int>(<Object?>[r'XDEL', key, id, ids]);
 
   @override
   Future<Object?> xgroup(StreamGroupSubcommand subcommand,
           {K? key, K? group, K? id, K? consumer, bool mkstream = false}) =>
       run<Object?>(
-          <Object?>[r'XGROUP', subcommand.name, key, group, id, consumer]
-            ..add(mkstream ? r'MKSTREAM' : null),
+          <Object?>[r'XGROUP', subcommand.name, key, group, id, consumer,
+            mkstream ? r'MKSTREAM' : null],
           mapper: streamGroupMapper);
 
   @override
@@ -1179,11 +1197,13 @@ class Commands<K, V> extends ModuleBase
   }
 
   @override
-  Future<List<StreamEntry<K?, V?>?>> xrange(K? key, K? start, K? end, {int? count}) =>
+  Future<List<StreamEntry<K?, V?>?>> xrange(K? key, K? start, K? end,
+      {int? count}) =>
       run<List<StreamEntry<K?, V?>?>>(
-          <Object?>[r'XRANGE', key, start, end]
-            ..add(count == null ? null : r'COUNT')
-            ..add(count),
+          <Object?>[r'XRANGE', key, start, end,
+            count == null ? null : r'COUNT',
+            count
+            ],
           mapper: StreamMapper<K, V>());
 
   @override
@@ -1195,17 +1215,17 @@ class Commands<K, V> extends ModuleBase
           int? count,
           int? timeout}) =>
       run<Map<K?, List<StreamEntry<K?, V?>?>>?>(
-          <Object?>[r'XREAD']
-            ..add(count == null ? null : r'COUNT')
-            ..add(count)
-            ..add(timeout == null ? null : r'BLOCK')
-            ..add(timeout)
-            ..add(r'STREAMS')
-            ..add(key)
-            ..addAll(keys)
-            ..add(id)
-            ..addAll(ids),
-          mapper: StreamsMapper<K, V>());
+          <Object?>[r'XREAD',
+            count == null ? null : r'COUNT',
+            count,
+            timeout == null ? null : r'BLOCK',
+            timeout,
+            r'STREAMS',
+            key,
+            ...keys,
+            id,
+            ...ids
+          ], mapper: StreamsMapper<K, V>());
 
   @override
   Future<Map<K?, List<StreamEntry<K?, V?>?>>?> xreadgroup(K? group, K? consumer,
@@ -1217,33 +1237,36 @@ class Commands<K, V> extends ModuleBase
           int? timeout,
           bool noack = false}) =>
       run<Map<K?, List<StreamEntry<K?, V?>?>>?>(
-          <Object?>[r'XREADGROUP', r'GROUP', group, consumer]
-            ..add(count == null ? null : r'COUNT')
-            ..add(count)
-            ..add(timeout == null ? null : r'BLOCK')
-            ..add(timeout)
-            ..add(noack ? r'NOACK' : null)
-            ..add(r'STREAMS')
-            ..add(key)
-            ..addAll(keys)
-            ..add(id)
-            ..addAll(ids),
-          mapper: StreamsMapper<K, V>());
+          <Object?>[
+            r'XREADGROUP',
+            r'GROUP',
+            group,
+            consumer,
+            count == null ? null : r'COUNT',
+            count,
+            timeout == null ? null : r'BLOCK',
+            timeout,
+            noack ? r'NOACK' : null,
+            r'STREAMS',
+            key,
+            ...keys,
+            id,
+            ...ids
+            ], mapper: StreamsMapper<K, V>());
 
   @override
   Future<List<StreamEntry<K?, V?>?>> xrevrange(K? key, K? end, K? start,
           {int? count}) =>
       run<List<StreamEntry<K?, V?>?>>(
-          <Object?>[r'XREVRANGE', key, end, start]
-            ..add(count == null ? null : r'COUNT')
-            ..add(count),
+          <Object?>[r'XREVRANGE', key, end, start,
+            count == null ? null : r'COUNT',
+            count],
           mapper: StreamMapper<K, V>());
 
   @override
   Future<int> xtrim(K? key, int maxlen, {bool roughly = false}) =>
-      run<int>(<Object?>[r'XTRIM', key, r'MAXLEN']
-        ..add(roughly ? r'~' : null)
-        ..add(maxlen));
+      run<int>(<Object?>[r'XTRIM', key, r'MAXLEN',
+        roughly ? r'~' : null, maxlen]);
 
   // Strings.
 
@@ -1259,8 +1282,8 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<List<int>> bitfield(K key, List<BitfieldOperation> operations) =>
-      run<List<int>>(<Object?>[r'BITFIELD', key]
-        ..addAll(operations.expand(_expandBitfield)));
+      run<List<int>>(<Object?>[r'BITFIELD', key,
+        ...operations.expand(_expandBitfield)]);
 
   List<Object?> _expandBitfield(BitfieldOperation operation) => <Object?>[
         operation.overflow == null ? null : r'OVERFLOW',
@@ -1274,7 +1297,7 @@ class Commands<K, V> extends ModuleBase
   @override
   Future<int> bitop(BitopOperation operation, K destkey,
           {K? key, Iterable<K> keys = const []}) =>
-      run<int>(<Object?>[r'BITOP', operation.name, destkey, key]..addAll(keys));
+      run<int>(<Object?>[r'BITOP', operation.name, destkey, key, ...keys]);
 
   @override
   Future<int> bitpos(K key, int bit, [int? start, int? end]) =>
@@ -1314,17 +1337,19 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<List<V>> mget({K? key, Iterable<K> keys = const []}) =>
-      run<List<V>>(<Object?>[r'MGET', key]..addAll(keys));
+      run<List<V>>(<Object?>[r'MGET', key, ...keys]);
 
   @override
   Future<void> mset({K? key, V? value, Map<K, V> map = const {}}) =>
-      run<void>(<Object?>[r'MSET', key, value]
-        ..addAll(map.entries.expand((entry) => [entry.key, entry.value])));
+      run<void>(<Object?>[r'MSET', key, value,
+        ...map.entries.expand((entry) => [entry.key, entry.value])
+      ]);
 
   @override
   Future<int> msetnx({K? key, V? value, Map<K, V> map = const {}}) =>
-      run<int>(<Object?>[r'MSETNX', key, value]
-        ..addAll(map.entries.expand((entry) => [entry.key, entry.value])));
+      run<int>(<Object?>[r'MSETNX', key, value,
+        ...map.entries.expand((entry) => [entry.key, entry.value])
+  ]);
 
   @override
   Future<void> psetex(K key, int milliseconds, V value) =>
@@ -1358,7 +1383,8 @@ class Commands<K, V> extends ModuleBase
       run<void>(<Object?>[r'SETEX', key, seconds, value]);
 
   @override
-  Future<int> setnx(K key, V value) => run<int>(<Object?>[r'SETNX', key, value]);
+  Future<int> setnx(K key, V value) =>
+      run<int>(<Object?>[r'SETNX', key, value]);
 
   @override
   Future<int> setrange(K key, int offset, V value) =>
@@ -1395,5 +1421,5 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<void> watch({K? key, Iterable<K> keys = const []}) =>
-      run<void>(<Object?>[r'WATCH', key]..addAll(keys));
+      run<void>(<Object?>[r'WATCH', key, ...keys]);
 }
