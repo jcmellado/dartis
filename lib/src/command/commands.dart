@@ -370,7 +370,7 @@ class Commands<K, V> extends ModuleBase
         r'MIGRATE',
         host,
         port,
-        key == null ? r'' : key,
+        key ?? r'',
         destinationDb,
         timeout,
         copy ? r'COPY' : null,
