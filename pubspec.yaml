@@ -1,5 +1,5 @@
 name: dartis
-version: 0.5.0
+version: 0.6.0
 author: Juan Mellado <jcmellado@gmail.com>
 homepage: https://github.com/jcmellado/dartis
 description: >-
@@ -8,12 +8,11 @@ description: >-
   commands, transactions, Lua scripting, modules, and much more.
 
 environment:
-  sdk: ">=2.3.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  logging: ^1.0.0
+  logging: ^1.0.1
 
 dev_dependencies:
   test: ^1.14.2
-  uuid: ^3.0.2
-  pedantic: ^1.11.0
+  uuid: ^3.0.4

@@ -19,7 +19,7 @@ abstract class ConnectionCommands {
   /// of the [message].
   ///
   /// See https://redis.io/commands/ping
-  Future<String> ping([String message]);
+  Future<String> ping([String? message]);
 
   /// Closes the connection.
   ///
