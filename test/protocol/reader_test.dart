@@ -5,9 +5,8 @@
 
 import 'dart:typed_data' show Uint8List;
 
-import 'package:test/test.dart';
-
 import 'package:dartis/dartis.dart';
+import 'package:test/test.dart';
 
 void main() {
   Uint8List _chunk(List<int> bytes) => Uint8List.fromList(bytes);
@@ -212,7 +211,7 @@ void main() {
         final reply = reader.consume();
         expect(reply, const TypeMatcher<ArrayReply>());
 
-        final array = (reply as ArrayReply).array;
+        final array = (reply as ArrayReply).array!;
         expect(array[0].value, [65]);
         expect(array[1].value, [49]);
       }
@@ -453,7 +452,7 @@ void main() {
         final reply = reader.consume();
         expect(reply, const TypeMatcher<ArrayReply>());
 
-        final array = (reply as ArrayReply).array;
+        final array = (reply as ArrayReply).array!;
         expect(array, hasLength(3));
 
         expect(array[0], const TypeMatcher<StringReply>());
@@ -484,14 +483,14 @@ void main() {
         final reply = reader.consume();
         expect(reply, const TypeMatcher<ArrayReply>());
 
-        final array = (reply as ArrayReply).array;
+        final array = (reply as ArrayReply).array!;
         expect(array, hasLength(3));
 
         expect(array[0], const TypeMatcher<StringReply>());
         expect(array[0].value, equals([65]));
 
         expect(array[1], const TypeMatcher<ArrayReply>());
-        final nested = (array[1] as ArrayReply).array;
+        final nested = (array[1] as ArrayReply).array!;
         expect(nested, hasLength(2));
         expect(nested[0], const TypeMatcher<StringReply>());
         expect(nested[1], const TypeMatcher<IntReply>());

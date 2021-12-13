@@ -1,9 +1,8 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-import 'package:test/test.dart';
-
 import 'package:dartis/dartis.dart';
+import 'package:test/test.dart';
 
 void main() {
   group('Reply', () {
@@ -69,7 +68,7 @@ void main() {
         const three = BulkReply([1, 2, 3]);
         const reply = ArrayReply(<Reply>[one, two, three]);
 
-        final replies = reply.array;
+        final replies = reply.array!;
         expect(
             replies.map((reply) => reply.value).toList(),
             equals([
@@ -78,7 +77,7 @@ void main() {
               [1, 2, 3]
             ]));
         expect(
-            reply.array.map((reply) => reply.value).toList(),
+            reply.array!.map((reply) => reply.value).toList(),
             equals([
               [65, 66, 67],
               [49, 50, 51],

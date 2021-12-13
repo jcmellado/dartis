@@ -4,9 +4,8 @@
 import 'dart:async' show Future;
 import 'dart:io' show SocketException;
 
-import 'package:test/test.dart';
-
 import 'package:dartis/dartis.dart';
+import 'package:test/test.dart';
 
 import '../fakesocket.dart';
 import '../util.dart' show uuid;
@@ -68,7 +67,7 @@ void main() {
       final futures = client.flush();
 
       expect(
-          await Future.wait<Object>(futures), equals(['PONG', 'PONG', 'PONG']));
+          await Future.wait<Object?>(futures), equals(['PONG', 'PONG', 'PONG']));
 
       await client.disconnect();
     });

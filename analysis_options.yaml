@@ -15,7 +15,6 @@ linter:
     - always_specify_types
     - annotate_overrides
     - avoid_annotating_with_dynamic
-    - avoid_as
     - avoid_bool_literals_in_conditional_expressions
     - avoid_catches_without_on_clauses
     - avoid_catching_errors
@@ -38,7 +37,6 @@ linter:
     - avoid_single_cascade_in_expression_statements
     - avoid_slow_async_io
     - avoid_types_as_parameter_names
-    - avoid_types_on_closure_parameters
     - avoid_unused_constructor_parameters
     - await_only_futures
     - camel_case_types
@@ -68,7 +66,6 @@ linter:
     - no_duplicate_case_values
     - non_constant_identifier_names
     - null_closures
-    - omit_local_variable_types
     - one_member_abstracts
     - only_throw_errors
     - overridden_fields

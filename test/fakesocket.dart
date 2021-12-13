@@ -6,7 +6,7 @@ import 'dart:io';
 
 import 'dart:typed_data';
 
-Stream<Uint8List> _stream(List<List<int>> data, Exception error) async* {
+Stream<Uint8List> _stream(List<List<int>> data, Exception? error) async* {
   for (final b in data) {
     yield Uint8List.fromList(b);
   }
@@ -34,10 +34,10 @@ class FakeSocket extends Stream<Uint8List> with IOSink implements Socket {
 
   FakeSocket(
     List<List<int>> output,
-    Exception error, {
-    this.address,
+    Exception? error, {
+    required this.address,
     this.port = 0,
-    this.remoteAddress,
+    required this.remoteAddress,
     this.remotePort = 0,
   })  : _output = _stream(output, error),
         super();
@@ -57,7 +57,7 @@ class FakeSocket extends Stream<Uint8List> with IOSink implements Socket {
   Future addStream(Stream<List<int>> stream) async => stream.forEach(add);
 
   @override
-  void addError(Object e, [StackTrace st]) => _done.completeError(e);
+  void addError(Object e, [StackTrace? st]) => _done.completeError(e);
 
   @override
   Future close() async => _done.isCompleted ? null : _done.complete();
@@ -72,8 +72,8 @@ class FakeSocket extends Stream<Uint8List> with IOSink implements Socket {
   void destroy() => close();
 
   @override
-  StreamSubscription<Uint8List> listen(void Function(Uint8List event) onData,
-          {Function onError, void Function() onDone, bool cancelOnError}) =>
+  StreamSubscription<Uint8List> listen(void Function(Uint8List event)? onData,
+          {Function? onError, void Function()? onDone, bool? cancelOnError}) =>
       _output.listen(
         onData,
         onError: onError,
@@ -82,7 +82,7 @@ class FakeSocket extends Stream<Uint8List> with IOSink implements Socket {
       );
 
   @override
-  void write(Object obj) {
+  void write(Object? obj) {
     add(encoding.encode(obj.toString()));
   }
 
@@ -104,7 +104,7 @@ class FakeSocket extends Stream<Uint8List> with IOSink implements Socket {
   }
 
   @override
-  void writeln([Object obj = '']) {
+  void writeln([Object? obj = '']) {
     write(obj);
     write('\n');
   }

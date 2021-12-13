@@ -1,20 +1,19 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-import 'package:test/test.dart';
-
 import 'package:dartis/dartis.dart';
+import 'package:test/test.dart';
 
 import '../util.dart' show uuid;
 
-class _Mapper implements Mapper<List<Reply>> {
+class _Mapper implements Mapper<List<Reply>?> {
   @override
-  List<Reply> map(covariant ArrayReply reply, RedisCodec codec) => reply.array;
+  List<Reply>? map(covariant ArrayReply reply, RedisCodec codec) => reply.array;
 }
 
 void main() {
-  Client client;
-  Commands<String, String> commands;
+  late Client client;
+  late Commands<String, String> commands;
 
   setUp(() async {
     client = await Client.connect('redis://localhost:6379');
@@ -37,11 +36,11 @@ void main() {
           keys: [key1, key2], args: ['first', 'second']);
 
       // Evaluate with a mapper.
-      final results = await commands.eval<List<Reply>>(
+      final results = await (commands.eval<List<Reply>?>(
           'return {KEYS[1],KEYS[2],ARGV[1],ARGV[2]}',
           keys: [key1, key2],
           args: ['first', 'second'],
-          mapper: _Mapper());
+          mapper: _Mapper()) as FutureOr<List<Reply>>);
 
       expect(results[0].value, equals(key1.codeUnits));
       expect(results[1].value, equals(key2.codeUnits));
@@ -65,8 +64,8 @@ void main() {
           .evalsha<void>(sha1, keys: [key1, key2], args: ['first', 'second']);
 
       // Evaluate with a mapper.
-      final results = await commands.evalsha<List<Reply>>(sha1,
-          keys: [key1, key2], args: ['first', 'second'], mapper: _Mapper());
+      final results = await (commands.evalsha<List<Reply>?>(sha1,
+          keys: [key1, key2], args: ['first', 'second'], mapper: _Mapper()) as FutureOr<List<Reply>>);
 
       expect(results[0].value, equals(key1.codeUnits));
       expect(results[1].value, equals(key2.codeUnits));

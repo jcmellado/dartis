@@ -4,7 +4,7 @@
 /// Base class for implementing exceptions.
 class RedisException implements Exception {
   /// An informative message.
-  final String message;
+  final String? message;
 
   /// Creates an [RedisException] instance with an informative [message].
   const RedisException(this.message);

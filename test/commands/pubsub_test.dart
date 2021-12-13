@@ -1,15 +1,14 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-import 'package:test/test.dart';
-
 import 'package:dartis/dartis.dart';
+import 'package:test/test.dart';
 
 import '../util.dart' show uuid;
 
 void main() {
-  Client client;
-  PubSubCommands<String, String> commands;
+  late Client client;
+  late PubSubCommands<String?, String> commands;
 
   setUp(() async {
     client = await Client.connect('redis://localhost:6379');
@@ -57,7 +56,7 @@ void main() {
     group('support', () {
       group('PubsubResult', () {
         test('toString', () {
-          const value = PubsubResult<String>(null, null);
+          const value = PubsubResult<String?>(null, null);
           expect(value.toString(), startsWith('PubsubResult<String>:'));
         });
       });

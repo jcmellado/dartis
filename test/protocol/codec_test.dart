@@ -3,35 +3,34 @@
 
 import 'dart:convert' show utf8;
 
+import 'package:dartis/dartis.dart';
 import 'package:test/test.dart';
 
-import 'package:dartis/dartis.dart';
-
 /// A encoder that encodes a [DateTime] to a list of bytes.
-class _DateTimeEncoder extends Encoder<DateTime> {
+class _DateTimeEncoder extends Encoder<DateTime?> {
   @override
-  List<int> convert(DateTime value, [RedisCodec codec]) =>
+  List<int> convert(DateTime? value, [RedisCodec? codec]) =>
       utf8.encode(value.toString());
 }
 
 /// A decoder that decodes a server reply to a [DateTime].
-class _DateTimeDecoder extends Decoder<SingleReply, DateTime> {
+class _DateTimeDecoder extends Decoder<SingleReply?, DateTime?> {
   @override
-  DateTime convert(SingleReply value, RedisCodec codec) =>
-      value.bytes == null ? null : DateTime.parse(utf8.decode(value.bytes));
+  DateTime? convert(SingleReply? value, RedisCodec codec) =>
+      value!.bytes == null ? null : DateTime.parse(utf8.decode(value.bytes!));
 }
 
 /// A encoder that encodes a [DateTime] to a list of bytes.
-class _IsoDateTimeEncoder extends Encoder<DateTime> {
+class _IsoDateTimeEncoder extends Encoder<DateTime?> {
   @override
-  List<int> convert(DateTime value, RedisCodec codec) =>
-      utf8.encode(value.toIso8601String());
+  List<int> convert(DateTime? value, RedisCodec codec) =>
+      utf8.encode(value!.toIso8601String());
 }
 
 /// A decoder that always returns 999.
-class _Int999Decoder extends Decoder<SingleReply, int> {
+class _Int999Decoder extends Decoder<SingleReply?, int> {
   @override
-  int convert(SingleReply value, RedisCodec codec) => 999;
+  int convert(SingleReply? value, RedisCodec codec) => 999;
 }
 
 void main() {

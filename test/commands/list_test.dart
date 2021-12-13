@@ -1,15 +1,14 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-import 'package:test/test.dart';
-
 import 'package:dartis/dartis.dart';
+import 'package:test/test.dart';
 
 import '../util.dart' show uuid;
 
 void main() {
-  Client client;
-  ListCommands<String, String> commands;
+  late Client client;
+  late ListCommands<String?, String?> commands;
 
   setUp(() async {
     client = await Client.connect('redis://localhost:6379');
@@ -29,26 +28,26 @@ void main() {
       await commands.rpush(key2, values: ['d', 'e', 'f']);
 
       // Pop one element.
-      var result = await commands.blpop(key: key1);
+      var result = await (commands.blpop(key: key1) as FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key1));
       expect(result.value, equals('a'));
-      result = await commands.blpop(key: key1);
+      result = await (commands.blpop(key: key1) as FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key1));
       expect(result.value, equals('b'));
 
       // Pop some elements.
-      result = await commands.blpop(keys: [key1, key2]);
+      result = await (commands.blpop(keys: [key1, key2]) as FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key1));
       expect(result.value, equals('c'));
-      result = await commands.blpop(keys: [key1, key2]);
+      result = await (commands.blpop(keys: [key1, key2]) as FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key2));
       expect(result.value, equals('d'));
-      result = await commands.blpop(keys: [key1, key2]);
+      result = await (commands.blpop(keys: [key1, key2]) as FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key2));
       expect(result.value, equals('e'));
 
       // Pop blocking.
-      result = await commands.blpop(keys: [key1, key2], timeout: 1);
+      result = await (commands.blpop(keys: [key1, key2], timeout: 1) as FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key2));
       expect(result.value, equals('f'));
 
@@ -67,26 +66,26 @@ void main() {
       await commands.rpush(key2, values: ['d', 'e', 'f']);
 
       // Pop one element.
-      var result = await commands.brpop(key: key1);
+      var result = await (commands.brpop(key: key1) as FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key1));
       expect(result.value, equals('c'));
-      result = await commands.brpop(key: key1);
+      result = await (commands.brpop(key: key1) as FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key1));
       expect(result.value, equals('b'));
 
       // Pop some elements.
-      result = await commands.brpop(keys: [key1, key2]);
+      result = await (commands.brpop(keys: [key1, key2]) as FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key1));
       expect(result.value, equals('a'));
-      result = await commands.brpop(keys: [key1, key2]);
+      result = await (commands.brpop(keys: [key1, key2]) as FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key2));
       expect(result.value, equals('f'));
-      result = await commands.brpop(keys: [key1, key2]);
+      result = await (commands.brpop(keys: [key1, key2]) as FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key2));
       expect(result.value, equals('e'));
 
       // Pop blocking.
-      result = await commands.brpop(keys: [key1, key2], timeout: 1);
+      result = await (commands.brpop(keys: [key1, key2], timeout: 1) as FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key2));
       expect(result.value, equals('d'));
 
@@ -335,7 +334,7 @@ void main() {
 
       group('ListPopResult', () {
         test('toString', () {
-          const value = ListPopResult<String, String>(null, null);
+          const value = ListPopResult<String?, String?>(null, null);
           expect(
               value.toString(), startsWith('ListPopResult<String, String>:'));
         });

@@ -1,16 +1,15 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-import 'package:test/test.dart';
-
 import 'package:dartis/dartis.dart';
+import 'package:test/test.dart';
 
 import '../util.dart' show uuid;
 
 void main() {
-  PubSub<String, String> pubsub;
-  Client client;
-  Commands<String, String> commands;
+  late PubSub<String, String> pubsub;
+  late Client client;
+  late Commands<String, String> commands;
 
   setUp(() async {
     pubsub = await PubSub.connect<String, String>('redis://localhost:6379');
@@ -247,20 +246,20 @@ void main() {
     group('support', () {
       group('SubscriptionEvent', () {
         test('toString', () {
-          const value = SubscriptionEvent<String>(null, null, null);
+          const value = SubscriptionEvent<String?>(null, null, null);
           expect(value.toString(), startsWith('SubscriptionEvent<String>:'));
         });
       });
       group('MessageEvent', () {
         test('toString', () {
-          const value = MessageEvent<String, String>(null, null);
+          const value = MessageEvent<String?, String?>(null, null);
           expect(value.toString(), startsWith('MessageEvent<String, String>:'));
         });
       });
 
       group('PongEvent', () {
         test('toString', () {
-          const value = PongEvent<String>(null);
+          const value = PongEvent<String?>(null);
           expect(value.toString(), startsWith('PongEvent<String>:'));
         });
       });

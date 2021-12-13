@@ -1,15 +1,14 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-import 'package:test/test.dart';
-
 import 'package:dartis/dartis.dart';
+import 'package:test/test.dart';
 
 import '../util.dart' show uuid;
 
 void main() {
-  Client client;
-  ClusterCommands<String> commands;
+  late Client client;
+  late ClusterCommands<String> commands;
 
   // Some values for testing.
   const masterId = '<ID>';
@@ -203,15 +202,15 @@ void main() {
 
         expect(results[0].start, equals(0));
         expect(results[0].end, equals(1));
-        expect(results[0].nodes[0].ip, equals('A'));
-        expect(results[0].nodes[0].port, equals(0));
-        expect(results[0].nodes[0].id, isNull);
+        expect(results[0].nodes![0].ip, equals('A'));
+        expect(results[0].nodes![0].port, equals(0));
+        expect(results[0].nodes![0].id, isNull);
 
         expect(results[1].start, equals(2));
         expect(results[1].end, equals(3));
-        expect(results[1].nodes[0].ip, equals('B'));
-        expect(results[1].nodes[0].port, equals(1));
-        expect(results[1].nodes[0].id, equals('C'));
+        expect(results[1].nodes![0].ip, equals('B'));
+        expect(results[1].nodes![0].port, equals(1));
+        expect(results[1].nodes![0].id, equals('C'));
       });
     });
   });

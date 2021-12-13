@@ -4,9 +4,8 @@
 import 'dart:async' show Completer;
 import 'dart:io' show SocketException;
 
-import 'package:test/test.dart';
-
 import 'package:dartis/dartis.dart';
+import 'package:test/test.dart';
 
 import '../fakesocket.dart';
 

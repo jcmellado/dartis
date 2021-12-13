@@ -3,9 +3,8 @@
 
 import 'dart:async' show Future;
 
-import 'package:test/test.dart';
-
 import 'package:dartis/dartis.dart';
+import 'package:test/test.dart';
 
 import '../util.dart' show uuid;
 
@@ -22,9 +21,9 @@ class _TypedCommands<K> extends ModuleBase {
   _TypedCommands(Client client) : super(client);
 
   Future<void> set<R>(K key, R value) =>
-      run<void>(<Object>[r'SET', key, value]);
+      run<void>(<Object?>[r'SET', key, value]);
 
-  Future<R> get<R>(K key) => run<R>(<Object>[r'GET', key]);
+  Future<R> get<R>(K key) => run<R>(<Object?>[r'GET', key]);
 }
 
 void main() {
