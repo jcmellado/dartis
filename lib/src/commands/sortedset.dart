@@ -164,7 +164,8 @@ abstract class SortedSetCommands<K, V> {
   /// ordered from higher to lower strings.
   ///
   /// See https://redis.io/commands/zrevrangebylex
-  Future<List<V>> zrevrangebylex(K key, V max, V min, {int? offset, int? count});
+  Future<List<V>> zrevrangebylex(K key, V max, V min, 
+    {int? offset, int? count});
 
   /// Returns a range of members in a sorted set, by score, with scores
   /// ordered from high to low.
@@ -274,7 +275,8 @@ class SortedSetScanResult<K> {
 class SortedSetPopResultMapper<K, V>
     implements Mapper<SortedSetPopResult<K?, V?>?> {
   @override
-  SortedSetPopResult<K?, V?>? map(covariant ArrayReply reply, RedisCodec codec) {
+  SortedSetPopResult<K?, V?>? map(covariant ArrayReply reply, RedisCodec codec)
+  {
     final array = reply.array;
 
     if (array == null) {

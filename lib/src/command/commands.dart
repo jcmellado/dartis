@@ -144,7 +144,8 @@ class Commands<K, V> extends ModuleBase
 
   List<Object?> _expandGeoItem(GeoItem<Object?>? item) => item == null
       ? <Object>[]
-      : <Object?>[item.position!.longitude, item.position!.latitude, item.member];
+      : <Object?>[item.position!.longitude, item.position!.latitude, 
+        item.member];
 
   @override
   Future<double> geodist(K key, V? member1, V? member2, {GeoUnit? unit}) =>
@@ -158,8 +159,8 @@ class Commands<K, V> extends ModuleBase
   @override
   Future<List<GeoPosition?>> geopos(K key,
           {V? member, Iterable<V?> members = const []}) =>
-      run<List<GeoPosition?>>(<Object?>[r'GEOPOS', key, member]..addAll(members),
-          mapper: geoPositionMapper);
+      run<List<GeoPosition?>>(<Object?>[r'GEOPOS', key, member]
+        ..addAll(members), mapper: geoPositionMapper);
 
   @override
   Future<List<GeoradiusResult<V?>>> georadius(
@@ -285,7 +286,8 @@ class Commands<K, V> extends ModuleBase
       run<List<V>>(<Object?>[r'HMGET', key, field]..addAll(fields));
 
   @override
-  Future<void> hmset(K? key, {K? field, V? value, Map<K?, V?> hash = const {}}) =>
+  Future<void> hmset(K? key, {K? field, V? value, Map<K?, V?> hash 
+    = const {}}) =>
       run<void>(<Object?>[r'HMSET', key, field, value]
         ..addAll(hash.entries.expand((entry) => [entry.key, entry.value])));
 
@@ -528,7 +530,8 @@ class Commands<K, V> extends ModuleBase
           mapper: BrpoplpushMapper<V>());
 
   @override
-  Future<V> lindex(K? key, int index) => run<V>(<Object?>[r'LINDEX', key, index]);
+  Future<V> lindex(K? key, int index) => 
+    run<V>(<Object?>[r'LINDEX', key, index]);
 
   @override
   Future<int> linsert(K? key, InsertPosition position, V? pivot, V? value) =>
@@ -606,8 +609,8 @@ class Commands<K, V> extends ModuleBase
           {Iterable<K> keys = const [],
           Iterable<Object> args = const [],
           Mapper<T>? mapper}) =>
-      run<T>(<Object?>[r'EVAL', script, keys.length]..addAll(keys)..addAll(args),
-          mapper: mapper);
+      run<T>(<Object?>[r'EVAL', script, keys.length]..addAll(keys)
+        ..addAll(args), mapper: mapper);
 
   @override
   Future<T> evalsha<T>(String sha1,
@@ -972,7 +975,8 @@ class Commands<K, V> extends ModuleBase
       ], mapper: SortedSetMapper<V>(withScores: withScores));
 
   @override
-  Future<List<V>> zrangebylex(K? key, V? min, V? max, {int? offset, int? count}) {
+  Future<List<V>> zrangebylex(K? key, V? min, V? max, {int? offset, int? count})
+  {
     assert(
         (offset == null && count == null) || (offset != null && count != null));
 
@@ -1037,7 +1041,8 @@ class Commands<K, V> extends ModuleBase
       ], mapper: SortedSetMapper<V>(withScores: withScores));
 
   @override
-  Future<List<V>> zrevrangebylex(K? key, V? max, V? min, {int? offset, int? count}) {
+  Future<List<V>> zrevrangebylex(K? key, V? max, V? min, 
+    {int? offset, int? count}) {
     assert(
         (offset == null && count == null) || (offset != null && count != null));
 
@@ -1179,7 +1184,8 @@ class Commands<K, V> extends ModuleBase
   }
 
   @override
-  Future<List<StreamEntry<K?, V?>?>> xrange(K? key, K? start, K? end, {int? count}) =>
+  Future<List<StreamEntry<K?, V?>?>> xrange(K? key, K? start, K? end, 
+    {int? count}) =>
       run<List<StreamEntry<K?, V?>?>>(
           <Object?>[r'XRANGE', key, start, end]
             ..add(count == null ? null : r'COUNT')
@@ -1358,7 +1364,8 @@ class Commands<K, V> extends ModuleBase
       run<void>(<Object?>[r'SETEX', key, seconds, value]);
 
   @override
-  Future<int> setnx(K key, V value) => run<int>(<Object?>[r'SETNX', key, value]);
+  Future<int> setnx(K key, V value) => 
+    run<int>(<Object?>[r'SETNX', key, value]);
 
   @override
   Future<int> setrange(K key, int offset, V value) =>

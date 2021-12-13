@@ -1,6 +1,8 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:dartis/dartis.dart';
 import 'package:test/test.dart';
 
@@ -65,7 +67,8 @@ void main() {
 
       // Evaluate with a mapper.
       final results = await (commands.evalsha<List<Reply>?>(sha1,
-          keys: [key1, key2], args: ['first', 'second'], mapper: _Mapper()) as FutureOr<List<Reply>>);
+          keys: [key1, key2], args: ['first', 'second'], mapper: _Mapper()) as 
+            FutureOr<List<Reply>>);
 
       expect(results[0].value, equals(key1.codeUnits));
       expect(results[1].value, equals(key2.codeUnits));

@@ -36,8 +36,8 @@ class FakeSocket extends Stream<Uint8List> with IOSink implements Socket {
     List<List<int>> output,
     Exception? error, {
     required this.address,
-    this.port = 0,
     required this.remoteAddress,
+    this.port = 0,
     this.remotePort = 0,
   })  : _output = _stream(output, error),
         super();

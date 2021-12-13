@@ -1,6 +1,8 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:dartis/dartis.dart';
 import 'package:test/test.dart';
 
@@ -28,18 +30,21 @@ void main() {
       await commands.zadd(key2, set: {'c': 3.0});
 
       // Pop from one sorted set.
-      var result = await (commands.bzpopmax(key: key1) as FutureOr<SortedSetPopResult<String?, String?>>);
+      var result = await (commands.bzpopmax(key: key1) as 
+        FutureOr<SortedSetPopResult<String?, String?>>);
       expect(result.key, equals(key1));
       expect(result.member!.key, equals('b'));
       expect(result.member!.value, equals(2.0));
 
-      result = await (commands.bzpopmax(key: key1) as FutureOr<SortedSetPopResult<String?, String?>>);
+      result = await (commands.bzpopmax(key: key1) as 
+        FutureOr<SortedSetPopResult<String?, String?>>);
       expect(result.key, equals(key1));
       expect(result.member!.key, equals('a'));
       expect(result.member!.value, equals(1.0));
 
       // Pop from some sorted sets.
-      result = await (commands.bzpopmax(keys: [key1, key2]) as FutureOr<SortedSetPopResult<String?, String?>>);
+      result = await (commands.bzpopmax(keys: [key1, key2]) as 
+        FutureOr<SortedSetPopResult<String?, String?>>);
       expect(result.key, equals(key2));
       expect(result.member!.key, equals('c'));
       expect(result.member!.value, equals(3.0));
@@ -60,20 +65,23 @@ void main() {
       await commands.zadd(key2, set: {'c': 3.0});
 
       // Pop from one sorted set.
-      var result = await (commands.bzpopmin(key: key1) as FutureOr<SortedSetPopResult<String?, String?>>);
+      var result = await (commands.bzpopmin(key: key1) as 
+        FutureOr<SortedSetPopResult<String?, String?>>);
       expect(result, isNotNull);
       expect(result.key, equals(key1));
       expect(result.member!.key, equals('a'));
       expect(result.member!.value, equals(1.0));
 
-      result = await (commands.bzpopmin(key: key1) as FutureOr<SortedSetPopResult<String?, String?>>);
+      result = await (commands.bzpopmin(key: key1) as 
+        FutureOr<SortedSetPopResult<String?, String?>>);
       expect(result, isNotNull);
       expect(result.key, equals(key1));
       expect(result.member!.key, equals('b'));
       expect(result.member!.value, equals(2.0));
 
       // Pop from one from some sorted sets.
-      result = await (commands.bzpopmin(keys: [key1, key2]) as FutureOr<SortedSetPopResult<String?, String?>>);
+      result = await (commands.bzpopmin(keys: [key1, key2]) as 
+        FutureOr<SortedSetPopResult<String?, String?>>);
       expect(result, isNotNull);
       expect(result.key, equals(key2));
       expect(result.member!.key, equals('c'));

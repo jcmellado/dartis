@@ -124,12 +124,13 @@ abstract class _LineReader extends _ReaderBase {
 
 /// A reader that reads a length.
 abstract class _LengthReader extends _LineReader {
-  int? _length;
+  late int _length;
 
   @override
   int read(Uint8List bytes, int start) {
     var end = start;
 
+    // ignore: unnecessary_null_comparison
     if (_length == null) {
       end = _readLength(bytes, start);
 
@@ -162,9 +163,9 @@ abstract class _LengthReader extends _LineReader {
 abstract class _BulkReader extends _LengthReader {
   @override
   int _readPayload(Uint8List bytes, int start) {
-    final size = min(bytes.length - start, _length! + 2);
+    final size = min(bytes.length - start, _length + 2);
 
-    final crlf = min(size, max(0, size - _length!));
+    final crlf = min(size, max(0, size - _length));
 
     assert(crlf <= 2);
 
@@ -175,7 +176,7 @@ abstract class _BulkReader extends _LengthReader {
     _length -= size;
     _done = _length == -2;
 
-    assert(_length! >= -2);
+    assert(_length >= -2);
 
     return start + size;
   }
@@ -192,7 +193,7 @@ abstract class _ArrayReader extends _LengthReader {
   int _readPayload(Uint8List bytes, int start) {
     var end = start;
 
-    while (_length! > 0) {
+    while (_length > 0) {
       if (end == bytes.length) {
         return end;
       }

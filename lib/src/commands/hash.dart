@@ -75,7 +75,8 @@ abstract class HashCommands<K, V> {
   /// Incrementally iterates fields and values of a hash stored at [key].
   ///
   /// See https://redis.io/commands/hscan
-  Future<HashScanResult<K, V>> hscan(K key, int cursor, {K? pattern, int? count});
+  Future<HashScanResult<K, V>> hscan(K key, int cursor, 
+    {K? pattern, int? count});
 
   /// Sets [field] in the hash stored at [key] to [value].
   ///

@@ -46,8 +46,8 @@ class RedisCodec {
   final _Decoder _decoder = _Decoder();
 
   /// Registers a new [encoder] or a new [decoder], or both.
-  void register(
-      {Converter<Object?, Object?>? encoder, Converter<Object?, Object?>? decoder}) {
+  void register({Converter<Object?, Object?>? encoder, 
+      Converter<Object?, Object?>? decoder}) {
     assert(encoder != null || decoder != null);
 
     if (encoder != null) {
@@ -182,7 +182,7 @@ class _StringReplyDecoder extends Decoder<SingleReply?, String?> {
 class _IntReplyDecoder extends Decoder<SingleReply?, int?> {
   @override
   int? convert(SingleReply? value, RedisCodec codec) =>
-      value!.bytes == null ? null : int.parse(String.fromCharCodes(value.bytes!));
+    value!.bytes == null ? null : int.parse(String.fromCharCodes(value.bytes!));
 }
 
 /// A decoder that converts a server reply into a [double].

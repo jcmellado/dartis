@@ -143,7 +143,8 @@ abstract class StreamCommands<K, V> {
   /// Use [count] to reduce the number of entries reported.
   ///
   /// See https://redis.io/commands/xrevrange
-  Future<List<StreamEntry<K, V>?>> xrevrange(K key, K end, K start, {int? count});
+  Future<List<StreamEntry<K, V>?>> xrevrange(K key, K end, K start, 
+    {int? count});
 
   /// Trims a stream at [key] to a given number [maxlen] of items. When the
   /// [roughly] option modifier is used the resulting length could be
@@ -327,7 +328,8 @@ class StreamClaimStreamMapper<K, V> implements StreamClaimMapper<K, V> {
   final _streamMapper = StreamMapper<K, V>();
 
   @override
-  List<StreamEntry<K?, V?>?> map(covariant ArrayReply reply, RedisCodec codec) =>
+  List<StreamEntry<K?, V?>?> map(covariant ArrayReply reply, RedisCodec codec)
+     =>
       _streamMapper.map(reply, codec);
 }
 
@@ -359,7 +361,8 @@ abstract class StreamPendingMapper<K, V> implements Mapper<Object> {
 /// A mapper for the XPENDING command.
 class StreamPendingSummaryMapper<K, V> implements StreamPendingMapper<K, V> {
   @override
-  StreamPendingSummary<K?, V> map(covariant ArrayReply reply, RedisCodec codec) {
+  StreamPendingSummary<K?, V> map(covariant ArrayReply reply, RedisCodec codec)
+  {
     final array = reply.array!;
 
     final pendingCount = codec.decode<int>(array[0]);
@@ -386,7 +389,8 @@ class StreamPendingSummaryMapper<K, V> implements StreamPendingMapper<K, V> {
         .toList();
   }
 
-  StreamPendingConsumer<K?, V> _mapConsumer(ArrayReply reply, RedisCodec codec) {
+  StreamPendingConsumer<K?, V> _mapConsumer(ArrayReply reply, RedisCodec codec)
+  {
     final array = reply.array!;
 
     final name = codec.decode<K>(array[0]);
@@ -414,7 +418,8 @@ class StreamPendingEntryMapper<K, V> implements StreamPendingMapper<K, V> {
     final deliveryTime = codec.decode<int>(array[2]);
     final deliveredCount = codec.decode<int>(array[3]);
 
-    return StreamPendingEntry<K?, V>(id, consumer, deliveryTime, deliveredCount);
+    return StreamPendingEntry<K?, V>(id, consumer, deliveryTime, 
+      deliveredCount);
   }
 }
 
@@ -534,7 +539,9 @@ class StreamInfoHelpMapper<K, V> implements StreamInfoMapper<K, V> {
 }
 
 /// A mapper to be used with some stream commands.
-class StreamsMapper<K, V> implements Mapper<Map<K?, List<StreamEntry<K?, V?>?>>?> {
+class StreamsMapper<K, V> implements 
+  Mapper<Map<K?, List<StreamEntry<K?, V?>?>>?>
+{
   final StreamMapper<K, V> _streamMapper = StreamMapper();
 
   @override
@@ -547,7 +554,8 @@ class StreamsMapper<K, V> implements Mapper<Map<K?, List<StreamEntry<K?, V?>?>>?
     }
 
     // ignore: prefer_collection_literals
-    final LinkedHashMap<K?, List<StreamEntry<K?, V?>?>> streams = LinkedHashMap<K?, List<StreamEntry<K, V>>>();
+    final LinkedHashMap<K?, List<StreamEntry<K?, V?>?>> streams = 
+      LinkedHashMap<K?, List<StreamEntry<K, V>>>();
 
     for (var item in items) {
       // ignore: avoid_as
