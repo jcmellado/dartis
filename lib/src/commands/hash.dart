@@ -14,7 +14,7 @@ abstract class HashCommands<K, V> {
   /// Returns the number of fields that were removed from the hash.
   ///
   /// See https://redis.io/commands/hdel
-  Future<int> hdel(K key, {K field, Iterable<K> fields = const []});
+  Future<int> hdel(K key, {K? field, Iterable<K> fields = const []});
 
   /// Ckecks if [field] is an existing field in the hash stored at [key].
   ///
@@ -64,18 +64,19 @@ abstract class HashCommands<K, V> {
   /// stored at [key].
   ///
   /// See https://redis.io/commands/hmget
-  Future<List<V>> hmget(K key, {K field, Iterable<K> fields = const []});
+  Future<List<V>> hmget(K key, {K? field, Iterable<K> fields = const []});
 
   /// Sets the specified fields to their respective values in the hash
   /// stored at [key].
   ///
   /// See https://redis.io/commands/hmset
-  Future<void> hmset(K key, {K field, V value, Map<K, V> hash = const {}});
+  Future<void> hmset(K key, {K? field, V? value, Map<K, V> hash = const {}});
 
   /// Incrementally iterates fields and values of a hash stored at [key].
   ///
   /// See https://redis.io/commands/hscan
-  Future<HashScanResult<K, V>> hscan(K key, int cursor, {K pattern, int count});
+  Future<HashScanResult<K, V>> hscan(K key, int cursor, 
+    {K? pattern, int? count});
 
   /// Sets [field] in the hash stored at [key] to [value].
   ///
@@ -109,10 +110,10 @@ abstract class HashCommands<K, V> {
 /// Result of the HSCAN command.
 class HashScanResult<K, V> {
   /// The cursor.
-  final int cursor;
+  final int? cursor;
 
   /// The fields.
-  final Map<K, V> fields;
+  final Map<K, V>? fields;
 
   /// Creates a [HashScanResult] instance.
   const HashScanResult(this.cursor, this.fields);
@@ -123,22 +124,22 @@ class HashScanResult<K, V> {
 }
 
 /// A mapper for the HSCAN command.
-class HashScanMapper<K, V> implements Mapper<HashScanResult<K, V>> {
+class HashScanMapper<K, V> implements Mapper<HashScanResult<K?, V?>> {
   @override
-  HashScanResult<K, V> map(covariant ArrayReply reply, RedisCodec codec) {
-    final cursor = codec.decode<int>(reply.array[0]);
+  HashScanResult<K?, V?> map(covariant ArrayReply reply, RedisCodec codec) {
+    final cursor = codec.decode<int>(reply.array![0]);
     // ignore: avoid_as
-    final fields = _mapHash(reply.array[1] as ArrayReply, codec);
+    final fields = _mapHash(reply.array![1] as ArrayReply, codec);
 
-    return HashScanResult<K, V>(cursor, fields);
+    return HashScanResult<K?, V?>(cursor, fields);
   }
 
   /// Maps a [reply] to a [Map] instance.
-  Map<K, V> _mapHash(ArrayReply reply, RedisCodec codec) {
+  Map<K?, V?> _mapHash(ArrayReply reply, RedisCodec codec) {
     // ignore: prefer_collection_literals
-    final hash = LinkedHashMap<K, V>();
+    final hash = LinkedHashMap<K?, V?>();
 
-    final array = reply.array;
+    final array = reply.array!;
     for (var i = 0; i < array.length; i += 2) {
       final key = codec.decode<K>(array[i]);
       final value = codec.decode<V>(array[i + 1]);
@@ -151,13 +152,13 @@ class HashScanMapper<K, V> implements Mapper<HashScanResult<K, V>> {
 }
 
 /// A mapper for the HGETALL command.
-class HashMapper<K, V> implements Mapper<Map<K, V>> {
+class HashMapper<K, V> implements Mapper<Map<K?, V?>> {
   @override
-  Map<K, V> map(covariant ArrayReply reply, RedisCodec codec) {
+  Map<K?, V?> map(covariant ArrayReply reply, RedisCodec codec) {
     // ignore: prefer_collection_literals
-    final hash = LinkedHashMap<K, V>();
+    final hash = LinkedHashMap<K?, V?>();
 
-    final array = reply.array;
+    final array = reply.array!;
     for (var i = 0; i < array.length; i += 2) {
       final key = codec.decode<K>(array[i]);
       final value = codec.decode<V>(array[i + 1]);

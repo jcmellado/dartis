@@ -2,11 +2,10 @@
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
 import 'dart:async' show Completer;
-import 'dart:io' show SocketException;
-
-import 'package:test/test.dart';
+import 'dart:io' show InternetAddress, SocketException;
 
 import 'package:dartis/dartis.dart';
+import 'package:test/test.dart';
 
 import '../fakesocket.dart';
 
@@ -69,10 +68,12 @@ void main() {
     });
 
     test('ping/pong using FakeSocket', () async {
+      final InternetAddress address = InternetAddress('127.0.0.1');
+      final InternetAddress remoteAddress = InternetAddress('127.0.0.1');
       // ignore: close_sinks
       final socket = FakeSocket([
         [RespToken.string, 80, 79, 78, 71, 13, 10]
-      ], null);
+      ], null, address: address, remoteAddress: remoteAddress);
       final connection = Connection(socket);
 
       final onData = Completer<List<int>>();
@@ -92,10 +93,13 @@ void main() {
     });
 
     test('broken connection using FakeSocket', () async {
+      final InternetAddress address = InternetAddress('127.0.0.1');
+      final InternetAddress remoteAddress = InternetAddress('127.0.0.1');
       // ignore: close_sinks
       final socket = FakeSocket([
         [RespToken.string, 80, 79, 78, 71, 13, 10]
-      ], const SocketException('bad fake connnection'));
+      ], const SocketException('bad fake connnection'),
+        address: address, remoteAddress: remoteAddress);
       final connection = Connection(socket);
 
       final onData = Completer<List<int>>();

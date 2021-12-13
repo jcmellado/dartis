@@ -1,15 +1,16 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-import 'package:test/test.dart';
+import 'dart:async';
 
 import 'package:dartis/dartis.dart';
+import 'package:test/test.dart';
 
 import '../util.dart' show uuid;
 
 void main() {
-  Client client;
-  ListCommands<String, String> commands;
+  late Client client;
+  late ListCommands<String?, String?> commands;
 
   setUp(() async {
     client = await Client.connect('redis://localhost:6379');
@@ -23,87 +24,99 @@ void main() {
   group('ListCommands', () {
     test('blpop', () async {
       // Add some elements.
-      final key1 = uuid();
-      final key2 = uuid();
+      final String key1 = uuid();
+      final String key2 = uuid();
       await commands.rpush(key1, values: ['a', 'b', 'c']);
       await commands.rpush(key2, values: ['d', 'e', 'f']);
 
       // Pop one element.
-      var result = await commands.blpop(key: key1);
+      var result = await (commands.blpop(key: key1) as 
+        FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key1));
       expect(result.value, equals('a'));
-      result = await commands.blpop(key: key1);
+      result = await (commands.blpop(key: key1) as 
+        FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key1));
       expect(result.value, equals('b'));
 
       // Pop some elements.
-      result = await commands.blpop(keys: [key1, key2]);
+      result = await (commands.blpop(keys: [key1, key2]) as 
+        FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key1));
       expect(result.value, equals('c'));
-      result = await commands.blpop(keys: [key1, key2]);
+      result = await (commands.blpop(keys: [key1, key2]) as 
+        FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key2));
       expect(result.value, equals('d'));
-      result = await commands.blpop(keys: [key1, key2]);
+      result = await (commands.blpop(keys: [key1, key2]) as 
+        FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key2));
       expect(result.value, equals('e'));
 
       // Pop blocking.
-      result = await commands.blpop(keys: [key1, key2], timeout: 1);
+      result = await (commands.blpop(keys: [key1, key2], timeout: 1) as 
+        FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key2));
       expect(result.value, equals('f'));
 
       // Try to pop from an empty or non existing list.
       expect(await commands.blpop(key: key2, timeout: 1), isNull);
 
-      final key3 = uuid();
+      final String key3 = uuid();
       expect(await commands.blpop(key: key3, timeout: 1), isNull);
     });
 
     test('brpop', () async {
       // Add some elements.
-      final key1 = uuid();
-      final key2 = uuid();
+      final String key1 = uuid();
+      final String key2 = uuid();
       await commands.rpush(key1, values: ['a', 'b', 'c']);
       await commands.rpush(key2, values: ['d', 'e', 'f']);
 
       // Pop one element.
-      var result = await commands.brpop(key: key1);
+      var result = await (commands.brpop(key: key1) as 
+        FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key1));
       expect(result.value, equals('c'));
-      result = await commands.brpop(key: key1);
+      result = await (commands.brpop(key: key1) as 
+        FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key1));
       expect(result.value, equals('b'));
 
       // Pop some elements.
-      result = await commands.brpop(keys: [key1, key2]);
+      result = await (commands.brpop(keys: [key1, key2]) as 
+        FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key1));
       expect(result.value, equals('a'));
-      result = await commands.brpop(keys: [key1, key2]);
+      result = await (commands.brpop(keys: [key1, key2]) as 
+        FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key2));
       expect(result.value, equals('f'));
-      result = await commands.brpop(keys: [key1, key2]);
+      result = await (commands.brpop(keys: [key1, key2]) as 
+        FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key2));
       expect(result.value, equals('e'));
 
       // Pop blocking.
-      result = await commands.brpop(keys: [key1, key2], timeout: 1);
+      result = await (commands.brpop(keys: [key1, key2], timeout: 1) as 
+        FutureOr<ListPopResult<String?, String?>>);
       expect(result.key, equals(key2));
       expect(result.value, equals('d'));
 
       // Try to pop from an empty or non existing list.
       expect(await commands.brpop(key: key2, timeout: 1), isNull);
 
-      final key3 = uuid();
+      final String key3 = uuid();
       expect(await commands.brpop(key: key3, timeout: 1), isNull);
     });
 
     test('brpoplpush', () async {
       // Add some elements.
-      final key1 = uuid();
+      final String key1 = uuid();
       await commands.rpush(key1, values: ['one', 'two', 'three']);
 
       // Pop and push.
-      final key2 = uuid();
+      final String key2 = uuid();
       expect(await commands.brpoplpush(key1, key2), equals('three'));
       expect(await commands.brpoplpush(key1, key2), equals('two'));
 
@@ -116,13 +129,13 @@ void main() {
       // Try to pop from empty or non existing list.
       expect(await commands.brpoplpush(key1, key2, timeout: 1), isNull);
 
-      final key3 = uuid();
+      final String key3 = uuid();
       expect(await commands.brpoplpush(key3, key2, timeout: 1), isNull);
     });
 
     test('lindex', () async {
       // Add some elements.
-      final key = uuid();
+      final String key = uuid();
       await commands.rpush(key, values: ['one', 'two', 'three']);
 
       // Get.
@@ -136,7 +149,7 @@ void main() {
 
     test('linsert', () async {
       // Add some elements.
-      final key = uuid();
+      final String key = uuid();
       await commands.rpush(key, values: ['one', 'two', 'three']);
 
       // Insert after.
@@ -160,7 +173,7 @@ void main() {
 
     test('llen', () async {
       // Add some elements.
-      final key1 = uuid();
+      final String key1 = uuid();
       await commands.rpush(key1, values: ['one', 'two', 'three']);
 
       // Get the length.
@@ -174,13 +187,13 @@ void main() {
       await commands.rpop(key1);
       expect(await commands.llen(key1), isZero);
 
-      final key2 = uuid();
+      final String key2 = uuid();
       expect(await commands.llen(key2), isZero);
     });
 
     test('lpop', () async {
       // Add some elements.
-      final key1 = uuid();
+      final String key1 = uuid();
       await commands.rpush(key1, values: ['one', 'two', 'three']);
 
       // Pop.
@@ -191,13 +204,13 @@ void main() {
       // Try to pop from an empty or non existing list.
       expect(await commands.lpop(key1), isNull);
 
-      final key2 = uuid();
+      final String key2 = uuid();
       expect(await commands.lpop(key2), isNull);
     });
 
     test('lpush', () async {
       // Push one element.
-      final key = uuid();
+      final String key = uuid();
       expect(await commands.lpush(key, value: 'one'), equals(1));
 
       // Push some elements.
@@ -206,7 +219,7 @@ void main() {
 
     test('lpushx', () async {
       // Try to push into non existing list.
-      final key = uuid();
+      final String key = uuid();
       expect(await commands.lpushx(key, 'one'), isZero);
 
       // Push.
@@ -217,7 +230,7 @@ void main() {
 
     test('lrange', () async {
       // Add some elements.
-      final key = uuid();
+      final String key = uuid();
       await commands.rpush(key, values: ['one', 'two', 'three']);
 
       // Get.
@@ -229,7 +242,7 @@ void main() {
 
     test('lrem', () async {
       // Add some elements.
-      final key = uuid();
+      final String key = uuid();
       await commands
           .rpush(key, values: ['one', 'two', 'two', 'three', 'three', 'three']);
 
@@ -242,7 +255,7 @@ void main() {
 
     test('lset', () async {
       // Add some elements.
-      final key = uuid();
+      final String key = uuid();
       await commands.rpush(key, values: ['one', 'two', 'three']);
 
       // Set.
@@ -257,7 +270,7 @@ void main() {
 
     test('ltrim', () async {
       // Add some elements.
-      final key = uuid();
+      final String key = uuid();
       await commands.rpush(key, values: ['one', 'two', 'three']);
 
       // Trim.
@@ -269,7 +282,7 @@ void main() {
 
     test('rpop', () async {
       // Add some elements.
-      final key1 = uuid();
+      final String key1 = uuid();
       await commands.rpush(key1, values: ['one', 'two', 'three']);
 
       // Pop.
@@ -280,17 +293,17 @@ void main() {
       // Try to pop from an empty or non existing list.
       expect(await commands.rpop(key1), isNull);
 
-      final key2 = uuid();
+      final String key2 = uuid();
       expect(await commands.rpop(key2), isNull);
     });
 
     test('rpoplpush', () async {
       // Add some elements.
-      final key1 = uuid();
+      final String key1 = uuid();
       await commands.rpush(key1, values: ['one', 'two', 'three']);
 
       // Pop and push.
-      final key2 = uuid();
+      final String key2 = uuid();
       expect(await commands.rpoplpush(key1, key2), equals('three'));
       expect(await commands.rpoplpush(key1, key2), equals('two'));
       expect(await commands.rpoplpush(key1, key2), equals('one'));
@@ -301,13 +314,13 @@ void main() {
       // Try to pop from and empty or non existing list.
       expect(await commands.rpoplpush(key1, key2), isNull);
 
-      final key3 = uuid();
+      final String key3 = uuid();
       expect(await commands.rpoplpush(key3, key2), isNull);
     });
 
     test('rpush', () async {
       // Push one element.
-      final key = uuid();
+      final String key = uuid();
       expect(await commands.rpush(key, value: 'one'), equals(1));
 
       // Push some elements.
@@ -316,7 +329,7 @@ void main() {
 
     test('rpushx', () async {
       // Try to push into non existing list.
-      final key = uuid();
+      final String key = uuid();
       expect(await commands.rpushx(key, 'one'), isZero);
 
       // Push.
@@ -335,7 +348,8 @@ void main() {
 
       group('ListPopResult', () {
         test('toString', () {
-          const value = ListPopResult<String, String>(null, null);
+          const ListPopResult<String?, String?> value = 
+            ListPopResult<String?, String?>(null, null);
           expect(
               value.toString(), startsWith('ListPopResult<String, String>:'));
         });

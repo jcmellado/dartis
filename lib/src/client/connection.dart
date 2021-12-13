@@ -15,7 +15,7 @@ class Connection {
   final StreamSubscription<List<int>> _subscription;
 
   /// Error handler from the latest listener.
-  void Function(Object, StackTrace) _onErrorListener;
+  void Function(Object, StackTrace?)? _onErrorListener;
 
   /// Implementation of [done].
   final Completer<void> _done = Completer<void>();
@@ -79,7 +79,7 @@ class Connection {
 
   /// Replaces the current event handlers.
   void listen(void Function(List<int> data) onData,
-      void Function(Object, [StackTrace]) onError, void Function() onDone) {
+      void Function(Object, [StackTrace?])? onError, void Function()? onDone) {
     _subscription
       ..onData(onData)
       ..onDone(onDone);
@@ -115,7 +115,7 @@ class Connection {
     log.info('Disconnected.');
   }
 
-  void _onError(Object error, [StackTrace stackTrace]) {
+  void _onError(Object error, [StackTrace? stackTrace]) {
     log.info('An error read/write to socket occured.', error, stackTrace);
 
     // Stop trying to send anything new.
@@ -129,7 +129,7 @@ class Connection {
       if (_onErrorListener == null) {
         throw error; // ignore: only_throw_errors
       }
-      _onErrorListener(error, stackTrace);
+      _onErrorListener!(error, stackTrace);
     } finally {
       // Ensure we cleanup, by destroying the socket.
       _socket.destroy();

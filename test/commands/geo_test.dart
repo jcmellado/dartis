@@ -1,15 +1,14 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-import 'package:test/test.dart';
-
 import 'package:dartis/dartis.dart';
+import 'package:test/test.dart';
 
 import '../util.dart' show uuid;
 
 void main() {
-  Client client;
-  GeoCommands<String, String> commands;
+  late Client client;
+  late GeoCommands<String, String?> commands;
 
   // Some items for testing.
   const item1 = GeoItem<String>(GeoPosition(-3.6827461, 40.4893538), 'Madrid');
@@ -111,15 +110,15 @@ void main() {
 
       // Get one position.
       var results = await commands.geopos(key1, member: 'Madrid');
-      expect(results[0].longitude, closeTo(-3.6827461, delta));
-      expect(results[0].latitude, closeTo(40.4893538, delta));
+      expect(results[0]!.longitude, closeTo(-3.6827461, delta));
+      expect(results[0]!.latitude, closeTo(40.4893538, delta));
 
       // Get some positions.
       results = await commands.geopos(key1, members: ['Valencia', 'Málaga']);
-      expect(results[0].longitude, closeTo(-0.3545661, delta));
-      expect(results[0].latitude, closeTo(39.4561165, delta));
-      expect(results[1].longitude, closeTo(-4.3971722, delta));
-      expect(results[1].latitude, closeTo(36.7585406, delta));
+      expect(results[0]!.longitude, closeTo(-0.3545661, delta));
+      expect(results[0]!.latitude, closeTo(39.4561165, delta));
+      expect(results[1]!.longitude, closeTo(-4.3971722, delta));
+      expect(results[1]!.latitude, closeTo(36.7585406, delta));
 
       // Get the position of a non existing member.
       final key2 = uuid();
@@ -159,8 +158,8 @@ void main() {
           key1, -0.2638491, 37.8234928, 200.0, GeoUnit.kilometer,
           withCoord: true);
       expect(results[0].member, 'Valencia');
-      expect(results[0].position.longitude, closeTo(-0.3545661, delta));
-      expect(results[0].position.latitude, closeTo(39.4561165, delta));
+      expect(results[0].position!.longitude, closeTo(-0.3545661, delta));
+      expect(results[0].position!.latitude, closeTo(39.4561165, delta));
       expect(results[0].hash, isNull);
       expect(results[0].distance, isNull);
 
@@ -169,8 +168,8 @@ void main() {
           key1, -0.2638491, 37.8234928, 200.0, GeoUnit.kilometer,
           withCoord: true, withHash: true);
       expect(results[0].member, 'Valencia');
-      expect(results[0].position.longitude, closeTo(-0.3545661, delta));
-      expect(results[0].position.latitude, closeTo(39.4561165, delta));
+      expect(results[0].position!.longitude, closeTo(-0.3545661, delta));
+      expect(results[0].position!.latitude, closeTo(39.4561165, delta));
       expect(results[0].hash, equals(1969199198234197));
       expect(results[0].distance, isNull);
 
@@ -179,8 +178,8 @@ void main() {
           key1, -0.2638491, 37.8234928, 200.0, GeoUnit.kilometer,
           withCoord: true, withHash: true, withDist: true);
       expect(results[0].member, 'Valencia');
-      expect(results[0].position.longitude, closeTo(-0.3545661, delta));
-      expect(results[0].position.latitude, closeTo(39.4561165, delta));
+      expect(results[0].position!.longitude, closeTo(-0.3545661, delta));
+      expect(results[0].position!.latitude, closeTo(39.4561165, delta));
       expect(results[0].hash, equals(1969199198234197));
       expect(results[0].distance, closeTo(181.7617, delta));
 
@@ -344,8 +343,8 @@ void main() {
           key1, 'Madrid', 400.0, GeoUnit.kilometer,
           withCoord: true);
       expect(results[0].member, 'Valencia');
-      expect(results[0].position.longitude, closeTo(-0.3545661, delta));
-      expect(results[0].position.latitude, closeTo(39.4561165, delta));
+      expect(results[0].position!.longitude, closeTo(-0.3545661, delta));
+      expect(results[0].position!.latitude, closeTo(39.4561165, delta));
       expect(results[0].hash, isNull);
       expect(results[0].distance, isNull);
 
@@ -354,8 +353,8 @@ void main() {
           key1, 'Madrid', 400.0, GeoUnit.kilometer,
           withCoord: true, withHash: true);
       expect(results[0].member, 'Valencia');
-      expect(results[0].position.longitude, closeTo(-0.3545661, delta));
-      expect(results[0].position.latitude, closeTo(39.4561165, delta));
+      expect(results[0].position!.longitude, closeTo(-0.3545661, delta));
+      expect(results[0].position!.latitude, closeTo(39.4561165, delta));
       expect(results[0].hash, equals(1969199198234197));
       expect(results[0].distance, isNull);
 
@@ -364,8 +363,8 @@ void main() {
           key1, 'Madrid', 400.0, GeoUnit.kilometer,
           withCoord: true, withHash: true, withDist: true);
       expect(results[0].member, 'Valencia');
-      expect(results[0].position.longitude, closeTo(-0.3545661, delta));
-      expect(results[0].position.latitude, closeTo(39.4561165, delta));
+      expect(results[0].position!.longitude, closeTo(-0.3545661, delta));
+      expect(results[0].position!.latitude, closeTo(39.4561165, delta));
       expect(results[0].hash, equals(1969199198234197));
       expect(results[0].distance, closeTo(306.0561, delta));
 
@@ -516,14 +515,14 @@ void main() {
 
       group('GeoItem', () {
         test('toString', () {
-          const value = GeoItem<String>(null, null);
+          const value = GeoItem<String?>(null, null);
           expect(value.toString(), startsWith('GeoItem<String>:'));
         });
       });
 
       group('GeoradiusResult', () {
         test('toString', () {
-          const value = GeoradiusResult<String>(null);
+          const value = GeoradiusResult<String?>(null);
           expect(value.toString(), startsWith('GeoradiusResult<String>:'));
         });
       });

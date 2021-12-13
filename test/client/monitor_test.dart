@@ -3,9 +3,8 @@
 
 import 'dart:async' show Completer;
 
-import 'package:test/test.dart';
-
 import 'package:dartis/dartis.dart';
+import 'package:test/test.dart';
 
 void main() {
   group('Monitor', () {

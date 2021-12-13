@@ -52,7 +52,7 @@ abstract class _ReaderBase implements Reader {
   @override
   bool get done => _done;
 
-  List<int> _takeBytes() {
+  List<int>? _takeBytes() {
     assert(_done);
 
     return _isNull ? null : _buffer.takeBytes();
@@ -124,12 +124,13 @@ abstract class _LineReader extends _ReaderBase {
 
 /// A reader that reads a length.
 abstract class _LengthReader extends _LineReader {
-  int _length;
+  late int _length;
 
   @override
   int read(Uint8List bytes, int start) {
     var end = start;
 
+    // ignore: unnecessary_null_comparison
     if (_length == null) {
       end = _readLength(bytes, start);
 
@@ -147,7 +148,7 @@ abstract class _LengthReader extends _LineReader {
     final end = super.read(bytes, start);
 
     if (_done) {
-      _length = int.parse(String.fromCharCodes(_takeBytes()));
+      _length = int.parse(String.fromCharCodes(_takeBytes()!));
 
       _isNull = _length == -1;
     }
@@ -186,7 +187,7 @@ abstract class _ArrayReader extends _LengthReader {
   final List<Reply> _array = [];
 
   /// Current reader.
-  Reader _reader;
+  Reader? _reader;
 
   @override
   int _readPayload(Uint8List bytes, int start) {
@@ -204,14 +205,14 @@ abstract class _ArrayReader extends _LengthReader {
       }
 
       // Reads.
-      end = _reader.read(bytes, end);
+      end = _reader!.read(bytes, end);
 
-      if (!_reader.done) {
+      if (!_reader!.done) {
         return end;
       }
 
       // Consumes the reply.
-      final reply = _reader.consume();
+      final reply = _reader!.consume();
       _array.add(reply);
       _reader = null;
 
