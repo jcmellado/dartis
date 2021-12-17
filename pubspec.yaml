@@ -1,6 +1,5 @@
 name: dartis
 version: 0.6.0
-author: Juan Mellado <jcmellado@gmail.com>
 homepage: https://github.com/jcmellado/dartis
 description: >-
   Redis client featuring type-safe commands, pipelining,
@@ -11,8 +10,8 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  logging: ^1.0.1
+  logging: ^1.0.2
 
 dev_dependencies:
-  test: ^1.14.2
-  uuid: ^3.0.4
+  test: ^1.20.0
+  uuid: ^3.0.5
