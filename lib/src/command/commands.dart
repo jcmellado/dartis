@@ -1134,7 +1134,7 @@ class Commands<K, V> extends ModuleBase
         maxlen == null ? null : r'MAXLEN',
         roughly ? r'~' : null,
         maxlen,
-        id == null ? r'*' : id,
+        id ?? r'*',
         field,
         value,
         ...fields.entries.expand((entry) => [entry.key, entry.value])

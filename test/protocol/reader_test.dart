@@ -7,6 +7,7 @@ import 'dart:typed_data' show Uint8List;
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 void main() {

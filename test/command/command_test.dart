@@ -5,6 +5,7 @@
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 class _ReverseMapper implements Mapper<String> {

@@ -7,6 +7,7 @@ import 'dart:convert' show utf8;
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 /// A encoder that encodes a [DateTime] to a list of bytes.
