@@ -54,7 +54,7 @@ void main() {
       // Try to pop from an empty or non existing sorted set.
       final key3 = uuid();
       expect(await commands.bzpopmax(key: key3, timeout: 1), isNull);
-    }, skip: 'Requires Redis 5.0.0.');
+    });
 
     test('bzpopmin', () async {
       // Add some elements.
@@ -89,7 +89,7 @@ void main() {
       // Try to pop from an empty or non existing sorted set.
       final key3 = uuid();
       expect(await commands.bzpopmin(key: key3, timeout: 1), isNull);
-    }, skip: 'Requires Redis 5.0.0.');
+    });
 
     test('zadd', () async {
       // Add one element.
@@ -229,7 +229,7 @@ void main() {
       expect(await commands.zpopmax(key, count: 2),
           allOf(containsPair('a', 1.0), containsPair('b', 2.0)));
       expect(await commands.zpopmax(key), isEmpty);
-    }, skip: 'Requires Redis 5.0.0.');
+    });
 
     test('zpopmin', () async {
       // Add some elements.
@@ -241,7 +241,7 @@ void main() {
       expect(await commands.zpopmin(key, count: 2),
           allOf(containsPair('b', 2.0), containsPair('c', 3.0)));
       expect(await commands.zpopmin(key), isEmpty);
-    }, skip: 'Requires Redis 5.0.0.');
+    });
 
     test('zrange', () async {
       // Add some elements.
