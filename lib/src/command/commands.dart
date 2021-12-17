@@ -707,7 +707,7 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<List<K>> commandGetkeys(List<Object> commandLine) =>
-      run<List<K>>(<Object>[r'COMMAND', r'GETKEYS', commandLine]);
+      run<List<K>>(<Object>[r'COMMAND', r'GETKEYS', ...commandLine]);
 
   @override
   Future<List<ClientCommand?>> commandInfo(
