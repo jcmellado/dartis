@@ -4,8 +4,6 @@
 import 'dart:async' show Future;
 import 'dart:collection' show LinkedHashMap;
 
-import 'package:dartis/dartis.dart';
-
 import '../command.dart';
 import '../exception.dart';
 import '../protocol.dart';
