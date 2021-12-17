@@ -518,12 +518,14 @@ class CommandMapper implements Mapper<List<ClientCommand?>> {
   const CommandMapper();
 
   @override
-  List<ClientCommand?> map(covariant ArrayReply reply, RedisCodec codec) => reply
-      .array!
-      .map((value) =>
-          // ignore: avoid_as
-          value.value == null ? null : _mapCommand(value as ArrayReply, codec))
-      .toList();
+  List<ClientCommand?> map(covariant ArrayReply reply, RedisCodec codec) =>
+      reply.array!
+          .map((value) =>
+              // ignore: avoid_as
+              value.value == null
+                  ? null
+                  : _mapCommand(value as ArrayReply, codec))
+          .toList();
 
   /// Maps a [reply] to a [ClientCommand] instance.
   ClientCommand _mapCommand(ArrayReply reply, RedisCodec codec) {

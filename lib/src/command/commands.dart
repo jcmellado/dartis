@@ -139,15 +139,19 @@ class Commands<K, V> extends ModuleBase
   Future<int> geoadd(K key,
           {GeoItem<V?>? item, Iterable<GeoItem<V?>> items = const []}) =>
       run<int>(<Object?>[
-        r'GEOADD', key,
+        r'GEOADD',
+        key,
         ..._expandGeoItem(item),
         ...items.expand(_expandGeoItem)
       ]);
 
   List<Object?> _expandGeoItem(GeoItem<Object?>? item) => item == null
       ? <Object>[]
-      : <Object?>[item.position!.longitude,
-    item.position!.latitude, item.member];
+      : <Object?>[
+          item.position!.longitude,
+          item.position!.latitude,
+          item.member
+        ];
 
   @override
   Future<double> geodist(K key, V? member1, V? member2, {GeoUnit? unit}) =>
@@ -288,10 +292,15 @@ class Commands<K, V> extends ModuleBase
       run<List<V>>(<Object?>[r'HMGET', key, field, ...fields]);
 
   @override
-  Future<void> hmset(K? key, {K? field, V? value,
-    Map<K?, V?> hash = const {}}) =>
-      run<void>(<Object?>[r'HMSET', key, field, value,
-        ...hash.entries.expand((entry) => [entry.key, entry.value])]);
+  Future<void> hmset(K? key,
+          {K? field, V? value, Map<K?, V?> hash = const {}}) =>
+      run<void>(<Object?>[
+        r'HMSET',
+        key,
+        field,
+        value,
+        ...hash.entries.expand((entry) => [entry.key, entry.value])
+      ]);
 
   @override
   Future<HashScanResult<K?, V?>> hscan(K? key, int cursor,
@@ -512,15 +521,13 @@ class Commands<K, V> extends ModuleBase
   @override
   Future<ListPopResult<K?, V?>?> blpop(
           {K? key, Iterable<K?> keys = const [], int timeout = 0}) =>
-      run<ListPopResult<K?, V?>?>(
-          <Object?>[r'BLPOP', key, ...keys, timeout],
+      run<ListPopResult<K?, V?>?>(<Object?>[r'BLPOP', key, ...keys, timeout],
           mapper: ListPopResultMapper<K, V>());
 
   @override
   Future<ListPopResult<K?, V?>?> brpop(
           {K? key, Iterable<K?> keys = const [], int timeout = 0}) =>
-      run<ListPopResult<K?, V?>?>(
-          <Object?>[r'BRPOP', key, ...keys, timeout],
+      run<ListPopResult<K?, V?>?>(<Object?>[r'BRPOP', key, ...keys, timeout],
           mapper: ListPopResultMapper<K, V>());
 
   @override
@@ -529,8 +536,8 @@ class Commands<K, V> extends ModuleBase
           mapper: BrpoplpushMapper<V>());
 
   @override
-  Future<V> lindex(K? key, int index) => run<V>(
-      <Object?>[r'LINDEX', key, index]);
+  Future<V> lindex(K? key, int index) =>
+      run<V>(<Object?>[r'LINDEX', key, index]);
 
   @override
   Future<int> linsert(K? key, InsertPosition position, V? pivot, V? value) =>
@@ -594,8 +601,7 @@ class Commands<K, V> extends ModuleBase
   @override
   Future<List<PubsubResult<K?>>> pubsubNumsub(
           {Iterable<K?> channels = const []}) =>
-      run<List<PubsubResult<K?>>>(
-          <Object?>[r'PUBSUB', r'NUMSUB', ...channels],
+      run<List<PubsubResult<K?>>>(<Object?>[r'PUBSUB', r'NUMSUB', ...channels],
           mapper: PubsubResultMapper<K>());
 
   @override
@@ -616,8 +622,7 @@ class Commands<K, V> extends ModuleBase
           {Iterable<K> keys = const [],
           Iterable<Object> args = const [],
           Mapper<T>? mapper}) =>
-      run<T>(
-          <Object?>[r'EVALSHA', sha1, keys.length, ...keys, ...args],
+      run<T>(<Object?>[r'EVALSHA', sha1, keys.length, ...keys, ...args],
           mapper: mapper);
 
   @override
@@ -654,13 +659,12 @@ class Commands<K, V> extends ModuleBase
   @override
   Future<int?> clientKill(
           {String? ipPort, Iterable<ClientFilter> filters = const []}) =>
-      run<int?>(
-          <Object?>[
-            r'CLIENT',
-            r'KILL',
-            ipPort,
-          ...filters.expand(_expandClientFilter)
-          ], mapper: clientKillMapper);
+      run<int?>(<Object?>[
+        r'CLIENT',
+        r'KILL',
+        ipPort,
+        ...filters.expand(_expandClientFilter)
+      ], mapper: clientKillMapper);
 
   List<Object?> _expandClientFilter(ClientFilter filter) => <Object?>[
         filter.clientId == null ? null : r'ID',
@@ -892,7 +896,7 @@ class Commands<K, V> extends ModuleBase
   Future<SortedSetPopResult<K?, V?>?> bzpopmax(
           {K? key, Iterable<K?> keys = const [], int timeout = 0}) =>
       run<SortedSetPopResult<K?, V?>?>(
-          <Object?>[r'BZPOPMAX', key, ...keys, timeout ],
+          <Object?>[r'BZPOPMAX', key, ...keys, timeout],
           mapper: SortedSetPopResultMapper<K, V>());
 
   @override
@@ -1125,7 +1129,8 @@ class Commands<K, V> extends ModuleBase
           int? maxlen,
           bool roughly = false}) =>
       run<K>(<Object?>[
-        r'XADD', key,
+        r'XADD',
+        key,
         maxlen == null ? null : r'MAXLEN',
         roughly ? r'~' : null,
         maxlen,
@@ -1133,7 +1138,7 @@ class Commands<K, V> extends ModuleBase
         field,
         value,
         ...fields.entries.expand((entry) => [entry.key, entry.value])
-        ]);
+      ]);
 
   @override
   Future<Object> xclaim(K? key, K? group, K? consumer, int minIdleTime,
@@ -1144,25 +1149,23 @@ class Commands<K, V> extends ModuleBase
           int? retryCount,
           bool force = false,
           bool justId = false}) =>
-      run<Object>(
-          <Object?>[
-            r'XCLAIM',
-            key,
-            group,
-            consumer,
-            minIdleTime,
-            id,
-            ...ids,
-            idle == null ? null : r'IDLE',
-            idle,
-            idleTimestamp == null ? null : r'TIME',
-            idleTimestamp,
-            retryCount == null ? null : r'RETRYCOUNT',
-            retryCount,
-            force ? r'FORCE' : null,
-            justId ? r'JUSTID' : null
-          ],
-          mapper: StreamClaimMapper<K, V>(justId: justId));
+      run<Object>(<Object?>[
+        r'XCLAIM',
+        key,
+        group,
+        consumer,
+        minIdleTime,
+        id,
+        ...ids,
+        idle == null ? null : r'IDLE',
+        idle,
+        idleTimestamp == null ? null : r'TIME',
+        idleTimestamp,
+        retryCount == null ? null : r'RETRYCOUNT',
+        retryCount,
+        force ? r'FORCE' : null,
+        justId ? r'JUSTID' : null
+      ], mapper: StreamClaimMapper<K, V>(justId: justId));
 
   @override
   Future<int> xdel(K? key, {K? id, Iterable<K?> ids = const []}) =>
@@ -1171,10 +1174,15 @@ class Commands<K, V> extends ModuleBase
   @override
   Future<Object?> xgroup(StreamGroupSubcommand subcommand,
           {K? key, K? group, K? id, K? consumer, bool mkstream = false}) =>
-      run<Object?>(
-          <Object?>[r'XGROUP', subcommand.name, key, group, id, consumer,
-            mkstream ? r'MKSTREAM' : null],
-          mapper: streamGroupMapper);
+      run<Object?>(<Object?>[
+        r'XGROUP',
+        subcommand.name,
+        key,
+        group,
+        id,
+        consumer,
+        mkstream ? r'MKSTREAM' : null
+      ], mapper: streamGroupMapper);
 
   @override
   Future<Object> xinfo(StreamInfoSubcommand subcommand, {K? key, K? group}) =>
@@ -1198,13 +1206,15 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<List<StreamEntry<K?, V?>?>> xrange(K? key, K? start, K? end,
-      {int? count}) =>
-      run<List<StreamEntry<K?, V?>?>>(
-          <Object?>[r'XRANGE', key, start, end,
-            count == null ? null : r'COUNT',
-            count
-            ],
-          mapper: StreamMapper<K, V>());
+          {int? count}) =>
+      run<List<StreamEntry<K?, V?>?>>(<Object?>[
+        r'XRANGE',
+        key,
+        start,
+        end,
+        count == null ? null : r'COUNT',
+        count
+      ], mapper: StreamMapper<K, V>());
 
   @override
   Future<Map<K?, List<StreamEntry<K?, V?>?>>?> xread(
@@ -1214,18 +1224,18 @@ class Commands<K, V> extends ModuleBase
           Iterable<K?> ids = const [],
           int? count,
           int? timeout}) =>
-      run<Map<K?, List<StreamEntry<K?, V?>?>>?>(
-          <Object?>[r'XREAD',
-            count == null ? null : r'COUNT',
-            count,
-            timeout == null ? null : r'BLOCK',
-            timeout,
-            r'STREAMS',
-            key,
-            ...keys,
-            id,
-            ...ids
-          ], mapper: StreamsMapper<K, V>());
+      run<Map<K?, List<StreamEntry<K?, V?>?>>?>(<Object?>[
+        r'XREAD',
+        count == null ? null : r'COUNT',
+        count,
+        timeout == null ? null : r'BLOCK',
+        timeout,
+        r'STREAMS',
+        key,
+        ...keys,
+        id,
+        ...ids
+      ], mapper: StreamsMapper<K, V>());
 
   @override
   Future<Map<K?, List<StreamEntry<K?, V?>?>>?> xreadgroup(K? group, K? consumer,
@@ -1236,37 +1246,38 @@ class Commands<K, V> extends ModuleBase
           int? count,
           int? timeout,
           bool noack = false}) =>
-      run<Map<K?, List<StreamEntry<K?, V?>?>>?>(
-          <Object?>[
-            r'XREADGROUP',
-            r'GROUP',
-            group,
-            consumer,
-            count == null ? null : r'COUNT',
-            count,
-            timeout == null ? null : r'BLOCK',
-            timeout,
-            noack ? r'NOACK' : null,
-            r'STREAMS',
-            key,
-            ...keys,
-            id,
-            ...ids
-            ], mapper: StreamsMapper<K, V>());
+      run<Map<K?, List<StreamEntry<K?, V?>?>>?>(<Object?>[
+        r'XREADGROUP',
+        r'GROUP',
+        group,
+        consumer,
+        count == null ? null : r'COUNT',
+        count,
+        timeout == null ? null : r'BLOCK',
+        timeout,
+        noack ? r'NOACK' : null,
+        r'STREAMS',
+        key,
+        ...keys,
+        id,
+        ...ids
+      ], mapper: StreamsMapper<K, V>());
 
   @override
   Future<List<StreamEntry<K?, V?>?>> xrevrange(K? key, K? end, K? start,
           {int? count}) =>
-      run<List<StreamEntry<K?, V?>?>>(
-          <Object?>[r'XREVRANGE', key, end, start,
-            count == null ? null : r'COUNT',
-            count],
-          mapper: StreamMapper<K, V>());
+      run<List<StreamEntry<K?, V?>?>>(<Object?>[
+        r'XREVRANGE',
+        key,
+        end,
+        start,
+        count == null ? null : r'COUNT',
+        count
+      ], mapper: StreamMapper<K, V>());
 
   @override
-  Future<int> xtrim(K? key, int maxlen, {bool roughly = false}) =>
-      run<int>(<Object?>[r'XTRIM', key, r'MAXLEN',
-        roughly ? r'~' : null, maxlen]);
+  Future<int> xtrim(K? key, int maxlen, {bool roughly = false}) => run<int>(
+      <Object?>[r'XTRIM', key, r'MAXLEN', roughly ? r'~' : null, maxlen]);
 
   // Strings.
 
@@ -1282,8 +1293,8 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<List<int>> bitfield(K key, List<BitfieldOperation> operations) =>
-      run<List<int>>(<Object?>[r'BITFIELD', key,
-        ...operations.expand(_expandBitfield)]);
+      run<List<int>>(
+          <Object?>[r'BITFIELD', key, ...operations.expand(_expandBitfield)]);
 
   List<Object?> _expandBitfield(BitfieldOperation operation) => <Object?>[
         operation.overflow == null ? null : r'OVERFLOW',
@@ -1341,15 +1352,21 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<void> mset({K? key, V? value, Map<K, V> map = const {}}) =>
-      run<void>(<Object?>[r'MSET', key, value,
+      run<void>(<Object?>[
+        r'MSET',
+        key,
+        value,
         ...map.entries.expand((entry) => [entry.key, entry.value])
       ]);
 
   @override
   Future<int> msetnx({K? key, V? value, Map<K, V> map = const {}}) =>
-      run<int>(<Object?>[r'MSETNX', key, value,
+      run<int>(<Object?>[
+        r'MSETNX',
+        key,
+        value,
         ...map.entries.expand((entry) => [entry.key, entry.value])
-  ]);
+      ]);
 
   @override
   Future<void> psetex(K key, int milliseconds, V value) =>

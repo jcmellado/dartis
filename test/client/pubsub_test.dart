@@ -215,7 +215,9 @@ void main() {
 
       // Ping.
       final message = uuid();
-      pubsub..ping()..ping(message);
+      pubsub
+        ..ping()
+        ..ping(message);
 
       expect(
           pubsub.stream,

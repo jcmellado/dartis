@@ -64,7 +64,10 @@ void main() {
 
       // Run some commands.
       // ignore: unawaited_futures
-      client.asCommands<String, String>()..ping()..ping()..ping();
+      client.asCommands<String, String>()
+        ..ping()
+        ..ping()
+        ..ping();
 
       // Flush.
       final futures = client.flush();
