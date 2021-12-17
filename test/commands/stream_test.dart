@@ -127,7 +127,7 @@ void main() {
 
       result1 = await commands.xclaim(key2, group2, consumer4, 0, id: id1);
       expect(result1, isA<List>());
-      // ignore: avoid_as
+
       final result2 = result1 as List<StreamEntry<String, String>>;
       expect(result2, hasLength(1));
       expect(result2[0].id, equals(id1));
@@ -153,7 +153,7 @@ void main() {
           force: true,
           justId: true);
       expect(result1, isA<List>());
-      // ignore: avoid_as
+
       final result3 = result1 as List<String>;
       expect(result3, hasLength(1));
       expect(result3[0], equals(id2));
@@ -331,7 +331,7 @@ void main() {
 
       var result1 = await commands.xpending(key1, group1);
       expect(result1, isA<StreamPendingSummary>());
-      // ignore: avoid_as
+
       var result2 = result1 as StreamPendingSummary<String, String>;
       expect(result2.pendingCount, equals(0));
       expect(result2.firstEntryId, isNull);
@@ -352,7 +352,7 @@ void main() {
 
       result1 = await commands.xpending(key2, group2);
       expect(result1, isA<StreamPendingSummary>());
-      // ignore: avoid_as
+
       result2 = result1 as StreamPendingSummary<String, String>;
       expect(result2.pendingCount, equals(2));
       expect(result2.firstEntryId, equals(id1));
@@ -374,7 +374,7 @@ void main() {
       var result3 =
           await commands.xpending(key3, group3, start: '-', end: '+', count: 1);
       expect(result3, isA<List>());
-      // ignore: avoid_as
+
       var result4 = result3 as List<StreamPendingEntry<String, String>>;
       expect(result4, isEmpty);
 
@@ -393,7 +393,7 @@ void main() {
       result3 =
           await commands.xpending(key4, group4, start: '-', end: '+', count: 2);
       expect(result3, isA<List>());
-      // ignore: avoid_as
+
       result4 = result3 as List<StreamPendingEntry<String, String>>;
       expect(result4, hasLength(2));
       expect(result4[0].id, equals(id3));
@@ -420,7 +420,7 @@ void main() {
       result3 = await commands.xpending(key5, group5,
           start: '-', end: '+', count: 1, consumer: consumer7);
       expect(result3, isA<List>());
-      // ignore: avoid_as
+
       result4 = result3 as List<StreamPendingEntry<String, String>>;
       expect(result4, hasLength(1));
       expect(result4[0].id, equals(id5));

@@ -100,7 +100,6 @@ abstract class _MultiConverter {
   T? convert<T>(Object? value, RedisCodec codec) {
     for (final converter in _converters) {
       if (converter.supports<T>(value)) {
-        // ignore: avoid_as
         return converter.convert(value, codec) as T?;
       }
     }

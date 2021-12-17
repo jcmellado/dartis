@@ -72,7 +72,6 @@ class Transaction {
     if (reply.value == null) {
       _discard(command, reply, codec);
     } else {
-      // ignore: avoid_as
       _dequeue(command, reply as ArrayReply, codec);
     }
   }

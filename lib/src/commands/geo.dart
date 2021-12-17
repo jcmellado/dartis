@@ -195,7 +195,6 @@ class GeoPositionMapper implements Mapper<List<GeoPosition?>> {
   @override
   List<GeoPosition?> map(covariant ArrayReply reply, RedisCodec codec) =>
       reply.array!
-          // ignore: avoid_as
           .map((value) => _mapPosition(value as ArrayReply, codec))
           .toList();
 
@@ -235,7 +234,6 @@ class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V?>>> {
 
     for (final reply in reply.array!) {
       if (withCoord || withDist || withHash) {
-        // ignore: avoid_as
         final result = _mapResult(reply as ArrayReply, codec);
         results.add(result);
       } else {
@@ -266,7 +264,6 @@ class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V?>>> {
 
     GeoPosition? position;
     if (withCoord) {
-      // ignore: avoid_as
       position = _mapPosition(array[index++] as ArrayReply, codec);
     }
 

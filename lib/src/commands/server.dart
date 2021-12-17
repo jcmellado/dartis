@@ -520,11 +520,9 @@ class CommandMapper implements Mapper<List<ClientCommand?>> {
   @override
   List<ClientCommand?> map(covariant ArrayReply reply, RedisCodec codec) =>
       reply.array!
-          .map((value) =>
-              // ignore: avoid_as
-              value.value == null
-                  ? null
-                  : _mapCommand(value as ArrayReply, codec))
+          .map((value) => value.value == null
+              ? null
+              : _mapCommand(value as ArrayReply, codec))
           .toList();
 
   /// Maps a [reply] to a [ClientCommand] instance.
@@ -676,7 +674,6 @@ class RoleMapper implements Mapper<Role> {
     final array = reply.array!;
 
     final offset = codec.decode<int>(array[1]);
-    // ignore: avoid_as
     final slaves = _mapSlaves(array[2] as ArrayReply, codec);
 
     return MasterRole(offset, slaves);
@@ -684,7 +681,6 @@ class RoleMapper implements Mapper<Role> {
 
   /// Maps a [reply] to a list of [Slave] instances.
   List<Slave> _mapSlaves(ArrayReply reply, RedisCodec codec) => reply.array!
-      // ignore: avoid_as
       .map((value) => _mapSlaveItem(value as ArrayReply, codec))
       .toList();
 
@@ -727,7 +723,6 @@ class SlowLogMapper implements Mapper<List<SlowLogEntry>> {
   @override
   List<SlowLogEntry> map(covariant ArrayReply reply, RedisCodec codec) =>
       reply.array!
-          // ignore: avoid_as
           .map((value) => _mapEntry(value as ArrayReply, codec))
           .toList();
 

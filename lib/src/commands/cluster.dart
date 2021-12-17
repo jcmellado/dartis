@@ -249,7 +249,6 @@ class ClusterSlotRangeMapper implements Mapper<List<ClusterSlotRange>> {
   @override
   List<ClusterSlotRange> map(covariant ArrayReply reply, RedisCodec codec) =>
       reply.array!
-          // ignore: avoid_as
           .map((value) => _mapRange(value as ArrayReply, codec))
           .toList();
 
@@ -262,7 +261,6 @@ class ClusterSlotRangeMapper implements Mapper<List<ClusterSlotRange>> {
     final nodes = <ClusterNode>[];
 
     for (var i = 2; i < array.length; i++) {
-      // ignore: avoid_as
       final node = _mapNode(array[i] as ArrayReply, codec);
 
       nodes.add(node);

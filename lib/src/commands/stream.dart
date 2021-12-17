@@ -372,7 +372,6 @@ class StreamPendingSummaryMapper<K, V> implements StreamPendingMapper<K, V> {
     final pendingCount = codec.decode<int>(array[0]);
     final firstEntryId = codec.decode<K>(array[1]);
     final lastEntryId = codec.decode<K>(array[2]);
-    // ignore: avoid_as
     final consumers = _mapConsumers(array[3] as ArrayReply, codec);
 
     return StreamPendingSummary<K?, V>(
@@ -388,7 +387,6 @@ class StreamPendingSummaryMapper<K, V> implements StreamPendingMapper<K, V> {
     }
 
     return array
-        // ignore: avoid_as
         .map((entry) => _mapConsumer(entry as ArrayReply, codec))
         .toList();
   }
@@ -410,7 +408,6 @@ class StreamPendingEntryMapper<K, V> implements StreamPendingMapper<K, V> {
   List<StreamPendingEntry<K?, V>> map(
           covariant ArrayReply reply, RedisCodec codec) =>
       reply.array!
-          // ignore: avoid_as
           .map((entry) => _mapEntry(entry as ArrayReply, codec))
           .toList();
 
@@ -479,7 +476,6 @@ class StreamMapInfoMapper<K, V> implements StreamInfoMapper<K, V> {
 abstract class StreamListMapInfoMapper<K, V> extends StreamMapInfoMapper<K, V> {
   @override
   Object map(covariant ArrayReply reply, RedisCodec codec) => reply.array!
-      // ignore: avoid_as
       .map((entry) => super.map(entry as ArrayReply, codec))
       .toList();
 }
@@ -561,11 +557,8 @@ class StreamsMapper<K, V>
         LinkedHashMap<K?, List<StreamEntry<K, V>>>();
 
     for (var item in items) {
-      // ignore: avoid_as
       final entry = item as ArrayReply;
-
       final key = codec.decode<K>(entry.array![0]);
-      // ignore: avoid_as
       final stream = _streamMapper.map(entry.array![1] as ArrayReply, codec);
 
       streams[key] = stream;
@@ -601,11 +594,9 @@ class StreamEntryMapper<K, V> implements Mapper<StreamEntry<K?, V?>?> {
       return null;
     }
 
-    // ignore: avoid_as
     final entry = reply.array!;
 
     final id = codec.decode<K>(entry[0]);
-    // ignore: avoid_as
     final fields = _fieldsMapper.map(entry[1] as ArrayReply, codec);
 
     return StreamEntry<K?, V?>(id, fields);

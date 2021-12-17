@@ -3,8 +3,6 @@
 
 // @dart=2.9
 
-// ignore_for_file: avoid_as
-
 import 'dart:typed_data' show Uint8List;
 
 import 'package:test/test.dart';

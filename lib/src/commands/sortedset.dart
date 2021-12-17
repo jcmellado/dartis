@@ -297,7 +297,6 @@ class SortedSetScanMapper<K> implements Mapper<SortedSetScanResult<K?>> {
   @override
   SortedSetScanResult<K?> map(covariant ArrayReply reply, RedisCodec codec) {
     final cursor = codec.decode<int>(reply.array![0]);
-    // ignore: avoid_as
     final members = _mapSet(reply.array![1] as ArrayReply, codec);
 
     return SortedSetScanResult<K?>(cursor, members);

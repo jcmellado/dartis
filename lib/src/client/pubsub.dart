@@ -209,7 +209,6 @@ class _PubSubDispatcher<K, V> extends ReplyDispatcher {
       throw RedisException('Unexpected server reply: $reply.');
     }
 
-    // ignore: avoid_as
     final event = _onEvent(reply);
     _controller.add(event);
   }
