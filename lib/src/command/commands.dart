@@ -1169,7 +1169,7 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<int> xdel(K? key, {K? id, Iterable<K?> ids = const []}) =>
-      run<int>(<Object?>[r'XDEL', key, id, ids]);
+      run<int>(<Object?>[r'XDEL', key, id, ...ids]);
 
   @override
   Future<Object?> xgroup(StreamGroupSubcommand subcommand,
