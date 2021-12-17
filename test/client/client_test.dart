@@ -63,10 +63,12 @@ void main() {
         ..pipeline();
 
       // Run some commands.
-      // ignore: unawaited_futures
       client.asCommands<String, String>()
+        // ignore: unawaited_futures
         ..ping()
+        // ignore: unawaited_futures
         ..ping()
+        // ignore: unawaited_futures
         ..ping();
 
       // Flush.
