@@ -117,11 +117,11 @@ class Commands<K, V> extends ModuleBase
   Future<void> auth(String password) => run<void>(<Object>[r'AUTH', password]);
 
   @override
-  Future<String> echo(String? message) =>
+  Future<String?> echo(String? message) =>
       run<String>(<Object?>[r'ECHO', message]);
 
   @override
-  Future<String> ping([String? message]) =>
+  Future<String?> ping([String? message]) =>
       run<String>(<Object?>[r'PING', message]);
 
   @override
