@@ -329,12 +329,12 @@ class Commands<K, V> extends ModuleBase
   // HyperLogLogs.
 
   @override
-  Future<int> pfadd(K key, {V? element, Iterable<V> elements = const []}) =>
-      run<int>(<Object?>[r'PFADD', key, element, ...elements]);
+  Future<int?> pfadd(K key, {V? element, Iterable<V> elements = const []}) =>
+      run<int?>(<Object?>[r'PFADD', key, element, ...elements]);
 
   @override
-  Future<int> pfcount({K? key, Iterable<K> keys = const []}) =>
-      run<int>(<Object?>[r'PFCOUNT', key, ...keys]);
+  Future<int?> pfcount({K? key, Iterable<K> keys = const []}) =>
+      run<int?>(<Object?>[r'PFCOUNT', key, ...keys]);
 
   @override
   Future<void> pfmerge(K destkey,
