@@ -1,8 +1,6 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-// @dart=2.9
-
 import 'package:test/test.dart';
 
 // ignore: directives_ordering
@@ -11,8 +9,8 @@ import 'package:dartis/dartis.dart';
 import '../util.dart' show uuid;
 
 void main() {
-  Client client;
-  HashCommands<String, String> commands;
+  late Client client;
+  late HashCommands<String, String> commands;
 
   setUp(() async {
     client = await Client.connect('redis://localhost:6379');
@@ -195,7 +193,7 @@ void main() {
 
       // Scan.
       var result = await commands.hscan(key1, 0);
-      expect(result.cursor, equals(0));
+      expect(result!.cursor, equals(0));
       expect(result.fields, hasLength(3));
       expect(
           result.fields,
@@ -204,18 +202,18 @@ void main() {
 
       // Scan with a hint.
       result = await commands.hscan(key1, 0, count: 5);
-      expect(result.cursor, isZero);
+      expect(result!.cursor, isZero);
       expect(result.fields, hasLength(3));
 
       // Scan with a pattern.
       result = await commands.hscan(key1, 0, pattern: 'a*');
-      expect(result.cursor, isZero);
+      expect(result!.cursor, isZero);
       expect(result.fields, hasLength(1));
 
       // Try to scan an empty or non existing hash.
       final key2 = uuid();
       result = await commands.hscan(key2, 0);
-      expect(result.cursor, isZero);
+      expect(result!.cursor, isZero);
       expect(result.fields, isEmpty);
     });
 
@@ -275,7 +273,7 @@ void main() {
     group('support', () {
       group('HashScanResult', () {
         test('toString', () {
-          const value = HashScanResult<String, String>(null, null);
+          const value = HashScanResult<String, String>(0, {});
           expect(
               value.toString(), startsWith('HashScanResult<String, String>:'));
         });

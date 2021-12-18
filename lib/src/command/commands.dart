@@ -13,7 +13,7 @@ class Commands<K, V> extends ModuleBase
         ClusterCommands<K>,
         ConnectionCommands,
         GeoCommands<K, V>,
-        HashCommands<K?, V?>,
+        HashCommands<K, V>,
         HyperLogLogCommands<K, V>,
         KeyCommands<K, V>,
         ListCommands<K?, V?>,
@@ -256,41 +256,40 @@ class Commands<K, V> extends ModuleBase
   // Hashes.
 
   @override
-  Future<int> hdel(K? key, {K? field, Iterable<K?> fields = const []}) =>
-      run<int>(<Object?>[r'HDEL', key, field, ...fields]);
+  Future<int?> hdel(K key, {K? field, Iterable<K> fields = const []}) =>
+      run<int?>(<Object?>[r'HDEL', key, field, ...fields]);
 
   @override
-  Future<int> hexists(K? key, K? field) =>
-      run<int>(<Object?>[r'HEXISTS', key, field]);
+  Future<int?> hexists(K key, K field) =>
+      run<int?>(<Object?>[r'HEXISTS', key, field]);
 
   @override
-  Future<V> hget(K? key, K? field) => run<V>(<Object?>[r'HGET', key, field]);
+  Future<V?> hget(K key, K field) => run<V?>(<Object?>[r'HGET', key, field]);
 
   @override
-  Future<Map<K?, V?>> hgetall(K? key) =>
-      run<Map<K?, V?>>(<Object?>[r'HGETALL', key], mapper: HashMapper<K, V>());
+  Future<Map<K, V?>?> hgetall(K key) =>
+      run<Map<K, V?>?>(<Object?>[r'HGETALL', key], mapper: HashMapper<K, V?>());
 
   @override
-  Future<int> hincrby(K? key, K? field, int increment) =>
-      run<int>(<Object?>[r'HINCRBY', key, field, increment]);
+  Future<int?> hincrby(K key, K field, int increment) =>
+      run<int?>(<Object?>[r'HINCRBY', key, field, increment]);
 
   @override
-  Future<double> hincrbyfloat(K? key, K? field, double increment) =>
-      run<double>(<Object?>[r'HINCRBYFLOAT', key, field, increment]);
+  Future<double?> hincrbyfloat(K key, K field, double increment) =>
+      run<double?>(<Object?>[r'HINCRBYFLOAT', key, field, increment]);
 
   @override
-  Future<List<K>> hkeys(K? key) => run<List<K>>(<Object?>[r'HKEYS', key]);
+  Future<List<K>?> hkeys(K key) => run<List<K>?>(<Object?>[r'HKEYS', key]);
 
   @override
-  Future<int> hlen(K? key) => run<int>(<Object?>[r'HLEN', key]);
+  Future<int?> hlen(K key) => run<int?>(<Object?>[r'HLEN', key]);
 
   @override
-  Future<List<V>> hmget(K? key, {K? field, Iterable<K?> fields = const []}) =>
-      run<List<V>>(<Object?>[r'HMGET', key, field, ...fields]);
+  Future<List<V>?> hmget(K key, {K? field, Iterable<K> fields = const []}) =>
+      run<List<V>?>(<Object?>[r'HMGET', key, field, ...fields]);
 
   @override
-  Future<void> hmset(K? key,
-          {K? field, V? value, Map<K?, V?> hash = const {}}) =>
+  Future<void> hmset(K key, {K? field, V? value, Map<K, V?> hash = const {}}) =>
       run<void>(<Object?>[
         r'HMSET',
         key,
@@ -300,9 +299,9 @@ class Commands<K, V> extends ModuleBase
       ]);
 
   @override
-  Future<HashScanResult<K?, V?>> hscan(K? key, int cursor,
+  Future<HashScanResult<K, V?>?> hscan(K key, int cursor,
           {K? pattern, int? count}) =>
-      run<HashScanResult<K?, V?>>(<void>[
+      run<HashScanResult<K, V?>?>(<void>[
         r'HSCAN',
         key,
         cursor,
@@ -310,22 +309,22 @@ class Commands<K, V> extends ModuleBase
         pattern,
         count == null ? null : r'COUNT',
         count
-      ], mapper: HashScanMapper<K, V>());
+      ], mapper: HashScanMapper<K, V?>());
 
   @override
-  Future<int> hset(K? key, K? field, V? value) =>
-      run<int>(<Object?>[r'HSET', key, field, value]);
+  Future<int?> hset(K key, K field, V? value) =>
+      run<int?>(<Object?>[r'HSET', key, field, value]);
 
   @override
-  Future<int> hsetnx(K? key, K? field, V? value) =>
-      run<int>(<Object?>[r'HSETNX', key, field, value]);
+  Future<int?> hsetnx(K key, K field, V? value) =>
+      run<int?>(<Object?>[r'HSETNX', key, field, value]);
 
   @override
-  Future<int> hstrlen(K? key, K? field) =>
-      run<int>(<Object?>[r'HSTRLEN', key, field]);
+  Future<int?> hstrlen(K key, K field) =>
+      run<int?>(<Object?>[r'HSTRLEN', key, field]);
 
   @override
-  Future<List<V>> hvals(K? key) => run<List<V>>(<Object?>[r'HVALS', key]);
+  Future<List<V?>?> hvals(K? key) => run<List<V?>?>(<Object?>[r'HVALS', key]);
 
   // HyperLogLogs.
 
