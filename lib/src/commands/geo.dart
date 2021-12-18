@@ -20,27 +20,27 @@ abstract class GeoCommands<K, V> {
   /// Returns the number of elements added to the sorted set.
   ///
   /// See https://redis.io/commands/geoadd
-  Future<int> geoadd(K key,
+  Future<int?> geoadd(K key,
       {GeoItem<V>? item, Iterable<GeoItem<V>> items = const []});
 
   /// Returns the distance between two members in the geospatial index
   /// represented by the sorted set stored at [key].
   ///
   /// See https://redis.io/commands/geodist
-  Future<double> geodist(K key, V member1, V member2, {GeoUnit? unit});
+  Future<double?> geodist(K key, V member1, V member2, {GeoUnit? unit});
 
   /// Returns members of a geospatial index represented by the sorted set
   /// stored at [key] as standard geohash strings.
   ///
   /// See https://redis.io/commands/geohash
-  Future<List<String>> geohash(K key,
+  Future<List<String>?> geohash(K key,
       {V? member, Iterable<V> members = const []});
 
   /// Returns the positions (longitude, latitude) of all the specified members
   /// of the geospatial index represented by the sorted set stored at [key].
   ///
   /// See https://redis.io/commands/geopos
-  Future<List<GeoPosition?>> geopos(K key,
+  Future<List<GeoPosition?>?> geopos(K key,
       {V? member, Iterable<V> members = const []});
 
   /// Queries a geospatial index represented by the sorted set stored at [key]
@@ -49,7 +49,7 @@ abstract class GeoCommands<K, V> {
   /// See [georadiusStore].
   ///
   /// See https://redis.io/commands/georadius
-  Future<List<GeoradiusResult<V>>> georadius(
+  Future<List<GeoradiusResult<V>>?> georadius(
       K key, double longitude, double latitude, double radius, GeoUnit unit,
       {bool withCoord = false,
       bool withDist = false,
@@ -74,7 +74,7 @@ abstract class GeoCommands<K, V> {
   /// See [georadiusbymemberStore].
   ///
   /// See https://redis.io/commands/georadiusbymember
-  Future<List<GeoradiusResult<V>>> georadiusbymember(
+  Future<List<GeoradiusResult<V>>?> georadiusbymember(
       K key, V member, double radius, GeoUnit unit,
       {bool withCoord = false,
       bool withDist = false,
@@ -137,10 +137,10 @@ class GeoOrder {
 /// A geospatial position represented by its longitude and latitude.
 class GeoPosition {
   /// The longitude.
-  final double? longitude;
+  final double longitude;
 
   /// The latitude.
-  final double? latitude;
+  final double latitude;
 
   /// Creates a [GeoPosition] instance.
   const GeoPosition(this.longitude, this.latitude);
@@ -153,7 +153,7 @@ class GeoPosition {
 /// A item to be added with the GEOADD command.
 class GeoItem<V> {
   /// The position.
-  final GeoPosition? position;
+  final GeoPosition position;
 
   /// The member.
   final V member;
@@ -209,12 +209,12 @@ class GeoPositionMapper implements Mapper<List<GeoPosition?>> {
     final longitude = codec.decode<double>(array[0]);
     final latitude = codec.decode<double>(array[1]);
 
-    return GeoPosition(longitude, latitude);
+    return GeoPosition(longitude!, latitude!);
   }
 }
 
 /// A mapper to be used with the GEORADIUS family commands.
-class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V?>>> {
+class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V>>> {
   /// Return the distance of the returned items from the specified center.
   final bool withCoord;
 
@@ -229,8 +229,8 @@ class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V?>>> {
       {this.withCoord = false, this.withDist = false, this.withHash = false});
 
   @override
-  List<GeoradiusResult<V?>> map(covariant ArrayReply reply, RedisCodec codec) {
-    final List<GeoradiusResult<V?>> results = <GeoradiusResult<V>>[];
+  List<GeoradiusResult<V>> map(covariant ArrayReply reply, RedisCodec codec) {
+    final results = <GeoradiusResult<V>>[];
 
     for (final reply in reply.array!) {
       if (withCoord || withDist || withHash) {
@@ -238,7 +238,7 @@ class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V?>>> {
         results.add(result);
       } else {
         final member = codec.decode<V>(reply);
-        results.add(GeoradiusResult<V?>(member));
+        results.add(GeoradiusResult<V>(member!));
       }
     }
 
@@ -246,7 +246,7 @@ class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V?>>> {
   }
 
   /// Maps a [reply] to a [GeoradiusResult] instance.
-  GeoradiusResult<V?> _mapResult(ArrayReply reply, RedisCodec codec) {
+  GeoradiusResult<V> _mapResult(ArrayReply reply, RedisCodec codec) {
     final array = reply.array!;
     var index = 0;
 
@@ -267,7 +267,7 @@ class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V?>>> {
       position = _mapPosition(array[index++] as ArrayReply, codec);
     }
 
-    return GeoradiusResult<V?>(member,
+    return GeoradiusResult<V>(member!,
         distance: distance, hash: hash, position: position);
   }
 
@@ -276,7 +276,7 @@ class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V?>>> {
     final longitude = codec.decode<double>(reply.array![0]);
     final latitude = codec.decode<double>(reply.array![1]);
 
-    return GeoPosition(longitude, latitude);
+    return GeoPosition(longitude!, latitude!);
   }
 }
 

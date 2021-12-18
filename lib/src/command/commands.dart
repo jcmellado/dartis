@@ -12,7 +12,7 @@ class Commands<K, V> extends ModuleBase
     implements
         ClusterCommands<K>,
         ConnectionCommands,
-        GeoCommands<K, V?>,
+        GeoCommands<K, V>,
         HashCommands<K?, V?>,
         HyperLogLogCommands<K, V>,
         KeyCommands<K, V>,
@@ -137,47 +137,43 @@ class Commands<K, V> extends ModuleBase
   // Geo.
 
   @override
-  Future<int> geoadd(K key,
-          {GeoItem<V?>? item, Iterable<GeoItem<V?>> items = const []}) =>
-      run<int>(<Object?>[
+  Future<int?> geoadd(K key,
+          {GeoItem<V>? item, Iterable<GeoItem<V>> items = const []}) =>
+      run<int?>(<Object?>[
         r'GEOADD',
         key,
         ..._expandGeoItem(item),
         ...items.expand(_expandGeoItem)
       ]);
 
-  List<Object?> _expandGeoItem(GeoItem<Object?>? item) => item == null
-      ? <Object>[]
-      : <Object?>[
-          item.position!.longitude,
-          item.position!.latitude,
-          item.member
-        ];
+  List<Object?> _expandGeoItem(GeoItem<V>? item) => item == null
+      ? <Object?>[]
+      : <Object?>[item.position.longitude, item.position.latitude, item.member];
 
   @override
-  Future<double> geodist(K key, V? member1, V? member2, {GeoUnit? unit}) =>
-      run<double>(<Object?>[r'GEODIST', key, member1, member2, unit?.name]);
+  Future<double?> geodist(K key, V member1, V member2, {GeoUnit? unit}) =>
+      run<double?>(<Object?>[r'GEODIST', key, member1, member2, unit?.name]);
 
   @override
-  Future<List<String>> geohash(K key,
-          {V? member, Iterable<V?> members = const []}) =>
-      run<List<String>>(<Object?>[r'GEOHASH', key, member, ...members]);
+  Future<List<String>?> geohash(K key,
+          {V? member, Iterable<V> members = const []}) =>
+      run<List<String>?>(<Object?>[r'GEOHASH', key, member, ...members]);
 
   @override
-  Future<List<GeoPosition?>> geopos(K key,
-          {V? member, Iterable<V?> members = const []}) =>
-      run<List<GeoPosition?>>(<Object?>[r'GEOPOS', key, member, ...members],
+  Future<List<GeoPosition?>?> geopos(K key,
+          {V? member, Iterable<V> members = const []}) =>
+      run<List<GeoPosition?>?>(<Object?>[r'GEOPOS', key, member, ...members],
           mapper: geoPositionMapper);
 
   @override
-  Future<List<GeoradiusResult<V?>>> georadius(
+  Future<List<GeoradiusResult<V>>?> georadius(
           K key, double longitude, double latitude, double radius, GeoUnit unit,
           {bool withCoord = false,
           bool withDist = false,
           bool withHash = false,
           int? count,
           GeoOrder? order}) =>
-      run<List<GeoradiusResult<V?>>>(<Object?>[
+      run<List<GeoradiusResult<V>>?>(<Object?>[
         r'GEORADIUS_RO',
         key,
         longitude,
@@ -215,14 +211,14 @@ class Commands<K, V> extends ModuleBase
       ], mapper: geoRadiusStoreMapper);
 
   @override
-  Future<List<GeoradiusResult<V?>>> georadiusbymember(
-          K key, V? member, double radius, GeoUnit unit,
+  Future<List<GeoradiusResult<V>>?> georadiusbymember(
+          K key, V member, double radius, GeoUnit unit,
           {bool withCoord = false,
           bool withDist = false,
           bool withHash = false,
           int? count,
           GeoOrder? order}) =>
-      run<List<GeoradiusResult<V?>>>(<Object?>[
+      run<List<GeoradiusResult<V>>?>(<Object?>[
         r'GEORADIUSBYMEMBER_RO',
         key,
         member,
@@ -240,7 +236,7 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<int?> georadiusbymemberStore(
-          K key, V? member, double radius, GeoUnit unit,
+          K key, V member, double radius, GeoUnit unit,
           {int? count, GeoOrder? order, K? storeKey, K? storeDistKey}) =>
       run<int?>(<Object?>[
         r'GEORADIUSBYMEMBER',
