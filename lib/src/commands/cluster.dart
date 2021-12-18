@@ -23,12 +23,12 @@ abstract class ClusterCommands<K> {
   /// Returns the number of failure reports active for a given node.
   ///
   /// See https://redis.io/commands/cluster-count-failure-reports
-  Future<int> clusterCountFailureReports(String nodeId);
+  Future<int?> clusterCountFailureReports(String nodeId);
 
   /// Returns the number of local keys in the specified hash [slot].
   ///
   /// See https://redis.io/commands/cluster-countkeysinslot
-  Future<int> clusterCountkeysinslot(int slot);
+  Future<int?> clusterCountkeysinslot(int slot);
 
   /// Sets hash slots as unbound in receiving node.
   ///
@@ -50,17 +50,17 @@ abstract class ClusterCommands<K> {
   /// of keys to return is specified via the [count] argument.
   ///
   /// See https://redis.io/commands/cluster-getkeysinslot
-  Future<List<K>> clusterGetkeysinslot(int slot, int count);
+  Future<List<K>?> clusterGetkeysinslot(int slot, int count);
 
   /// Provides info about Redis Cluster node state.
   ///
   /// See https://redis.io/commands/cluster-info
-  Future<Map<String, String>> clusterInfo();
+  Future<Map<String, String>?> clusterInfo();
 
   /// Returns the hash slot number of the specified [key].
   ///
   /// See https://redis.io/commands/cluster-keyslot
-  Future<int> clusterKeyslot(K key);
+  Future<int?> clusterKeyslot(K key);
 
   /// Forces a node cluster to handshake with another node.
   ///
@@ -71,7 +71,7 @@ abstract class ClusterCommands<K> {
   /// we are contacting.
   ///
   /// See https://redis.io/commands/cluster-nodes
-  Future<String> clusterNodes();
+  Future<String?> clusterNodes();
 
   /// Reconfigures a node as a slave of the specified master node.
   ///
@@ -102,12 +102,12 @@ abstract class ClusterCommands<K> {
   /// Lists slave nodes of the specified master node.
   ///
   /// See https://redis.io/commands/cluster-slaves
-  Future<String> clusterSlaves(String nodeId);
+  Future<String?> clusterSlaves(String nodeId);
 
   /// Returns details about which cluster slots map to which Redis instances.
   ///
   /// See https://redis.io/commands/cluster-slots
-  Future<List<ClusterSlotRange>> clusterSlots();
+  Future<List<ClusterSlotRange>?> clusterSlots();
 
   /// Enables read queries for a connection to a Redis Cluster slave node.
   ///

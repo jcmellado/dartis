@@ -35,12 +35,12 @@ class Commands<K, V> extends ModuleBase
       run<void>(<Object?>[r'CLUSTER', r'ADDSLOTS', slot, ...slots]);
 
   @override
-  Future<int> clusterCountFailureReports(String nodeId) =>
-      run<int>(<Object>[r'CLUSTER', r'COUNT-FAILURE-REPORTS', nodeId]);
+  Future<int?> clusterCountFailureReports(String nodeId) =>
+      run<int?>(<Object>[r'CLUSTER', r'COUNT-FAILURE-REPORTS', nodeId]);
 
   @override
-  Future<int> clusterCountkeysinslot(int slot) =>
-      run<int>(<Object>[r'CLUSTER', r'COUNTKEYSINSLOT', slot]);
+  Future<int?> clusterCountkeysinslot(int slot) =>
+      run<int?>(<Object>[r'CLUSTER', r'COUNTKEYSINSLOT', slot]);
 
   @override
   Future<void> clusterDelslots({int? slot, Iterable<int> slots = const []}) =>
@@ -55,24 +55,25 @@ class Commands<K, V> extends ModuleBase
       run<void>(<Object>[r'CLUSTER', r'FORGET', nodeId]);
 
   @override
-  Future<List<K>> clusterGetkeysinslot(int slot, int count) =>
-      run<List<K>>(<Object>[r'CLUSTER', r'GETKEYSINSLOT', slot, count]);
+  Future<List<K>?> clusterGetkeysinslot(int slot, int count) =>
+      run<List<K>?>(<Object>[r'CLUSTER', r'GETKEYSINSLOT', slot, count]);
 
   @override
-  Future<Map<String, String>> clusterInfo() =>
-      run<Map<String, String>>(<Object>[r'CLUSTER', r'INFO'],
+  Future<Map<String, String>?> clusterInfo() =>
+      run<Map<String, String>?>(<Object>[r'CLUSTER', r'INFO'],
           mapper: clusterInfoMapper);
 
   @override
-  Future<int> clusterKeyslot(K key) =>
-      run<int>(<Object?>[r'CLUSTER', r'KEYSLOT', key]);
+  Future<int?> clusterKeyslot(K key) =>
+      run<int?>(<Object?>[r'CLUSTER', r'KEYSLOT', key]);
 
   @override
   Future<void> clusterMeet(String ip, int port) =>
       run<void>(<Object>[r'CLUSTER', r'MEET', ip, port]);
 
   @override
-  Future<String> clusterNodes() => run<String>(<Object>[r'CLUSTER', r'NODES']);
+  Future<String?> clusterNodes() =>
+      run<String?>(<Object>[r'CLUSTER', r'NODES']);
 
   @override
   Future<void> clusterReplicate(String nodeId) =>
@@ -96,12 +97,12 @@ class Commands<K, V> extends ModuleBase
       run<void>(<Object?>[r'CLUSTER', r'SETSLOT', slot, command.name, nodeId]);
 
   @override
-  Future<String> clusterSlaves(String nodeId) =>
-      run<String>(<Object>[r'CLUSTER', r'SLAVES', nodeId]);
+  Future<String?> clusterSlaves(String nodeId) =>
+      run<String?>(<Object>[r'CLUSTER', r'SLAVES', nodeId]);
 
   @override
-  Future<List<ClusterSlotRange>> clusterSlots() =>
-      run<List<ClusterSlotRange>>(<Object>[r'CLUSTER', r'SLOTS'],
+  Future<List<ClusterSlotRange>?> clusterSlots() =>
+      run<List<ClusterSlotRange>?>(<Object>[r'CLUSTER', r'SLOTS'],
           mapper: clusterSlotRangeMapper);
 
   @override
