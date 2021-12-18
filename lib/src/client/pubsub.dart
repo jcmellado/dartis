@@ -183,7 +183,8 @@ class PubSub<K, V> {
   Future<void> disconnect() => _dispatcher.disconnect();
 
   void _run(Iterable<Object?> line) {
-    final withoutNulls = line.where((value) => value != null);
+    final withoutNulls =
+        line.where((value) => value != null).map((value) => value!);
 
     _dispatcher.dispatch(withoutNulls);
   }
@@ -198,7 +199,7 @@ class _PubSubDispatcher<K, V> extends ReplyDispatcher {
 
   Stream<PubSubEvent> get stream => _controller.stream;
 
-  void dispatch(Iterable<Object?> line) {
+  void dispatch(Iterable<Object> line) {
     final bytes = writer.write(line, codec);
     send(bytes);
   }

@@ -1,8 +1,6 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-// @dart=2.9
-
 import 'package:test/test.dart';
 
 // ignore: directives_ordering
@@ -74,14 +72,14 @@ void main() {
 
         final replies = reply.array;
         expect(
-            replies.map((reply) => reply.value).toList(),
+            replies!.map((reply) => reply.value).toList(),
             equals([
               [65, 66, 67],
               [49, 50, 51],
               [1, 2, 3]
             ]));
         expect(
-            reply.array.map((reply) => reply.value).toList(),
+            reply.array!.map((reply) => reply.value).toList(),
             equals([
               [65, 66, 67],
               [49, 50, 51],

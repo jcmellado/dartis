@@ -21,7 +21,7 @@ abstract class Command<T> {
       CommandBase<T>(line, mapper: mapper);
 
   /// Returns the original command [line] used to create this command.
-  Iterable<Object?> get line;
+  Iterable<Object> get line;
 
   /// Returns the [future] that is completed by this command.
   Future<T> get future;
@@ -41,7 +41,7 @@ class CommandBase<T> implements Command<T> {
   final Completer<T> _completer = Completer<T>();
 
   /// The original command line.
-  final Iterable<Object?> _line;
+  final Iterable<Object> _line;
 
   /// The optional mapper.
   final Mapper<T>? _mapper;
@@ -51,11 +51,11 @@ class CommandBase<T> implements Command<T> {
   ///
   /// Null values are removed from the given command line.
   CommandBase(Iterable<Object?> line, {Mapper<T>? mapper})
-      : _line = line.where((value) => value != null),
+      : _line = line.where((value) => value != null).map((value) => value!),
         _mapper = mapper;
 
   @override
-  Iterable<Object?> get line => _line;
+  Iterable<Object> get line => _line;
 
   @override
   Future<T> get future => _completer.future;
