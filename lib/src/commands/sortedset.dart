@@ -13,15 +13,15 @@ abstract class SortedSetCommands<K, V> {
   /// sorted sets, or blocks until one is available.
   ///
   /// See https://redis.io/commands/bzpopmax
-  Future<SortedSetPopResult<K, V>> bzpopmax(
-      {K key, Iterable<K> keys = const [], int timeout = 0});
+  Future<SortedSetPopResult<K, V>?> bzpopmax(
+      {K? key, Iterable<K> keys = const [], int timeout = 0});
 
   /// Removes and returns the member with the lowest score from one or more
   /// sorted sets, or blocks until one is available.
   ///
   /// See https://redis.io/commands/bzpopmin
-  Future<SortedSetPopResult<K, V>> bzpopmin(
-      {K key, Iterable<K> keys = const [], int timeout = 0});
+  Future<SortedSetPopResult<K, V>?> bzpopmin(
+      {K? key, Iterable<K> keys = const [], int timeout = 0});
 
   /// Adds one or more members to a sorted set, or updates its score if it
   /// already exists.
@@ -32,10 +32,10 @@ abstract class SortedSetCommands<K, V> {
   ///
   /// See https://redis.io/commands/zadd
   Future<int> zadd(K key,
-      {SortedSetExistMode mode,
+      {SortedSetExistMode? mode,
       bool changed = false,
-      double score,
-      V member,
+      double? score,
+      V? member,
       Map<V, double> set = const {}});
 
   /// Increments the score of a member of a sorted set.
@@ -45,8 +45,8 @@ abstract class SortedSetCommands<K, V> {
   /// See [zadd] and [zincrby].
   ///
   /// See https://redis.io/commands/zadd
-  Future<double> zaddIncr(K key, double score, V member,
-      {SortedSetExistMode mode});
+  Future<double?> zaddIncr(K key, double score, V member,
+      {SortedSetExistMode? mode});
 
   /// Returns the cardinality (number of elements) of the sorted set stored
   /// at [key].
@@ -76,7 +76,7 @@ abstract class SortedSetCommands<K, V> {
   ///
   /// See https://redis.io/commands/zinterstore
   Future<int> zinterstore(K destination, List<K> keys,
-      {Iterable<double> weights = const [], AggregateMode mode});
+      {Iterable<double> weights = const [], AggregateMode? mode});
 
   /// Counts the number of members in a sorted set between a given
   /// lexicographical range.
@@ -92,7 +92,7 @@ abstract class SortedSetCommands<K, V> {
   /// Returns the list of popped scores and elements.
   ///
   /// See https://redis.io/commands/zpopmax
-  Future<Map<V, double>> zpopmax(K key, {int count});
+  Future<Map<V, double?>?> zpopmax(K key, {int? count});
 
   /// Removes and returns up to [count] members with the lowest scores in
   /// the sorted set stored at [key].
@@ -100,37 +100,37 @@ abstract class SortedSetCommands<K, V> {
   /// Returns the list of popped scores and elements.
   ///
   /// See https://redis.io/commands/zpopmin
-  Future<Map<V, double>> zpopmin(K key, {int count});
+  Future<Map<V, double?>?> zpopmin(K key, {int? count});
 
   /// Returns the specified range of elements in the sorted set stored at [key].
   ///
   /// See https://redis.io/commands/zrange
-  Future<Map<V, double>> zrange(K key, int start, int stop,
+  Future<Map<V, double?>?> zrange(K key, int start, int stop,
       {bool withScores = false});
 
   /// Returns a range of members in a sorted set, by lexicographical range.
   ///
   /// See https://redis.io/commands/zrangebylex
-  Future<List<V>> zrangebylex(K key, V min, V max, {int offset, int count});
+  Future<List<V>> zrangebylex(K key, V min, V max, {int? offset, int? count});
 
   /// Returns a range of members in a sorted set, by score.
   ///
   /// See https://redis.io/commands/zrangebyscore
-  Future<Map<V, double>> zrangebyscore(K key, String min, String max,
-      {bool withScores = false, int offset, int count});
+  Future<Map<V, double?>?> zrangebyscore(K key, String min, String max,
+      {bool withScores = false, int? offset, int? count});
 
   /// Returns the rank of member in the sorted set stored at [key], with
   /// the scores ordered from low to high.
   ///
   /// See https://redis.io/commands/zrank
-  Future<int> zrank(K key, V member);
+  Future<int?> zrank(K key, V member);
 
   /// Removes the specified members from the sorted set stored at [key].
   ///
   /// Returns the number of members removed from the sorted set.
   ///
   /// See https://redis.io/commands/zrem
-  Future<int> zrem(K key, {V member, Iterable<V> members = const []});
+  Future<int> zrem(K key, {V? member, Iterable<V> members = const []});
 
   /// Removes all members in a sorted set between the given lexicographical
   /// range.
@@ -157,38 +157,39 @@ abstract class SortedSetCommands<K, V> {
   /// Returns the specified range of elements in the sorted set stored at [key].
   ///
   /// See https://redis.io/commands/zrevrange
-  Future<Map<V, double>> zrevrange(K key, int start, int stop,
+  Future<Map<V, double?>?> zrevrange(K key, int start, int stop,
       {bool withScores = false});
 
   /// Returns a range of members in a sorted set, by lexicographical range,
   /// ordered from higher to lower strings.
   ///
   /// See https://redis.io/commands/zrevrangebylex
-  Future<List<V>> zrevrangebylex(K key, V max, V min, {int offset, int count});
+  Future<List<V>> zrevrangebylex(K key, V max, V min,
+      {int? offset, int? count});
 
   /// Returns a range of members in a sorted set, by score, with scores
   /// ordered from high to low.
   ///
   /// See https://redis.io/commands/zrevrangebyscore
-  Future<Map<V, double>> zrevrangebyscore(K key, String max, String min,
-      {bool withScores = false, int offset, int count});
+  Future<Map<V, double?>?> zrevrangebyscore(K key, String max, String min,
+      {bool withScores = false, int? offset, int? count});
 
   /// Returns the rank of member in the sorted set stored at [key], with
   /// the scores ordered from high to low.
   ///
   /// See https://redis.io/commands/zrevrank
-  Future<int> zrevrank(K key, V member);
+  Future<int?> zrevrank(K key, V member);
 
   /// Incrementally iterates members and scores of a sorted set stored at [key].
   ///
   /// See https://redis.io/commands/zscan
   Future<SortedSetScanResult<K>> zscan(K key, int cursor,
-      {K pattern, int count});
+      {K? pattern, int? count});
 
   /// Returns the score of [member] in the sorted set at [key].
   ///
   /// See https://redis.io/commands/zscore
-  Future<double> zscore(K key, V member);
+  Future<double?> zscore(K key, V member);
 
   /// Adds multiple sorted sets and stores the resulting sorted set in a
   /// new key.
@@ -197,7 +198,7 @@ abstract class SortedSetCommands<K, V> {
   ///
   /// See https://redis.io/commands/zunionstore
   Future<int> zunionstore(K destination, List<K> keys,
-      {Iterable<double> weights = const [], AggregateMode mode});
+      {Iterable<double> weights = const [], AggregateMode? mode});
 }
 
 /// Modes allowed for the ZADD command.
@@ -245,7 +246,7 @@ class SortedSetPopResult<K, V> {
   final K key;
 
   /// The member.
-  final MapEntry<V, double> member;
+  final MapEntry<V, double?>? member;
 
   /// Creates a [SortedSetMapper] instance.
   const SortedSetPopResult(this.key, this.member);
@@ -257,10 +258,10 @@ class SortedSetPopResult<K, V> {
 /// Result of the ZSCAN command.
 class SortedSetScanResult<K> {
   /// The cursor.
-  final int cursor;
+  final int? cursor;
 
   /// The members with theirs scores.
-  final Map<K, double> members;
+  final Map<K?, double?>? members;
 
   /// Creates a [SortedSetScanResult] instance.
   const SortedSetScanResult(this.cursor, this.members);
@@ -277,10 +278,6 @@ class SortedSetPopResultMapper<K, V>
   SortedSetPopResult<K, V> map(covariant ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
-    if (array == null) {
-      return null;
-    }
-
     final key = codec.decode<K>(array[0]);
     final value = codec.decode<V>(array[1]);
     final score = codec.decode<double>(array[2]);
@@ -295,7 +292,6 @@ class SortedSetScanMapper<K> implements Mapper<SortedSetScanResult<K>> {
   @override
   SortedSetScanResult<K> map(covariant ArrayReply reply, RedisCodec codec) {
     final cursor = codec.decode<int>(reply.array[0]);
-    // ignore: avoid_as
     final members = _mapSet(reply.array[1] as ArrayReply, codec);
 
     return SortedSetScanResult<K>(cursor, members);
@@ -319,7 +315,7 @@ class SortedSetScanMapper<K> implements Mapper<SortedSetScanResult<K>> {
 }
 
 /// A mapper to be used with some sorted set commands.
-class SortedSetMapper<V> implements Mapper<Map<V, double>> {
+class SortedSetMapper<V> implements Mapper<Map<V, double?>> {
   /// Retrieves the scores.
   final bool withScores;
 
@@ -327,15 +323,11 @@ class SortedSetMapper<V> implements Mapper<Map<V, double>> {
   SortedSetMapper({this.withScores = false});
 
   @override
-  Map<V, double> map(covariant ArrayReply reply, RedisCodec codec) {
+  Map<V, double?> map(covariant ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
-    if (array == null) {
-      return null;
-    }
-
     // ignore: prefer_collection_literals
-    final set = LinkedHashMap<V, double>();
+    final set = LinkedHashMap<V, double?>();
 
     final incr = withScores ? 2 : 1;
 

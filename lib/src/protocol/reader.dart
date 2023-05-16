@@ -1,9 +1,8 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-import 'dart:io' show BytesBuilder;
 import 'dart:math' show min, max;
-import 'dart:typed_data' show Uint8List;
+import 'dart:typed_data' show BytesBuilder, Uint8List;
 
 import '../exception.dart';
 import 'reply.dart';
@@ -54,27 +53,28 @@ abstract class _ReaderBase implements Reader {
 
   List<int> _takeBytes() {
     assert(_done);
+    assert(!_isNull);
 
-    return _isNull ? null : _buffer.takeBytes();
+    return _buffer.takeBytes();
   }
 }
 
 /// A reader that reads a RESP simple string.
 class _StringReplyReader extends _LineReader {
   @override
-  Reply consume() => StringReply(_takeBytes());
+  Reply consume() => _isNull ? nullReply : StringReply(_takeBytes());
 }
 
 /// A reader that reads a RESP integer.
 class _IntReplyReader extends _LineReader {
   @override
-  Reply consume() => IntReply(_takeBytes());
+  Reply consume() => _isNull ? nullReply : IntReply(_takeBytes());
 }
 
 /// A reader that reads a RESP bulk string.
 class _BulkReplyReader extends _BulkReader {
   @override
-  Reply consume() => BulkReply(_takeBytes());
+  Reply consume() => _isNull ? nullReply : BulkReply(_takeBytes());
 }
 
 /// A reader that reads a RESP array.
@@ -83,7 +83,10 @@ class _ArrayReplyReader extends _ArrayReader {
   Reply consume() {
     assert(_done);
 
-    return ArrayReply(_isNull ? null : _array);
+    if (_isNull) {
+      return nullReply;
+    }
+    return ArrayReply(_array);
   }
 }
 
@@ -124,7 +127,7 @@ abstract class _LineReader extends _ReaderBase {
 
 /// A reader that reads a length.
 abstract class _LengthReader extends _LineReader {
-  int _length;
+  int? _length;
 
   @override
   int read(Uint8List bytes, int start) {
@@ -162,9 +165,9 @@ abstract class _LengthReader extends _LineReader {
 abstract class _BulkReader extends _LengthReader {
   @override
   int _readPayload(Uint8List bytes, int start) {
-    final size = min(bytes.length - start, _length + 2);
+    final size = min(bytes.length - start, _length! + 2);
 
-    final crlf = min(size, max(0, size - _length));
+    final crlf = min(size, max(0, size - _length!));
 
     assert(crlf <= 2);
 
@@ -172,10 +175,10 @@ abstract class _BulkReader extends _LengthReader {
       _buffer.add(Uint8List.view(bytes.buffer, start, size - crlf));
     }
 
-    _length -= size;
+    _length = _length! - size;
     _done = _length == -2;
 
-    assert(_length >= -2);
+    assert(_length! >= -2);
 
     return start + size;
   }
@@ -186,13 +189,13 @@ abstract class _ArrayReader extends _LengthReader {
   final List<Reply> _array = [];
 
   /// Current reader.
-  Reader _reader;
+  Reader? _reader;
 
   @override
   int _readPayload(Uint8List bytes, int start) {
     var end = start;
 
-    while (_length > 0) {
+    while (_length! > 0) {
       if (end == bytes.length) {
         return end;
       }
@@ -204,18 +207,18 @@ abstract class _ArrayReader extends _LengthReader {
       }
 
       // Reads.
-      end = _reader.read(bytes, end);
+      end = _reader!.read(bytes, end);
 
-      if (!_reader.done) {
+      if (!_reader!.done) {
         return end;
       }
 
       // Consumes the reply.
-      final reply = _reader.consume();
+      final reply = _reader!.consume();
       _array.add(reply);
       _reader = null;
 
-      _length--;
+      _length = _length! - 1;
     }
 
     _done = true;

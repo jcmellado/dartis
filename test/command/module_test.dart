@@ -5,6 +5,7 @@ import 'dart:async' show Future;
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 import '../util.dart' show uuid;
@@ -21,10 +22,9 @@ class _DummyModule extends ModuleBase {
 class _TypedCommands<K> extends ModuleBase {
   _TypedCommands(Client client) : super(client);
 
-  Future<void> set<R>(K key, R value) =>
-      run<void>(<Object>[r'SET', key, value]);
+  Future<void> set<R>(K key, R value) => run([r'SET', key, value]);
 
-  Future<R> get<R>(K key) => run<R>(<Object>[r'GET', key]);
+  Future<R?> get<R extends Object>(K key) => run<R>([r'GET', key]);
 }
 
 void main() {

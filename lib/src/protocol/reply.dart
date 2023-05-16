@@ -7,7 +7,7 @@ const NullReply nullReply = NullReply();
 /// RESP (REdis Serialization Protocol) reply.
 abstract class Reply {
   /// Returns the raw content of this reply.
-  Object get value;
+  Object? get value;
 }
 
 /// Base class for implementing replies.
@@ -19,13 +19,16 @@ abstract class SingleReply implements Reply {
   const SingleReply(this.bytes);
 
   @override
-  Object get value => bytes;
+  Object? get value => bytes;
 }
 
 /// A convenient abstraction for null replies.
 class NullReply extends SingleReply {
   /// Creates a [NullReply] instance.
-  const NullReply() : super(null);
+  const NullReply() : super(const []);
+
+  @override
+  Object? get value => null;
 
   @override
   String toString() => 'NullReply: null';
@@ -34,7 +37,7 @@ class NullReply extends SingleReply {
 /// RESP simple string.
 class StringReply extends SingleReply {
   /// Creates a [StringReply] instance.
-  const StringReply(List<int> bytes) : super(bytes);
+  const StringReply(super.bytes);
 
   @override
   String toString() => 'StringReply: "${String.fromCharCodes(bytes)}"';
@@ -43,7 +46,7 @@ class StringReply extends SingleReply {
 /// RESP integer.
 class IntReply extends SingleReply {
   /// Creates an [IntReply] instance.
-  const IntReply(List<int> bytes) : super(bytes);
+  const IntReply(super.bytes);
 
   @override
   String toString() => 'IntReply: ${int.parse(String.fromCharCodes(bytes))}';
@@ -52,7 +55,7 @@ class IntReply extends SingleReply {
 /// RESP bulk string.
 class BulkReply extends SingleReply {
   /// Creates a [BulkReply] instance.
-  const BulkReply(List<int> bytes) : super(bytes);
+  const BulkReply(super.bytes);
 
   @override
   String toString() => 'BulkReply: $bytes';
@@ -76,7 +79,7 @@ class ArrayReply implements Reply {
 /// RESP error.
 class ErrorReply extends SingleReply {
   /// Creates an [ErrorReply] instance.
-  const ErrorReply(List<int> bytes) : super(bytes);
+  const ErrorReply(super.bytes);
 
   @override
   String toString() => 'ErrorReply: "${String.fromCharCodes(bytes)}"';

@@ -3,6 +3,7 @@
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 void main() {

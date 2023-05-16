@@ -5,12 +5,13 @@ import 'dart:convert' show utf8;
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 /// A encoder that encodes a [DateTime] to a list of bytes.
 class _DateTimeEncoder extends Encoder<DateTime> {
   @override
-  List<int> convert(DateTime value, [RedisCodec codec]) =>
+  List<int> convert(DateTime value, RedisCodec codec) =>
       utf8.encode(value.toString());
 }
 
@@ -18,7 +19,7 @@ class _DateTimeEncoder extends Encoder<DateTime> {
 class _DateTimeDecoder extends Decoder<SingleReply, DateTime> {
   @override
   DateTime convert(SingleReply value, RedisCodec codec) =>
-      value.bytes == null ? null : DateTime.parse(utf8.decode(value.bytes));
+      DateTime.parse(utf8.decode(value.bytes));
 }
 
 /// A encoder that encodes a [DateTime] to a list of bytes.
@@ -36,8 +37,8 @@ class _Int999Decoder extends Decoder<SingleReply, int> {
 
 void main() {
   /// Converts an [array] of lists of bytes to a list of replies.
-  List<Reply> _replies(List<List<int>> array) =>
-      array.map((bytes) => StringReply(bytes)).toList();
+  List<Reply> replies(List<List<int>> array) =>
+      array.map(StringReply.new).toList();
 
   group('RedisCodec', () {
     final codec = RedisCodec();
@@ -117,11 +118,6 @@ void main() {
     });
 
     group('encode', () {
-      test('null', () {
-        expect(() => encode<List<int>>(null),
-            throwsA(const TypeMatcher<RedisException>()));
-      });
-
       test('String to List<int>', () {
         expect(encode<List<int>>(''), equals(<int>[]));
         expect(encode<List<int>>('ABC'), equals([65, 66, 67]));
@@ -156,7 +152,6 @@ void main() {
 
     group('decode', () {
       test('List<int> to String', () {
-        expect(decode<String>(const StringReply(null)), isNull);
         expect(decode<String>(const StringReply(<int>[])), equals(''));
         expect(decode<String>(const StringReply([65, 66, 67])), equals('ABC'));
         expect(
@@ -165,7 +160,6 @@ void main() {
       });
 
       test('List<int> to int', () {
-        expect(decode<int>(const IntReply(null)), isNull);
         expect(
             () => decode<int>(const IntReply(<int>[])), throwsFormatException);
         expect(decode<int>(const IntReply([49])), equals(1));
@@ -174,7 +168,6 @@ void main() {
       });
 
       test('List<int> to double', () {
-        expect(decode<double>(const BulkReply(null)), isNull);
         expect(
             () => decode<int>(const BulkReply(<int>[])), throwsFormatException);
         expect(decode<double>(const BulkReply([49, 46, 48])), equals(1.0));
@@ -193,7 +186,6 @@ void main() {
       });
 
       test('List<int> to List<int>', () {
-        expect(decode<List<int>>(const BulkReply(null)), isNull);
         expect(decode<List<int>>(const BulkReply(<int>[])), equals(<int>[]));
         expect(decode<List<int>>(const BulkReply([1])), equals(<int>[1]));
         expect(decode<List<int>>(const BulkReply([1, 2, 3])),
@@ -201,16 +193,15 @@ void main() {
       });
 
       test('List<Reply> to List<String>', () {
-        expect(decode<List<String>>(const ArrayReply(null)), isNull);
         expect(
-            decode<List<String>>(ArrayReply(_replies([]))), equals(<String>[]));
+            decode<List<String>>(ArrayReply(replies([]))), equals(<String>[]));
         expect(
-            decode<List<String>>(ArrayReply(_replies([
+            decode<List<String>>(ArrayReply(replies([
               [65, 66, 67]
             ]))),
             equals(['ABC']));
         expect(
-            decode<List<String>>(ArrayReply(_replies([
+            decode<List<String>>(ArrayReply(replies([
               [230, 188, 162],
               [232, 170, 158]
             ]))),
@@ -218,15 +209,14 @@ void main() {
       });
 
       test('List<Reply> to List<int>', () {
-        expect(decode<List<int>>(const ArrayReply(null)), isNull);
-        expect(decode<List<int>>(ArrayReply(_replies([]))), equals(<String>[]));
+        expect(decode<List<int>>(ArrayReply(replies([]))), equals(<String>[]));
         expect(
-            decode<List<int>>(ArrayReply(_replies([
+            decode<List<int>>(ArrayReply(replies([
               [49]
             ]))),
             equals([1]));
         expect(
-            decode<List<int>>(ArrayReply(_replies([
+            decode<List<int>>(ArrayReply(replies([
               [50, 53],
               [45, 55]
             ]))),
@@ -234,16 +224,15 @@ void main() {
       });
 
       test('List<Reply> to List<double>', () {
-        expect(decode<List<double>>(const ArrayReply(null)), isNull);
         expect(
-            decode<List<double>>(ArrayReply(_replies([]))), equals(<double>[]));
+            decode<List<double>>(ArrayReply(replies([]))), equals(<double>[]));
         expect(
-            decode<List<double>>(ArrayReply(_replies([
+            decode<List<double>>(ArrayReply(replies([
               [49, 46, 48]
             ]))),
             equals([1.0]));
         expect(
-            decode<List<double>>(ArrayReply(_replies([
+            decode<List<double>>(ArrayReply(replies([
               [50, 53, 46, 56, 57],
               [45, 54, 46, 48, 51],
               [53, 49, 48, 48, 46, 48],
@@ -262,4 +251,12 @@ void main() {
       });
     });
   });
+
+  //TODO: add tests for:
+  // Decode:
+  // - decode<String|int|List<int>...>(null) => throw Exception
+  // - decode<String?|int?|List<int>?>(null) => ok
+  // - decode<List<int?>>([null]) => ok
+  // - decode<List<int|String|...>>([null]) => not ok
+  // - decode<List<List<int>>([]) => ok
 }

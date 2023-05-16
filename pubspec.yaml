@@ -1,19 +1,18 @@
 name: dartis
-version: 0.5.0
-author: Juan Mellado <jcmellado@gmail.com>
+version: 0.6.0
 homepage: https://github.com/jcmellado/dartis
 description: >-
   Redis client featuring type-safe commands, pipelining,
   fire and forget, publish/subscribe, monitor mode, inline
   commands, transactions, Lua scripting, modules, and much more.
-documentation:
 
 environment:
-  sdk: '>=2.0.0 <3.0.0'
+  sdk: "^3.0.0"
 
 dependencies:
-  logging: ^0.11.4
+  logging: ^1.0.2
 
 dev_dependencies:
-  test: ^1.14.2
-  uuid: ^2.0.4
+  lints: ^2.1.0
+  test: ^1.20.0
+  uuid: ^3.0.5

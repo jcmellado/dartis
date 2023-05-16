@@ -40,7 +40,7 @@ class Client implements CommandRunner {
   final _ClientDispatcher _dispatcher;
 
   /// Delayed commands.
-  final List<Command<Object>> _delayed = [];
+  final List<Command<Object?>> _delayed = [];
 
   /// Whether this is in the pipelined mode.
   bool _pipelined = false;
@@ -104,7 +104,8 @@ class Client implements CommandRunner {
   /// existing ones.
   ///
   /// See [Commands].
-  Commands<K, V> asCommands<K, V>() => Commands<K, V>(this);
+  Commands<K, V> asCommands<K extends Object, V extends Object>() =>
+      Commands<K, V>(this);
 
   /// Starts the pipelined mode in order to send multiple commands to the
   /// server in only one call, instead of doing one call for each command.
@@ -154,7 +155,7 @@ class Client implements CommandRunner {
   /// either the result of its execution or an error if the execution failed.
   ///
   /// It's safe to call this method even before calling [pipeline()].
-  List<Future<Object>> flush() {
+  List<Future<Object?>> flush() {
     final futures = _dispatcher.dispatchAll(_delayed);
 
     _delayed.clear();
@@ -190,7 +191,7 @@ class Client implements CommandRunner {
 /// A dispatcher for a client.
 class _ClientDispatcher extends ReplyDispatcher {
   /// Commands waiting for a server reply.
-  final Queue<Command<Object>> _unreplied = Queue<Command<Object>>();
+  final Queue<Command<Object?>> _unreplied = Queue<Command<Object?>>();
 
   /// Transaction in progress, if any.
   final Transaction _transaction = Transaction();
@@ -211,7 +212,7 @@ class _ClientDispatcher extends ReplyDispatcher {
   }
 
   /// Sends a list of [commands] to the server.
-  List<Future<Object>> dispatchAll(Iterable<Command<Object>> commands) {
+  List<Future<Object?>> dispatchAll(Iterable<Command<Object?>> commands) {
     final lines = commands.map((command) => command.line);
 
     final bytes = writer.writeAll(lines, codec);
@@ -224,7 +225,7 @@ class _ClientDispatcher extends ReplyDispatcher {
   /// Stores a [command] for completing it with the server reply, or
   /// completes it immediately with `null` if the 'fire and forget'
   /// mode is currently active.
-  Future<Object> _fire(Command<Object> command) {
+  Future<Object?> _fire(Command<Object?> command) {
     final fireAndForget = _mustFireAndForget(command);
 
     if (fireAndForget) {
@@ -237,7 +238,7 @@ class _ClientDispatcher extends ReplyDispatcher {
   }
 
   /// Checks if a [command] must be completed without waiting a server reply.
-  bool _mustFireAndForget(Command<Object> command) {
+  bool _mustFireAndForget(Command<Object?> command) {
     if (command is ClientReplyCommand) {
       _replyMode = command.mode;
       return _replyMode != ReplyMode.on;
@@ -286,7 +287,7 @@ class _ClientDispatcher extends ReplyDispatcher {
   }
 
   @override
-  void onError(Object error, [StackTrace stackStrace]) {
+  void onError(Object error, [StackTrace? stackStrace]) {
     try {
       for (var command in _unreplied) {
         command.completeError(error, stackStrace);

@@ -3,13 +3,14 @@
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 import '../util.dart' show uuid;
 
 void main() {
-  Client client;
-  ClusterCommands<String> commands;
+  late Client client;
+  late ClusterCommands<String> commands;
 
   // Some values for testing.
   const masterId = '<ID>';
@@ -151,14 +152,14 @@ void main() {
 
     group('ClusterNode', () {
       test('toString', () {
-        const value = ClusterNode(null, null);
+        const value = ClusterNode('', 0);
         expect(value.toString(), startsWith('ClusterNode:'));
       });
     });
 
     group('ClusterSlotRange', () {
       test('toString', () {
-        const value = ClusterSlotRange(null, null, null);
+        const value = ClusterSlotRange(0, 0, []);
         expect(value.toString(), startsWith('ClusterSlotRange:'));
       });
     });

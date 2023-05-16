@@ -3,13 +3,14 @@
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 import '../util.dart' show uuid;
 
 void main() {
-  Client client;
-  Commands<String, String> commands;
+  late Client client;
+  late Commands<String, String> commands;
 
   setUp(() async {
     client = await Client.connect('redis://localhost:6379');
@@ -49,18 +50,17 @@ void main() {
       await commands.set(key1, 'abc');
 
       // Operate.
-      final operations = <BitfieldOperation>[]
-        ..add(const BitfieldOperation(BitfieldCommand.get, 'u8', '0'))
-        ..add(const BitfieldOperation(BitfieldCommand.set, 'u8', '#1',
-            value: 100))
-        ..add(const BitfieldOperation(BitfieldCommand.incrby, 'u8', '#1',
-            value: 2))
-        ..add(const BitfieldOperation(BitfieldCommand.incrby, 'u8', '#2',
-            value: 1000, overflow: BitfieldOverflow.wrap))
-        ..add(const BitfieldOperation(BitfieldCommand.incrby, 'u8', '#2',
-            value: 1000, overflow: BitfieldOverflow.sat))
-        ..add(const BitfieldOperation(BitfieldCommand.incrby, 'u8', '#2',
-            value: 1000, overflow: BitfieldOverflow.fail));
+      final operations = <BitfieldOperation>[
+        const BitfieldOperation(BitfieldCommand.get, 'u8', '0'),
+        const BitfieldOperation(BitfieldCommand.set, 'u8', '#1', value: 100),
+        const BitfieldOperation(BitfieldCommand.incrby, 'u8', '#1', value: 2),
+        const BitfieldOperation(BitfieldCommand.incrby, 'u8', '#2',
+            value: 1000, overflow: BitfieldOverflow.wrap),
+        const BitfieldOperation(BitfieldCommand.incrby, 'u8', '#2',
+            value: 1000, overflow: BitfieldOverflow.sat),
+        const BitfieldOperation(BitfieldCommand.incrby, 'u8', '#2',
+            value: 1000, overflow: BitfieldOverflow.fail)
+      ];
 
       expect(await commands.bitfield(key1, operations),
           equals([97, 98, 102, 75, 255, null]));

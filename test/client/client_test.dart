@@ -6,6 +6,7 @@ import 'dart:io' show SocketException;
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 import '../fakesocket.dart';
@@ -61,14 +62,18 @@ void main() {
         ..pipeline();
 
       // Run some commands.
-      // ignore: unawaited_futures
-      client.asCommands<String, String>()..ping()..ping()..ping();
+      client.asCommands<String, String>()
+        // ignore: unawaited_futures
+        ..ping()
+        // ignore: unawaited_futures
+        ..ping()
+        // ignore: unawaited_futures
+        ..ping();
 
       // Flush.
       final futures = client.flush();
 
-      expect(
-          await Future.wait<Object>(futures), equals(['PONG', 'PONG', 'PONG']));
+      expect(await Future.wait(futures), equals(['PONG', 'PONG', 'PONG']));
 
       await client.disconnect();
     });

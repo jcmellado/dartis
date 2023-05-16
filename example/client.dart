@@ -21,8 +21,13 @@ void main() async {
   // Pipeline.
   client.pipeline();
 
-  // ignore: unawaited_futures
-  commands..ping()..ping()..ping();
+  commands
+    // ignore: unawaited_futures
+    ..ping()
+    // ignore: unawaited_futures
+    ..ping()
+    // ignore: unawaited_futures
+    ..ping();
 
   final futures = client.flush();
 

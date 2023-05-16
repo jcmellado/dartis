@@ -40,13 +40,13 @@ class SubscriptionEvent<K> implements PubSubEvent {
   /// The name of the command that caused this event.
   ///
   /// See [PubSubEventType].
-  final String command;
+  final String? command;
 
   /// The name of the channel affected by this event.
   final K channel;
 
   /// The number of channels that the client is currently subscribed to.
-  final int channelCount;
+  final int? channelCount;
 
   /// Creates a [SubscriptionEvent] instance.
   const SubscriptionEvent(this.command, this.channel, this.channelCount);
@@ -65,7 +65,7 @@ class MessageEvent<K, V> implements PubSubEvent {
   final V message;
 
   /// The original pattern matching the name of the channel, if any.
-  final K pattern;
+  final K? pattern;
 
   /// Creates a [MessageEvent] instance.
   const MessageEvent(this.channel, this.message, [this.pattern]);
@@ -150,40 +150,41 @@ class PubSub<K, V> {
   /// Subscribes the client to the given [channel] or [channels].
   ///
   /// See https://redis.io/commands/subscribe
-  void subscribe({K channel, Iterable<K> channels = const []}) =>
-      _run(<Object>[r'SUBSCRIBE', channel]..addAll(channels));
+  void subscribe({K? channel, Iterable<K> channels = const []}) =>
+      _run(<Object?>[r'SUBSCRIBE', channel, ...channels]);
 
   /// Unsubscribes the client from the given [channel] or [channels], or
   /// from all of them if none is given.
   ///
   /// See https://redis.io/commands/unsubscribe
-  void unsubscribe({K channel, Iterable<K> channels = const []}) =>
-      _run(<Object>[r'UNSUBSCRIBE', channel]..addAll(channels));
+  void unsubscribe({K? channel, Iterable<K> channels = const []}) =>
+      _run(<Object?>[r'UNSUBSCRIBE', channel, ...channels]);
 
   /// Subscribes the client to the given [pattern] or [patterns].
   ///
   /// See https://redis.io/commands/psubscribe
-  void psubscribe({K pattern, Iterable<K> patterns = const []}) =>
-      _run(<Object>[r'PSUBSCRIBE', pattern]..addAll(patterns));
+  void psubscribe({K? pattern, Iterable<K> patterns = const []}) =>
+      _run(<Object?>[r'PSUBSCRIBE', pattern, ...patterns]);
 
   /// Unsubscribes the client from the given [pattern] or [patterns], or
   /// from all of them if none is given.
   ///
   /// See https://redis.io/commands/punsubscribe
-  void punsubscribe({K pattern, Iterable<K> patterns = const []}) =>
-      _run(<Object>[r'PUNSUBSCRIBE', pattern]..addAll(patterns));
+  void punsubscribe({K? pattern, Iterable<K> patterns = const []}) =>
+      _run(<Object?>[r'PUNSUBSCRIBE', pattern, ...patterns]);
 
   /// Returns an empty string if no [message] is provided, otherwise returns
   /// a copy of the [message].
   ///
   /// See https://redis.io/commands/ping
-  void ping([String message]) => _run(<Object>[r'PING', message]);
+  void ping([String? message]) => _run(<Object?>[r'PING', message]);
 
   /// Closes the connection.
   Future<void> disconnect() => _dispatcher.disconnect();
 
-  void _run(Iterable<Object> line) {
-    final withoutNulls = line.where((value) => value != null);
+  void _run(Iterable<Object?> line) {
+    final withoutNulls =
+        line.where((value) => value != null).map((value) => value!);
 
     _dispatcher.dispatch(withoutNulls);
   }
@@ -209,8 +210,7 @@ class _PubSubDispatcher<K, V> extends ReplyDispatcher {
       throw RedisException('Unexpected server reply: $reply.');
     }
 
-    // ignore: avoid_as
-    final event = _onEvent(reply as ArrayReply);
+    final event = _onEvent(reply);
     _controller.add(event);
   }
 
@@ -220,7 +220,7 @@ class _PubSubDispatcher<K, V> extends ReplyDispatcher {
   }
 
   @override
-  void onError(Object error, [StackTrace stackTrace]) {
+  void onError(Object error, [StackTrace? stackTrace]) {
     _controller.addError(error, stackTrace);
   }
 

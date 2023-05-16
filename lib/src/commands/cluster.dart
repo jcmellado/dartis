@@ -18,27 +18,27 @@ abstract class ClusterCommands<K> {
   /// Assigns new hash slots to receiving node.
   ///
   /// See https://redis.io/commands/cluster-addslots
-  Future<void> clusterAddslots({int slot, Iterable<int> slots = const []});
+  Future<void> clusterAddslots({int? slot, Iterable<int> slots = const []});
 
   /// Returns the number of failure reports active for a given node.
   ///
   /// See https://redis.io/commands/cluster-count-failure-reports
-  Future<int> clusterCountFailureReports(String nodeId);
+  Future<int?> clusterCountFailureReports(String nodeId);
 
   /// Returns the number of local keys in the specified hash [slot].
   ///
   /// See https://redis.io/commands/cluster-countkeysinslot
-  Future<int> clusterCountkeysinslot(int slot);
+  Future<int?> clusterCountkeysinslot(int slot);
 
   /// Sets hash slots as unbound in receiving node.
   ///
   /// See https://redis.io/commands/cluster-delslots
-  Future<void> clusterDelslots({int slot, Iterable<int> slots = const []});
+  Future<void> clusterDelslots({int? slot, Iterable<int> slots = const []});
 
   /// Forces a slave to perform a manual failover of its master.
   ///
   /// See https://redis.io/commands/cluster-failover
-  Future<void> clusterFailover([ClusterFailoverMode mode]);
+  Future<void> clusterFailover([ClusterFailoverMode? mode]);
 
   /// Removes a node from the nodes table.
   ///
@@ -50,17 +50,17 @@ abstract class ClusterCommands<K> {
   /// of keys to return is specified via the [count] argument.
   ///
   /// See https://redis.io/commands/cluster-getkeysinslot
-  Future<List<K>> clusterGetkeysinslot(int slot, int count);
+  Future<List<K>?> clusterGetkeysinslot(int slot, int count);
 
   /// Provides info about Redis Cluster node state.
   ///
   /// See https://redis.io/commands/cluster-info
-  Future<Map<String, String>> clusterInfo();
+  Future<Map<String, String>?> clusterInfo();
 
   /// Returns the hash slot number of the specified [key].
   ///
   /// See https://redis.io/commands/cluster-keyslot
-  Future<int> clusterKeyslot(K key);
+  Future<int?> clusterKeyslot(K key);
 
   /// Forces a node cluster to handshake with another node.
   ///
@@ -71,7 +71,7 @@ abstract class ClusterCommands<K> {
   /// we are contacting.
   ///
   /// See https://redis.io/commands/cluster-nodes
-  Future<String> clusterNodes();
+  Future<String?> clusterNodes();
 
   /// Reconfigures a node as a slave of the specified master node.
   ///
@@ -81,7 +81,7 @@ abstract class ClusterCommands<K> {
   /// Reset a Redis Cluster node.
   ///
   /// See https://redis.io/commands/cluster-reset
-  Future<void> clusterReset([ClusterResetMode mode]);
+  Future<void> clusterReset([ClusterResetMode? mode]);
 
   /// Forces the node to save cluster state on disk.
   ///
@@ -97,17 +97,17 @@ abstract class ClusterCommands<K> {
   ///
   /// See https://redis.io/commands/cluster-setslot
   Future<void> clusterSetslot(int slot, ClusterSetslotCommand command,
-      {String nodeId});
+      {String? nodeId});
 
   /// Lists slave nodes of the specified master node.
   ///
   /// See https://redis.io/commands/cluster-slaves
-  Future<String> clusterSlaves(String nodeId);
+  Future<String?> clusterSlaves(String nodeId);
 
   /// Returns details about which cluster slots map to which Redis instances.
   ///
   /// See https://redis.io/commands/cluster-slots
-  Future<List<ClusterSlotRange>> clusterSlots();
+  Future<List<ClusterSlotRange>?> clusterSlots();
 
   /// Enables read queries for a connection to a Redis Cluster slave node.
   ///
@@ -190,7 +190,7 @@ class ClusterNode {
   final int port;
 
   /// The ID.
-  final String id;
+  final String? id;
 
   /// Creates a [ClusterNode] instance.
   const ClusterNode(this.ip, this.port, [this.id]);
@@ -249,7 +249,6 @@ class ClusterSlotRangeMapper implements Mapper<List<ClusterSlotRange>> {
   @override
   List<ClusterSlotRange> map(covariant ArrayReply reply, RedisCodec codec) =>
       reply.array
-          // ignore: avoid_as
           .map((value) => _mapRange(value as ArrayReply, codec))
           .toList();
 
@@ -262,7 +261,6 @@ class ClusterSlotRangeMapper implements Mapper<List<ClusterSlotRange>> {
     final nodes = <ClusterNode>[];
 
     for (var i = 2; i < array.length; i++) {
-      // ignore: avoid_as
       final node = _mapNode(array[i] as ArrayReply, codec);
 
       nodes.add(node);
@@ -278,7 +276,7 @@ class ClusterSlotRangeMapper implements Mapper<List<ClusterSlotRange>> {
     final ip = codec.decode<String>(array[0]);
     final port = codec.decode<int>(array[1]);
 
-    String id;
+    String? id;
     if (array.length > 2) {
       id = codec.decode<String>(array[2]);
     }

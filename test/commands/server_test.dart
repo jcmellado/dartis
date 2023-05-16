@@ -3,13 +3,14 @@
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 import '../util.dart' show uuid;
 
 void main() {
-  Client client;
-  Commands<String, String> commands;
+  late Client client;
+  late Commands<String, String> commands;
 
   setUp(() async {
     client = await Client.connect('redis://localhost:6379');
@@ -122,12 +123,13 @@ void main() {
       // Retrieve one command.
       final results = await commands.commandInfo(commandName: 'GET');
       expect(results, hasLength(1));
-      expect(results[0].name, equals('get'));
-      expect(results[0].arity, equals(2));
-      expect(results[0].flags, equals(['readonly', 'fast']));
-      expect(results[0].firstKeyPosition, equals(1));
-      expect(results[0].lastKeyPosition, equals(1));
-      expect(results[0].keyStepCount, equals(1));
+      final firstResult = results[0]!;
+      expect(firstResult.name, equals('get'));
+      expect(firstResult.arity, equals(2));
+      expect(firstResult.flags, equals(['readonly', 'fast']));
+      expect(firstResult.firstKeyPosition, equals(1));
+      expect(firstResult.lastKeyPosition, equals(1));
+      expect(firstResult.keyStepCount, equals(1));
 
       // Retrieve some commands.
       expect(await commands.commandInfo(commandNames: ['GET', 'SET', 'PING']),
@@ -173,7 +175,7 @@ void main() {
 
       // Get.
       expect(await commands.debugObject(key), isNotEmpty);
-    });
+    }, skip: 'ERR DEBUG is disabled by default in Redis >=7');
 
     test('debugSegfault', () async {
       await commands.debugSegfault();

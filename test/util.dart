@@ -4,6 +4,6 @@
 import 'package:uuid/uuid.dart' show Uuid;
 
 // UUID generator.
-final Uuid _uuid = Uuid();
+const Uuid _uuid = Uuid();
 
 String uuid() => 'dartis-test-${_uuid.v4()}';

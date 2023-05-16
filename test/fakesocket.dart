@@ -2,11 +2,12 @@
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'dart:typed_data';
 
-Stream<Uint8List> _stream(List<List<int>> data, Exception error) async* {
+Stream<Uint8List> _stream(List<List<int>> data, Exception? error) async* {
   for (final b in data) {
     yield Uint8List.fromList(b);
   }
@@ -15,7 +16,7 @@ Stream<Uint8List> _stream(List<List<int>> data, Exception error) async* {
   }
 }
 
-class FakeSocket extends Stream<Uint8List> with IOSink implements Socket {
+class FakeSocket extends Stream<Uint8List> implements IOSink, Socket {
   final List<int> written = [];
   final Stream<Uint8List> _output;
   final Completer<void> _done = Completer();
@@ -34,12 +35,14 @@ class FakeSocket extends Stream<Uint8List> with IOSink implements Socket {
 
   FakeSocket(
     List<List<int>> output,
-    Exception error, {
-    this.address,
+    Exception? error, {
+    InternetAddress? address,
+    InternetAddress? remoteAddress,
     this.port = 0,
-    this.remoteAddress,
     this.remotePort = 0,
   })  : _output = _stream(output, error),
+        address = address ?? InternetAddress.anyIPv4,
+        remoteAddress = remoteAddress ?? InternetAddress.anyIPv4,
         super();
 
   @override
@@ -57,7 +60,8 @@ class FakeSocket extends Stream<Uint8List> with IOSink implements Socket {
   Future addStream(Stream<List<int>> stream) async => stream.forEach(add);
 
   @override
-  void addError(Object e, [StackTrace st]) => _done.completeError(e);
+  void addError(Object e, [StackTrace? stackTrace]) =>
+      _done.completeError(e, stackTrace);
 
   @override
   Future close() async => _done.isCompleted ? null : _done.complete();
@@ -72,8 +76,8 @@ class FakeSocket extends Stream<Uint8List> with IOSink implements Socket {
   void destroy() => close();
 
   @override
-  StreamSubscription<Uint8List> listen(void Function(Uint8List event) onData,
-          {Function onError, void Function() onDone, bool cancelOnError}) =>
+  StreamSubscription<Uint8List> listen(void Function(Uint8List event)? onData,
+          {Function? onError, void Function()? onDone, bool? cancelOnError}) =>
       _output.listen(
         onData,
         onError: onError,
@@ -82,7 +86,7 @@ class FakeSocket extends Stream<Uint8List> with IOSink implements Socket {
       );
 
   @override
-  void write(Object obj) {
+  void write(Object? obj) {
     add(encoding.encode(obj.toString()));
   }
 
@@ -104,7 +108,8 @@ class FakeSocket extends Stream<Uint8List> with IOSink implements Socket {
   }
 
   @override
-  void writeln([Object obj = '']) {
+  void writeln([Object? obj]) {
+    obj ??= '';
     write(obj);
     write('\n');
   }
@@ -114,4 +119,7 @@ class FakeSocket extends Stream<Uint8List> with IOSink implements Socket {
 
   @override
   void setRawOption(RawSocketOption option) {}
+
+  @override
+  Encoding encoding = utf8;
 }

@@ -12,15 +12,15 @@ abstract class ListCommands<K, V> {
   /// available.
   ///
   /// See https://redis.io/commands/blpop
-  Future<ListPopResult<K, V>> blpop(
-      {K key, Iterable<K> keys = const [], int timeout = 0});
+  Future<ListPopResult<K, V>?> blpop(
+      {K? key, Iterable<K> keys = const [], int timeout = 0});
 
   /// Removes and gets the last element in a list, or blocks until one is
   /// available.
   ///
   /// See https://redis.io/commands/brpop.
-  Future<ListPopResult<K, V>> brpop(
-      {K key, Iterable<K> keys = const [], int timeout = 0});
+  Future<ListPopResult<K, V>?> brpop(
+      {K? key, Iterable<K> keys = const [], int timeout = 0});
 
   /// Pops a value from a list, push it to another list and return it; or
   /// blocks until one is available.
@@ -34,7 +34,7 @@ abstract class ListCommands<K, V> {
   /// Returns the element at index [index] in the list stored at [key].
   ///
   /// See https://redis.io/commands/lindex
-  Future<V> lindex(K key, int index);
+  Future<V?> lindex(K key, int index);
 
   /// Inserts [value] in the list stored at [key] either before or after the
   /// reference value [pivot].
@@ -53,14 +53,14 @@ abstract class ListCommands<K, V> {
   /// Removes and returns the first element of the list stored at [key].
   ///
   /// See https://redis.io/commands/lpop
-  Future<V> lpop(K key);
+  Future<V?> lpop(K key);
 
   /// Inserts all the specified values at the head of the list stored at [key].
   ///
   /// Returns the length of the list after the push operations.
   ///
   /// See https://redis.io/commands/lpush
-  Future<int> lpush(K key, {V value, Iterable<V> values = const []});
+  Future<int> lpush(K key, {V? value, Iterable<V> values = const []});
 
   /// Inserts [value] at the head of the list stored at [key], only if [key]
   /// already exists and holds a list.
@@ -97,20 +97,20 @@ abstract class ListCommands<K, V> {
   /// Removes and returns the last element of the list stored at [key].
   ///
   /// See https://redis.io/commands/rpop
-  Future<V> rpop(K key);
+  Future<V?> rpop(K key);
 
   /// Removes the last element in a list stored at [source], prepends it
   /// to another list stored at [destination] and returns it.
   ///
   /// See https://redis.io/commands/rpoplpush
-  Future<V> rpoplpush(K source, K destination);
+  Future<V?> rpoplpush(K source, K destination);
 
   /// Appends one or multiple values to a list stored at [key].
   ///
   /// Returns the length of the list after the push operation.
   ///
   /// See https://redis.io/commands/rpush
-  Future<int> rpush(K key, {V value, Iterable<V> values = const []});
+  Future<int> rpush(K key, {V? value, Iterable<V> values = const []});
 
   /// Appends a value to a list stored at [key], only if the list exists.
   ///
@@ -153,26 +153,26 @@ class ListPopResult<K, V> {
 }
 
 /// A mapper for the BLPOP and BRPOP commands.
-class ListPopResultMapper<K, V> implements Mapper<ListPopResult<K, V>> {
+class ListPopResultMapper<K, V> implements Mapper<ListPopResult<K?, V?>?> {
   @override
-  ListPopResult<K, V> map(covariant ArrayReply reply, RedisCodec codec) {
+  ListPopResult<K?, V?>? map(covariant ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
-    if (array == null) {
+    if (array.isEmpty) {
       return null;
     }
 
     final key = codec.decode<K>(array[0]);
     final value = codec.decode<V>(array[1]);
 
-    return ListPopResult<K, V>(key, value);
+    return ListPopResult<K?, V?>(key, value);
   }
 }
 
 /// A mapper for the BRPOPLPUSH command.
-class BrpoplpushMapper<V> implements Mapper<V> {
+class BrpoplpushMapper<V> implements Mapper<V?> {
   @override
-  V map(Reply reply, RedisCodec codec) {
+  V? map(Reply reply, RedisCodec codec) {
     // BRPOPLPUSH returns a null [ArrayReply] instead of a null [BulkReply].
     if (reply is ArrayReply) {
       return null;

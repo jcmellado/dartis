@@ -3,13 +3,14 @@
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 import '../util.dart' show uuid;
 
 void main() {
-  Client client;
-  HashCommands<String, String> commands;
+  late Client client;
+  late HashCommands<String, String> commands;
 
   setUp(() async {
     client = await Client.connect('redis://localhost:6379');
@@ -113,7 +114,8 @@ void main() {
 
       // Increment.
       expect(await commands.hincrbyfloat(key1, 'height', 0.5), equals(2.3));
-      expect(await commands.hincrbyfloat(key1, 'height', -0.7), equals(1.6));
+      expect(await commands.hincrbyfloat(key1, 'height', -0.7),
+          closeTo(1.6, 0.001));
       expect(await commands.hincrbyfloat(key1, 'width', 79.0), equals(79.0));
 
       // Try to increment in an empty or non existing hash.
@@ -166,6 +168,10 @@ void main() {
       // Try to get a non existing field.
       expect(await commands.hmget(key1, field: 'sons'), equals([null]));
 
+      // Try to get a non existing key.
+      expect(() => commands.hmget('notakey'),
+          throwsA(const TypeMatcher<RedisException>()));
+
       // Try to get from an empty or non existing hash.
       final key2 = uuid();
       expect(await commands.hmget(key2, field: 'name'), equals([null]));
@@ -192,7 +198,7 @@ void main() {
 
       // Scan.
       var result = await commands.hscan(key1, 0);
-      expect(result.cursor, equals(0));
+      expect(result!.cursor, equals(0));
       expect(result.fields, hasLength(3));
       expect(
           result.fields,
@@ -201,18 +207,18 @@ void main() {
 
       // Scan with a hint.
       result = await commands.hscan(key1, 0, count: 5);
-      expect(result.cursor, isZero);
+      expect(result!.cursor, isZero);
       expect(result.fields, hasLength(3));
 
       // Scan with a pattern.
       result = await commands.hscan(key1, 0, pattern: 'a*');
-      expect(result.cursor, isZero);
+      expect(result!.cursor, isZero);
       expect(result.fields, hasLength(1));
 
       // Try to scan an empty or non existing hash.
       final key2 = uuid();
       result = await commands.hscan(key2, 0);
-      expect(result.cursor, isZero);
+      expect(result!.cursor, isZero);
       expect(result.fields, isEmpty);
     });
 
@@ -272,7 +278,7 @@ void main() {
     group('support', () {
       group('HashScanResult', () {
         test('toString', () {
-          const value = HashScanResult<String, String>(null, null);
+          const value = HashScanResult<String, String>(0, {});
           expect(
               value.toString(), startsWith('HashScanResult<String, String>:'));
         });

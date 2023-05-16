@@ -13,13 +13,13 @@ abstract class ConnectionCommands {
   /// Returns [message].
   ///
   /// See https://redis.io/commands/echo
-  Future<String> echo(String message);
+  Future<String?> echo(String message);
 
   /// Returns `PONG` if no [message] is provided, otherwise returns a copy
   /// of the [message].
   ///
   /// See https://redis.io/commands/ping
-  Future<String> ping([String message]);
+  Future<String?> ping([String? message]);
 
   /// Closes the connection.
   ///

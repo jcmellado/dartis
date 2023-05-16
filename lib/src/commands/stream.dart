@@ -4,8 +4,6 @@
 import 'dart:async' show Future;
 import 'dart:collection' show LinkedHashMap;
 
-import 'package:dartis/dartis.dart';
-
 import '../command.dart';
 import '../exception.dart';
 import '../protocol.dart';
@@ -22,7 +20,7 @@ abstract class StreamCommands<K, V> {
   /// Returns the number of messages successfully acknowledged.
   ///
   /// See https://redis.io/commands/xack
-  Future<int> xack(K key, K group, {K id, Iterable<K> ids = const []});
+  Future<int> xack(K key, K group, {K? id, Iterable<K> ids = const []});
 
   /// Appends one or multiple entries to a stream at [key]. When the
   /// [roughly] option modifier is used the resulting stream length could
@@ -32,11 +30,11 @@ abstract class StreamCommands<K, V> {
   ///
   /// See https://redis.io/commands/xadd
   Future<K> xadd(K key,
-      {K id,
-      K field,
-      V value,
+      {K? id,
+      K? field,
+      V? value,
       Map<K, V> fields = const {},
-      int maxlen,
+      int? maxlen,
       bool roughly = false});
 
   /// Changes the ownership of some pending messages for a consumer group, so
@@ -47,11 +45,11 @@ abstract class StreamCommands<K, V> {
   ///
   /// See https://redis.io/commands/xclaim
   Future<Object> xclaim(K key, K group, K consumer, int minIdleTime,
-      {K id,
+      {K? id,
       Iterable<K> ids = const [],
-      int idle,
-      int idleTimestamp,
-      int retryCount,
+      int? idle,
+      int? idleTimestamp,
+      int? retryCount,
       bool force = false,
       bool justId = false});
 
@@ -60,7 +58,7 @@ abstract class StreamCommands<K, V> {
   /// Returns the number of entries deleted.
   ///
   /// See https://redis.io/commands/xdel
-  Future<int> xdel(K key, {K id, Iterable<K> ids = const []});
+  Future<int> xdel(K key, {K? id, Iterable<K> ids = const []});
 
   /// Manages the consumer groups associated with a stream. The [subcommand]
   /// specifies if the command must create a new consumer group, destroy an
@@ -72,8 +70,8 @@ abstract class StreamCommands<K, V> {
   /// for the help subcommand.
   ///
   /// See https://redis.io/commands/xgroup
-  Future<Object> xgroup(StreamGroupSubcommand subcommand,
-      {K key, K group, K id, K consumer, bool mkstream = false});
+  Future<Object?> xgroup(StreamGroupSubcommand subcommand,
+      {K? key, K? group, K? id, K? consumer, bool mkstream = false});
 
   /// Returns general information about a stream. The [subcommand]
   /// specifies if the command must return information about the consumer
@@ -81,7 +79,7 @@ abstract class StreamCommands<K, V> {
   /// print the help.
   ///
   /// See https://redis.io/commands/xinfo
-  Future<Object> xinfo(StreamInfoSubcommand subcommand, {K key, K group});
+  Future<Object> xinfo(StreamInfoSubcommand subcommand, {K? key, K? group});
 
   /// Returns the number of entries inside a stream at [key].
   ///
@@ -98,14 +96,14 @@ abstract class StreamCommands<K, V> {
   ///
   /// See https://redis.io/commands/xpending
   Future<Object> xpending(K key, K group,
-      {K start, K end, int count, K consumer});
+      {K? start, K? end, int? count, K? consumer});
 
   /// Returns the entries of a stream at [key] matching a given range of IDs.
   /// The range is specified by a [start] and [end] ID. Use [count] to reduce
   /// the number of entries reported.
   ///
   /// See https://redis.io/commands/xrange
-  Future<List<StreamEntry<K, V>>> xrange(K key, K start, K end, {int count});
+  Future<List<StreamEntry<K, V>?>> xrange(K key, K start, K end, {int? count});
 
   /// Reads data from one or multiple streams, only returning entries with an
   /// ID greater than the one reported by the caller. Use [count] to reduce
@@ -115,13 +113,13 @@ abstract class StreamCommands<K, V> {
   /// Returns the stream entries or `null` on timeout.
   ///
   /// See https://redis.io/commands/xread
-  Future<Map<K, List<StreamEntry<K, V>>>> xread(
-      {K key,
-      K id,
+  Future<Map<K, List<StreamEntry<K, V>?>>?> xread(
+      {K? key,
+      K? id,
       Iterable<K> keys = const [],
       Iterable<K> ids = const [],
-      int count,
-      int timeout});
+      int? count,
+      int? timeout});
 
   /// Special version of the [xread] command with support for consumer groups.
   /// Reads data from one or multiple streams, only returning entries with an
@@ -133,13 +131,13 @@ abstract class StreamCommands<K, V> {
   /// Returns the stream entries or `null` on timeout.
   ///
   /// See https://redis.io/commands/xreadgroup
-  Future<Map<K, List<StreamEntry<K, V>>>> xreadgroup(K group, K consumer,
-      {K key,
-      K id,
+  Future<Map<K, List<StreamEntry<K, V>?>>?> xreadgroup(K group, K consumer,
+      {K? key,
+      K? id,
       Iterable<K> keys = const [],
       Iterable<K> ids = const [],
-      int count,
-      int timeout,
+      int? count,
+      int? timeout,
       bool noack = false});
 
   /// Returns the entries of a stream at [key] matching a given range of IDs
@@ -147,7 +145,8 @@ abstract class StreamCommands<K, V> {
   /// Use [count] to reduce the number of entries reported.
   ///
   /// See https://redis.io/commands/xrevrange
-  Future<List<StreamEntry<K, V>>> xrevrange(K key, K end, K start, {int count});
+  Future<List<StreamEntry<K, V>?>> xrevrange(K key, K end, K start,
+      {int? count});
 
   /// Trims a stream at [key] to a given number [maxlen] of items. When the
   /// [roughly] option modifier is used the resulting length could be
@@ -236,7 +235,7 @@ class StreamEntry<K, V> {
   final K id;
 
   /// The entry fields.
-  final Map<K, V> fields;
+  final Map<K, V>? fields;
 
   /// Creates a [StreamEntry] instance.
   const StreamEntry(this.id, this.fields);
@@ -248,7 +247,7 @@ class StreamEntry<K, V> {
 /// A result of type summary for the XPENDING command.
 class StreamPendingSummary<K, V> {
   /// The total number of pending messages for the consumer group.
-  final int pendingCount;
+  final int? pendingCount;
 
   /// The smallest ID among the pending messages.
   final K firstEntryId;
@@ -276,7 +275,7 @@ class StreamPendingConsumer<K, V> {
   final K name;
 
   /// The number of pending message.
-  final int pendingCount;
+  final int? pendingCount;
 
   /// Creates a [StreamPendingConsumer] instance.
   const StreamPendingConsumer(this.name, this.pendingCount);
@@ -297,10 +296,10 @@ class StreamPendingEntry<K, V> {
 
   /// The number of milliseconds that elapsed since the last time this
   /// entry was delivered to this consumer.
-  final int deliveryTime;
+  final int? deliveryTime;
 
   /// The number of times this message was delivered.
-  final int deliveredCount;
+  final int? deliveredCount;
 
   /// Creates a [StreamPendingEntry] instance.
   const StreamPendingEntry(
@@ -315,7 +314,7 @@ class StreamPendingEntry<K, V> {
 /// A mapper for the XCLAIM command.
 abstract class StreamClaimMapper<K, V> implements Mapper<Object> {
   /// Creates a [StreamClaimMapper] instance.
-  factory StreamClaimMapper({bool justId}) =>
+  factory StreamClaimMapper({required bool justId}) =>
       justId ? StreamClaimIdMapper<K, V>() : StreamClaimStreamMapper<K, V>();
 }
 
@@ -336,12 +335,12 @@ class StreamClaimStreamMapper<K, V> implements StreamClaimMapper<K, V> {
 }
 
 /// A mapper for the XGROUP command.
-class StreamGroupMapper implements Mapper<Object> {
+class StreamGroupMapper implements Mapper<Object?> {
   /// Creates a [StreamGroupMapper] instance.
   const StreamGroupMapper();
 
   @override
-  Object map(Reply reply, RedisCodec codec) {
+  Object? map(Reply reply, RedisCodec codec) {
     if (reply is IntReply) {
       return codec.decode<int>(reply);
     }
@@ -355,7 +354,7 @@ class StreamGroupMapper implements Mapper<Object> {
 /// A mapper for the XPENDING command.
 abstract class StreamPendingMapper<K, V> implements Mapper<Object> {
   /// Creates a [StreamPendingMapper] instance.
-  factory StreamPendingMapper({bool justSummary}) => justSummary
+  factory StreamPendingMapper({required bool justSummary}) => justSummary
       ? StreamPendingSummaryMapper<K, V>()
       : StreamPendingEntryMapper<K, V>();
 }
@@ -369,8 +368,10 @@ class StreamPendingSummaryMapper<K, V> implements StreamPendingMapper<K, V> {
     final pendingCount = codec.decode<int>(array[0]);
     final firstEntryId = codec.decode<K>(array[1]);
     final lastEntryId = codec.decode<K>(array[2]);
-    // ignore: avoid_as
-    final consumers = _mapConsumers(array[3] as ArrayReply, codec);
+    final consumersReply = array[3];
+    final consumers = consumersReply is NullReply
+        ? <StreamPendingConsumer<K, V>>[]
+        : _mapConsumers(consumersReply as ArrayReply, codec);
 
     return StreamPendingSummary<K, V>(
         pendingCount, firstEntryId, lastEntryId, consumers);
@@ -380,12 +381,7 @@ class StreamPendingSummaryMapper<K, V> implements StreamPendingMapper<K, V> {
       ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
-    if (array == null) {
-      return null;
-    }
-
     return array
-        // ignore: avoid_as
         .map((entry) => _mapConsumer(entry as ArrayReply, codec))
         .toList();
   }
@@ -406,7 +402,6 @@ class StreamPendingEntryMapper<K, V> implements StreamPendingMapper<K, V> {
   List<StreamPendingEntry<K, V>> map(
           covariant ArrayReply reply, RedisCodec codec) =>
       reply.array
-          // ignore: avoid_as
           .map((entry) => _mapEntry(entry as ArrayReply, codec))
           .toList();
 
@@ -445,21 +440,20 @@ abstract class StreamInfoMapper<K, V> implements Mapper<Object> {
 class StreamMapInfoMapper<K, V> implements StreamInfoMapper<K, V> {
   @override
   Object map(covariant ArrayReply reply, RedisCodec codec) {
-    // ignore: prefer_collection_literals
-    final hash = LinkedHashMap<String, Object>();
+    final hash = <String, Object?>{};
 
     final array = reply.array;
     for (var i = 0; i < array.length; i += 2) {
       final key = codec.decode<String>(array[i]);
       final value = array[i + 1];
 
-      hash[key] = _mapValue(key, value, codec);
+      hash[key] = value is NullReply ? null : _mapValue(key, value, codec);
     }
 
     return hash;
   }
 
-  Object _mapValue(String key, Reply value, RedisCodec codec) {
+  Object? _mapValue(String? key, Reply value, RedisCodec codec) {
     if (value is ArrayReply) {
       return map(value, codec);
     }
@@ -474,22 +468,24 @@ class StreamMapInfoMapper<K, V> implements StreamInfoMapper<K, V> {
 abstract class StreamListMapInfoMapper<K, V> extends StreamMapInfoMapper<K, V> {
   @override
   Object map(covariant ArrayReply reply, RedisCodec codec) => reply.array
-      // ignore: avoid_as
       .map((entry) => super.map(entry as ArrayReply, codec))
       .toList();
 }
 
 /// A mapper to be used with the XINFO command and STREAMS subcommand.
 class StreamInfoStreamsMapper<K, V> extends StreamMapInfoMapper<K, V> {
-  final StreamEntryMapper<K, V> _entryMapper = StreamEntryMapper();
+  final _entryMapper = StreamEntryMapper<K, V>();
 
   @override
-  Object _mapValue(String key, Reply value, RedisCodec codec) {
+  Object? _mapValue(String? key, Reply value, RedisCodec codec) {
     switch (key) {
       case r'last-generated-id':
         return codec.decode<K>(value);
       case r'first-entry':
       case r'last-entry':
+        if (value is! ArrayReply) {
+          return null;
+        }
         return _entryMapper.map(value, codec);
       default:
         return super._mapValue(key, value, codec);
@@ -500,7 +496,7 @@ class StreamInfoStreamsMapper<K, V> extends StreamMapInfoMapper<K, V> {
 /// A mapper to be used with the XINFO command and GROUPS subcommand.
 class StreamInfoGroupsMapper<K, V> extends StreamListMapInfoMapper<K, V> {
   @override
-  Object _mapValue(String key, Reply value, RedisCodec codec) {
+  Object? _mapValue(String? key, Reply value, RedisCodec codec) {
     switch (key) {
       case r'name':
         return codec.decode<K>(value);
@@ -513,7 +509,7 @@ class StreamInfoGroupsMapper<K, V> extends StreamListMapInfoMapper<K, V> {
 /// A mapper to be used with the XINFO command and CONSUMERS subcommand.
 class StreamInfoConsumersMapper<K, V> extends StreamListMapInfoMapper<K, V> {
   @override
-  Object _mapValue(String key, Reply value, RedisCodec codec) {
+  Object? _mapValue(String? key, Reply value, RedisCodec codec) {
     switch (key) {
       case r'name':
         return codec.decode<K>(value);
@@ -546,19 +542,11 @@ class StreamsMapper<K, V> implements Mapper<Map<K, List<StreamEntry<K, V>>>> {
       covariant ArrayReply reply, RedisCodec codec) {
     final items = reply.array;
 
-    if (items == null) {
-      return null;
-    }
-
-    // ignore: prefer_collection_literals
-    final streams = LinkedHashMap<K, List<StreamEntry<K, V>>>();
+    final streams = <K, List<StreamEntry<K, V>>>{};
 
     for (var item in items) {
-      // ignore: avoid_as
       final entry = item as ArrayReply;
-
       final key = codec.decode<K>(entry.array[0]);
-      // ignore: avoid_as
       final stream = _streamMapper.map(entry.array[1] as ArrayReply, codec);
 
       streams[key] = stream;
@@ -577,7 +565,9 @@ class StreamMapper<K, V> implements Mapper<List<StreamEntry<K, V>>> {
     final stream = <StreamEntry<K, V>>[];
 
     for (var entry in reply.array) {
-      stream.add(_entryMapper.map(entry, codec));
+      if (entry is ArrayReply) {
+        stream.add(_entryMapper.map(entry, codec));
+      }
     }
 
     return stream;
@@ -589,16 +579,10 @@ class StreamEntryMapper<K, V> implements Mapper<StreamEntry<K, V>> {
   final StreamEntryFieldsMapper<K, V> _fieldsMapper = StreamEntryFieldsMapper();
 
   @override
-  StreamEntry<K, V> map(Reply reply, RedisCodec codec) {
-    if (reply is! ArrayReply) {
-      return null;
-    }
-
-    // ignore: avoid_as
-    final entry = (reply as ArrayReply).array;
+  StreamEntry<K, V> map(covariant ArrayReply reply, RedisCodec codec) {
+    final entry = reply.array;
 
     final id = codec.decode<K>(entry[0]);
-    // ignore: avoid_as
     final fields = _fieldsMapper.map(entry[1] as ArrayReply, codec);
 
     return StreamEntry<K, V>(id, fields);

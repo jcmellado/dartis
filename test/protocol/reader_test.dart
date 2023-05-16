@@ -1,20 +1,20 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-// ignore_for_file: avoid_as
-
 import 'dart:typed_data' show Uint8List;
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 void main() {
+  // ignore: no_leading_underscores_for_local_identifiers
   Uint8List _chunk(List<int> bytes) => Uint8List.fromList(bytes);
 
   group('Reader', () {
     group('read until CR LF', () {
-      void _checkLine(Reader reader) {
+      void checkLine(Reader reader) {
         expect(reader.done, isTrue);
 
         final reply = reader.consume();
@@ -37,7 +37,7 @@ void main() {
         final end = reader.read(_chunk([1, 2, 3, 13, 10]), 0);
         expect(end, equals(5));
 
-        _checkLine(reader);
+        checkLine(reader);
       });
 
       test('from one chunk [..., 13, 10, ...] with extra data', () {
@@ -47,7 +47,7 @@ void main() {
         final end = reader.read(_chunk([0, 0, 1, 2, 3, 13, 10, 0, 0]), 2);
         expect(end, equals(7));
 
-        _checkLine(reader);
+        checkLine(reader);
       });
 
       test('from two chunks [...] [..., 13, 10]', () {
@@ -61,7 +61,7 @@ void main() {
         end = reader.read(_chunk([3, 13, 10]), 0);
         expect(end, equals(3));
 
-        _checkLine(reader);
+        checkLine(reader);
       });
 
       test('from two chunks [...] [13, 10]', () {
@@ -75,7 +75,7 @@ void main() {
         end = reader.read(_chunk([13, 10]), 0);
         expect(end, equals(2));
 
-        _checkLine(reader);
+        checkLine(reader);
       });
 
       test('from two chunks [..., 13] [10]', () {
@@ -89,12 +89,12 @@ void main() {
         end = reader.read(_chunk([10]), 0);
         expect(end, equals(1));
 
-        _checkLine(reader);
+        checkLine(reader);
       });
     });
 
     group('read length and payload', () {
-      void _checkBulk(Reader reader) {
+      void checkBulk(Reader reader) {
         expect(reader.done, isTrue);
 
         final reply = reader.consume();
@@ -117,7 +117,7 @@ void main() {
         final end = reader.read(_chunk([51, 13, 10, 1, 2, 3, 13, 10]), 0);
         expect(end, equals(8));
 
-        _checkBulk(reader);
+        checkBulk(reader);
       });
 
       test('from one chunk [..., 13, 10, ..., 13, 10, ...] with extra data',
@@ -129,7 +129,7 @@ void main() {
             reader.read(_chunk([0, 0, 51, 13, 10, 1, 2, 3, 13, 10, 0, 0]), 2);
         expect(end, equals(10));
 
-        _checkBulk(reader);
+        checkBulk(reader);
       });
 
       test('from two chunks [..., 13, 10] [..., 13, 10]', () {
@@ -143,7 +143,7 @@ void main() {
         end = reader.read(_chunk([1, 2, 3, 13, 10]), 0);
         expect(end, equals(5));
 
-        _checkBulk(reader);
+        checkBulk(reader);
       });
 
       test('from two chunks [..., 13, 10, ...] [13, 10]', () {
@@ -157,7 +157,7 @@ void main() {
         end = reader.read(_chunk([13, 10]), 0);
         expect(end, equals(2));
 
-        _checkBulk(reader);
+        checkBulk(reader);
       });
 
       test('from two chunks [..., 13, 10, ...] [13, 10, ...] with extra data',
@@ -172,7 +172,7 @@ void main() {
         end = reader.read(_chunk([13, 10, 0, 0]), 0);
         expect(end, equals(2));
 
-        _checkBulk(reader);
+        checkBulk(reader);
       });
 
       test('from two chunks [..., 13, 10, ..., 13] [10]', () {
@@ -186,7 +186,7 @@ void main() {
         end = reader.read(_chunk([10]), 0);
         expect(end, equals(1));
 
-        _checkBulk(reader);
+        checkBulk(reader);
       });
 
       test('from two chunks [..., 13, 10, ..., 13] [10, ...] with extra data',
@@ -201,12 +201,12 @@ void main() {
         end = reader.read(_chunk([10, 0, 0]), 0);
         expect(end, equals(1));
 
-        _checkBulk(reader);
+        checkBulk(reader);
       });
     });
 
     group('read length and array', () {
-      void _checkArray(Reader reader) {
+      void checkArray(Reader reader) {
         expect(reader.done, isTrue);
 
         final reply = reader.consume();
@@ -238,7 +238,7 @@ void main() {
             0);
         expect(end, equals(11));
 
-        _checkArray(reader);
+        checkArray(reader);
       });
 
       test('from one chunk [..., 13, 10, ..., 13, 10, ...] with extra data',
@@ -257,7 +257,7 @@ void main() {
             2);
         expect(end, equals(13));
 
-        _checkArray(reader);
+        checkArray(reader);
       });
 
       test('from two chunks [..., 13, 10] [..., 13, 10]', () {
@@ -280,7 +280,7 @@ void main() {
             0);
         expect(end, equals(4));
 
-        _checkArray(reader);
+        checkArray(reader);
       });
 
       test('from two chunks [..., 13, 10, ...] [13, 10]', () {
@@ -300,7 +300,7 @@ void main() {
         end = reader.read(_chunk([13, 10]), 0);
         expect(end, equals(2));
 
-        _checkArray(reader);
+        checkArray(reader);
       });
 
       test('from two chunks [..., 13, 10, ...] [13, 10, ...] with extra data',
@@ -322,7 +322,7 @@ void main() {
         end = reader.read(_chunk([13, 10, 0, 0]), 0);
         expect(end, equals(2));
 
-        _checkArray(reader);
+        checkArray(reader);
       });
 
       test('from two chunks [..., 13, 10, ..., 13] [10]', () {
@@ -342,7 +342,7 @@ void main() {
         end = reader.read(_chunk([10]), 0);
         expect(end, equals(1));
 
-        _checkArray(reader);
+        checkArray(reader);
       });
 
       test('from two chunks [..., 13, 10, ..., 13] [10, ...] with extra data',
@@ -364,7 +364,7 @@ void main() {
         end = reader.read(_chunk([10, 0, 0]), 0);
         expect(end, equals(1));
 
-        _checkArray(reader);
+        checkArray(reader);
       });
     });
 
@@ -396,8 +396,8 @@ void main() {
         expect(reader.read(_chunk([45, 49, 13, 10]), 0), equals(4));
 
         final reply = reader.consume();
-        expect(reply, const TypeMatcher<BulkReply>());
-        expect(reply.value, isNull);
+        expect(reply, const TypeMatcher<NullReply>());
+        expect(reply.value, null);
       });
 
       test('empty bulk', () {
@@ -424,8 +424,7 @@ void main() {
         expect(reader.read(_chunk([45, 49, 13, 10]), 0), equals(4));
 
         final reply = reader.consume();
-        expect(reply, const TypeMatcher<ArrayReply>());
-        expect((reply as ArrayReply).array, isNull);
+        expect(reply, const TypeMatcher<NullReply>());
       });
 
       test('empty array', () {

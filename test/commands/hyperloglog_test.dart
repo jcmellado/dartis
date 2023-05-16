@@ -3,13 +3,14 @@
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 import '../util.dart' show uuid;
 
 void main() {
-  Client client;
-  HyperLogLogCommands<String, String> commands;
+  late Client client;
+  late HyperLogLogCommands<String, String> commands;
 
   setUp(() async {
     client = await Client.connect('redis://localhost:6379');

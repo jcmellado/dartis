@@ -51,15 +51,15 @@ abstract class ServerCommands<K> {
   /// Gets the current connection name.
   ///
   /// See https://redis.io/commands/client-getname
-  Future<String> clientGetname();
+  Future<String?> clientGetname();
 
   /// Closes a given client connection.
   ///
   /// Returns the number of clients killed.
   ///
   /// See https://redis.io/commands/client-kill
-  Future<int> clientKill(
-      {String ipPort, Iterable<ClientFilter> filters = const []});
+  Future<int?> clientKill(
+      {String? ipPort, Iterable<ClientFilter> filters = const []});
 
   /// Returns the list of client connections.
   ///
@@ -85,7 +85,7 @@ abstract class ServerCommands<K> {
   /// Returns details about all available Redis commands.
   ///
   /// See https://redis.io/commands/command
-  Future<List<ClientCommand>> command();
+  Future<List<ClientCommand?>> command();
 
   /// Returns the total number of available Redis commands.
   ///
@@ -100,13 +100,13 @@ abstract class ServerCommands<K> {
   /// Returns details about multiple Redis commands.
   ///
   /// See https://redis.io/commands/command-info
-  Future<List<ClientCommand>> commandInfo(
-      {String commandName, Iterable<String> commandNames = const []});
+  Future<List<ClientCommand?>> commandInfo(
+      {String? commandName, Iterable<String> commandNames = const []});
 
   /// Gets the value of a configuration [parameter].
   ///
   /// See https://redis.io/commands/config-get
-  Future<Map<String, String>> configGet(String parameter);
+  Future<Map<String?, String?>> configGet(String parameter);
 
   /// Resets the statistics reported by Redis using the `INFO` command.
   ///
@@ -153,7 +153,7 @@ abstract class ServerCommands<K> {
   /// Returns information and statistics about the server.
   ///
   /// See https://redis.io/commands/info
-  Future<String> info([InfoSection section]);
+  Future<String> info([InfoSection? section]);
 
   /// Returns the UNIX time of the last DB save executed with success.
   ///
@@ -184,13 +184,13 @@ abstract class ServerCommands<K> {
   /// Returns memory usage details.
   ///
   /// See https://redis.io/commands/memory-stats
-  Future<Map<String, Object>> memoryStats();
+  Future<Map<String?, Object?>> memoryStats();
 
   /// Returns the number of bytes that a [key] and its value require to be
   /// stored in RAM.
   ///
   /// See https://redis.io/commands/memory-usage
-  Future<int> memoryUsage(K key, {int count});
+  Future<int?> memoryUsage(K key, {int? count});
 
   /// Returns the role of the instance in the context of replication.
   ///
@@ -205,7 +205,7 @@ abstract class ServerCommands<K> {
   /// Synchronously saves the dataset to disk and then shut down the server.
   ///
   /// See https://redis.io/commands/shutdown
-  Future<void> shutdown([ShutdownMode mode]);
+  Future<void> shutdown([ShutdownMode? mode]);
 
   /// Makes the server a slave of another instance, or promote it as master.
   ///
@@ -217,7 +217,7 @@ abstract class ServerCommands<K> {
   /// See [slowlogLen] and [slowlogReset].
   ///
   /// See https://redis.io/commands/slowlog
-  Future<List<SlowLogEntry>> slowlogGet({int count});
+  Future<List<SlowLogEntry>> slowlogGet({int? count});
 
   /// Returns the length of the slow log.
   ///
@@ -327,13 +327,13 @@ class ShutdownMode {
 /// A client filter.
 class ClientFilter {
   /// The client ID.
-  final int clientId;
+  final int? clientId;
 
   /// The client type.
-  final ClientType type;
+  final ClientType? type;
 
   /// The ip:port.
-  final String ipPort;
+  final String? ipPort;
 
   /// The "skip me" flag.
   final bool skipMe;
@@ -350,22 +350,22 @@ class ClientFilter {
 /// A client command.
 class ClientCommand {
   /// The name.
-  final String name;
+  final String? name;
 
   /// The arity specification.
-  final int arity;
+  final int? arity;
 
   /// The flags.
-  final List<String> flags;
+  final List<String>? flags;
 
   /// The position of first key in argument list.
-  final int firstKeyPosition;
+  final int? firstKeyPosition;
 
   /// The position of last key in argument list.
-  final int lastKeyPosition;
+  final int? lastKeyPosition;
 
   /// Key sep count for locating repeating keys.
-  final int keyStepCount;
+  final int? keyStepCount;
 
   /// Creates a [ClientCommand] instance.
   const ClientCommand(this.name, this.arity, this.flags, this.firstKeyPosition,
@@ -380,10 +380,10 @@ class ClientCommand {
 /// Server time.
 class ServerTime {
   /// The UNIX timestamp in seconds.
-  final int timestamp;
+  final int? timestamp;
 
   /// The amount of microseconds already elapsed in the current second.
-  final int microseconds;
+  final int? microseconds;
 
   /// Creates a [ServerTime] instance.
   const ServerTime(this.timestamp, this.microseconds);
@@ -396,13 +396,13 @@ class ServerTime {
 /// A slave server.
 class Slave {
   /// The slave IP.
-  final String ip;
+  final String? ip;
 
   /// The slave port.
-  final int port;
+  final int? port;
 
   /// The last acknowledged replication offset.
-  final int offset;
+  final int? offset;
 
   /// Creates a [Slave] instance.
   const Slave(this.ip, this.port, this.offset);
@@ -414,10 +414,10 @@ class Slave {
 /// Master instance details.
 class MasterRole {
   /// The current master replication offset.
-  final int offset;
+  final int? offset;
 
   /// The connected slaves.
-  final List<Slave> slaves;
+  final List<Slave>? slaves;
 
   /// Creates a [MasterRole] instance.
   const MasterRole(this.offset, this.slaves);
@@ -429,16 +429,16 @@ class MasterRole {
 /// Slave instance details.
 class SlaveRole {
   /// The IP of the master.
-  final String ip;
+  final String? ip;
 
   /// The port number of the master.
-  final int port;
+  final int? port;
 
   /// The state of the replication from the point of view of the master.
-  final String state;
+  final String? state;
 
   /// The amount of data received from the slave so far.
-  final int received;
+  final int? received;
 
   /// Creates a [SlaveRole] instance.
   const SlaveRole(this.ip, this.port, this.state, this.received);
@@ -451,7 +451,7 @@ class SlaveRole {
 /// Sentinel instance details.
 class SentinelRole {
   /// The master names monitored by the Sentinel instance.
-  final List<String> masters;
+  final List<String>? masters;
 
   /// Creates a [SentinelRole] instance.
   const SentinelRole(this.masters);
@@ -463,16 +463,16 @@ class SentinelRole {
 /// The role of an instance.
 class Role {
   /// The type of the role.
-  final String type;
+  final String? type;
 
   /// The instance details for master instances.
-  final MasterRole master;
+  final MasterRole? master;
 
   /// The instance details for slave instances.
-  final SlaveRole slave;
+  final SlaveRole? slave;
 
   /// The instance details for Sentinel instances.
-  final SentinelRole sentinel;
+  final SentinelRole? sentinel;
 
   /// Creates a [Role] instance.
   const Role(this.type, {this.master, this.slave, this.sentinel});
@@ -485,22 +485,22 @@ class Role {
 /// A slow log entry.
 class SlowLogEntry {
   /// The id.
-  final int id;
+  final int? id;
 
   /// The unix timestamp at which the logged command was processed.
-  final int timestamp;
+  final int? timestamp;
 
   /// The amount of time needed for its execution, in microseconds.
-  final int responseTime;
+  final int? responseTime;
 
   /// The arguments of the command.
-  final List<String> args;
+  final List<String>? args;
 
   /// Client IP address and port
-  final String clientIpPort;
+  final String? clientIpPort;
 
   /// Client name.
-  final String clientName;
+  final String? clientName;
 
   /// Creates a [SlowLogEntry] instance.
   const SlowLogEntry(this.id, this.timestamp, this.responseTime, this.args,
@@ -513,17 +513,17 @@ class SlowLogEntry {
 }
 
 /// A mapper for the COMMAND and COMMAND INFO commands.
-class CommandMapper implements Mapper<List<ClientCommand>> {
+class CommandMapper implements Mapper<List<ClientCommand?>> {
   /// Creates a [CommandMapper] instance.
   const CommandMapper();
 
   @override
-  List<ClientCommand> map(covariant ArrayReply reply, RedisCodec codec) => reply
-      .array
-      .map((value) =>
-          // ignore: avoid_as
-          value.value == null ? null : _mapCommand(value as ArrayReply, codec))
-      .toList();
+  List<ClientCommand?> map(covariant ArrayReply reply, RedisCodec codec) =>
+      reply.array
+          .map((value) => value.value == null
+              ? null
+              : _mapCommand(value as ArrayReply, codec))
+          .toList();
 
   /// Maps a [reply] to a [ClientCommand] instance.
   ClientCommand _mapCommand(ArrayReply reply, RedisCodec codec) {
@@ -593,14 +593,14 @@ class ClientListMapper implements Mapper<List<Map<String, String>>> {
 }
 
 /// A mapper for the CONFIG GET command.
-class ConfigMapper implements Mapper<Map<String, String>> {
+class ConfigMapper implements Mapper<Map<String?, String?>> {
   /// Creates a [ConfigMapper] instance.
   const ConfigMapper();
 
   @override
-  Map<String, String> map(covariant ArrayReply reply, RedisCodec codec) {
+  Map<String?, String?> map(covariant ArrayReply reply, RedisCodec codec) {
     // ignore: prefer_collection_literals
-    final hash = LinkedHashMap<String, String>();
+    final hash = LinkedHashMap<String?, String?>();
 
     final array = reply.array;
     for (var i = 0; i < array.length; i += 2) {
@@ -615,14 +615,14 @@ class ConfigMapper implements Mapper<Map<String, String>> {
 }
 
 /// A mapper for the MEMORY STATS command.
-class MemoryStatsMapper implements Mapper<Map<String, Object>> {
+class MemoryStatsMapper implements Mapper<Map<String?, Object?>> {
   /// Creates a [MemoryStatsMapper] instance.
   const MemoryStatsMapper();
 
   @override
-  Map<String, Object> map(covariant ArrayReply reply, RedisCodec codec) {
+  Map<String?, Object?> map(covariant ArrayReply reply, RedisCodec codec) {
     // ignore: prefer_collection_literals
-    final stats = LinkedHashMap<String, Object>();
+    final stats = LinkedHashMap<String?, Object?>();
 
     final array = reply.array;
     for (var i = 0; i < array.length; i += 2) {
@@ -648,9 +648,9 @@ class RoleMapper implements Mapper<Role> {
   Role map(covariant ArrayReply reply, RedisCodec codec) {
     final type = codec.decode<String>(reply.array[0]);
 
-    MasterRole master;
-    SlaveRole slave;
-    SentinelRole sentinel;
+    MasterRole? master;
+    SlaveRole? slave;
+    SentinelRole? sentinel;
 
     switch (type) {
       case 'master':
@@ -674,7 +674,6 @@ class RoleMapper implements Mapper<Role> {
     final array = reply.array;
 
     final offset = codec.decode<int>(array[1]);
-    // ignore: avoid_as
     final slaves = _mapSlaves(array[2] as ArrayReply, codec);
 
     return MasterRole(offset, slaves);
@@ -682,7 +681,6 @@ class RoleMapper implements Mapper<Role> {
 
   /// Maps a [reply] to a list of [Slave] instances.
   List<Slave> _mapSlaves(ArrayReply reply, RedisCodec codec) => reply.array
-      // ignore: avoid_as
       .map((value) => _mapSlaveItem(value as ArrayReply, codec))
       .toList();
 
@@ -725,7 +723,6 @@ class SlowLogMapper implements Mapper<List<SlowLogEntry>> {
   @override
   List<SlowLogEntry> map(covariant ArrayReply reply, RedisCodec codec) =>
       reply.array
-          // ignore: avoid_as
           .map((value) => _mapEntry(value as ArrayReply, codec))
           .toList();
 
@@ -738,8 +735,8 @@ class SlowLogMapper implements Mapper<List<SlowLogEntry>> {
     final responseTime = codec.decode<int>(array[2]);
     final args = codec.decode<List<String>>(array[3]);
 
-    String clientIpPort;
-    String clientName;
+    String? clientIpPort;
+    String? clientName;
     if (array.length > 4) {
       clientIpPort = codec.decode<String>(array[4]);
       clientName = codec.decode<String>(array[5]);

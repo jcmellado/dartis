@@ -3,13 +3,14 @@
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 import '../util.dart' show uuid;
 
 void main() {
-  Client client;
-  SortedSetCommands<String, String> commands;
+  late Client client;
+  late SortedSetCommands<String?, String?> commands;
 
   setUp(() async {
     client = await Client.connect('redis://localhost:6379');
@@ -30,20 +31,20 @@ void main() {
 
       // Pop from one sorted set.
       var result = await commands.bzpopmax(key: key1);
-      expect(result.key, equals(key1));
-      expect(result.member.key, equals('b'));
-      expect(result.member.value, equals(2.0));
+      expect(result!.key, equals(key1));
+      expect(result.member!.key, equals('b'));
+      expect(result.member!.value, equals(2.0));
 
       result = await commands.bzpopmax(key: key1);
-      expect(result.key, equals(key1));
-      expect(result.member.key, equals('a'));
-      expect(result.member.value, equals(1.0));
+      expect(result!.key, equals(key1));
+      expect(result.member!.key, equals('a'));
+      expect(result.member!.value, equals(1.0));
 
       // Pop from some sorted sets.
       result = await commands.bzpopmax(keys: [key1, key2]);
-      expect(result.key, equals(key2));
-      expect(result.member.key, equals('c'));
-      expect(result.member.value, equals(3.0));
+      expect(result!.key, equals(key2));
+      expect(result.member!.key, equals('c'));
+      expect(result.member!.value, equals(3.0));
 
       // Pop blocking.
       expect(await commands.bzpopmax(key: key1, timeout: 1), isNull);
@@ -51,7 +52,7 @@ void main() {
       // Try to pop from an empty or non existing sorted set.
       final key3 = uuid();
       expect(await commands.bzpopmax(key: key3, timeout: 1), isNull);
-    }, skip: 'Requires Redis 5.0.0.');
+    });
 
     test('bzpopmin', () async {
       // Add some elements.
@@ -63,22 +64,22 @@ void main() {
       // Pop from one sorted set.
       var result = await commands.bzpopmin(key: key1);
       expect(result, isNotNull);
-      expect(result.key, equals(key1));
-      expect(result.member.key, equals('a'));
-      expect(result.member.value, equals(1.0));
+      expect(result!.key, equals(key1));
+      expect(result.member!.key, equals('a'));
+      expect(result.member!.value, equals(1.0));
 
       result = await commands.bzpopmin(key: key1);
       expect(result, isNotNull);
-      expect(result.key, equals(key1));
-      expect(result.member.key, equals('b'));
-      expect(result.member.value, equals(2.0));
+      expect(result!.key, equals(key1));
+      expect(result.member!.key, equals('b'));
+      expect(result.member!.value, equals(2.0));
 
       // Pop from one from some sorted sets.
       result = await commands.bzpopmin(keys: [key1, key2]);
       expect(result, isNotNull);
-      expect(result.key, equals(key2));
-      expect(result.member.key, equals('c'));
-      expect(result.member.value, equals(3.0));
+      expect(result!.key, equals(key2));
+      expect(result.member!.key, equals('c'));
+      expect(result.member!.value, equals(3.0));
 
       // Pop blocking.
       expect(await commands.bzpopmin(key: key1, timeout: 1), isNull);
@@ -86,7 +87,7 @@ void main() {
       // Try to pop from an empty or non existing sorted set.
       final key3 = uuid();
       expect(await commands.bzpopmin(key: key3, timeout: 1), isNull);
-    }, skip: 'Requires Redis 5.0.0.');
+    });
 
     test('zadd', () async {
       // Add one element.
@@ -226,7 +227,7 @@ void main() {
       expect(await commands.zpopmax(key, count: 2),
           allOf(containsPair('a', 1.0), containsPair('b', 2.0)));
       expect(await commands.zpopmax(key), isEmpty);
-    }, skip: 'Requires Redis 5.0.0.');
+    });
 
     test('zpopmin', () async {
       // Add some elements.
@@ -238,7 +239,7 @@ void main() {
       expect(await commands.zpopmin(key, count: 2),
           allOf(containsPair('b', 2.0), containsPair('c', 3.0)));
       expect(await commands.zpopmin(key), isEmpty);
-    }, skip: 'Requires Redis 5.0.0.');
+    });
 
     test('zrange', () async {
       // Add some elements.
@@ -594,9 +595,9 @@ void main() {
 
       group('SortedSetPopResult', () {
         test('toString', () {
-          const value = SortedSetPopResult<String, String>(null, null);
+          const value = SortedSetPopResult<String?, String>(null, null);
           expect(value.toString(),
-              startsWith('SortedSetPopResult<String, String>:'));
+              startsWith('SortedSetPopResult<String?, String>:'));
         });
       });
 

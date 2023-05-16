@@ -3,13 +3,14 @@
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 import '../util.dart' show uuid;
 
 void main() {
-  Client client;
-  Commands<String, String> commands;
+  late Client client;
+  late Commands<String, String> commands;
 
   setUp(() async {
     client = await Client.connect('redis://localhost:6379');
@@ -125,11 +126,11 @@ void main() {
 
       result1 = await commands.xclaim(key2, group2, consumer4, 0, id: id1);
       expect(result1, isA<List>());
-      // ignore: avoid_as
-      final result2 = result1 as List<StreamEntry<String, String>>;
+
+      final result2 = result1 as List<StreamEntry<String?, String?>?>;
       expect(result2, hasLength(1));
-      expect(result2[0].id, equals(id1));
-      expect(result2[0].fields, {'pressure': '1'});
+      expect(result2[0]!.id, equals(id1));
+      expect(result2[0]!.fields, {'pressure': '1'});
 
       // Claims a message with options.
       final key3 = uuid();
@@ -151,8 +152,8 @@ void main() {
           force: true,
           justId: true);
       expect(result1, isA<List>());
-      // ignore: avoid_as
-      final result3 = result1 as List<String>;
+
+      final result3 = result1 as List<String?>;
       expect(result3, hasLength(1));
       expect(result3[0], equals(id2));
     });
@@ -329,12 +330,12 @@ void main() {
 
       var result1 = await commands.xpending(key1, group1);
       expect(result1, isA<StreamPendingSummary>());
-      // ignore: avoid_as
+
       var result2 = result1 as StreamPendingSummary<String, String>;
       expect(result2.pendingCount, equals(0));
-      expect(result2.firstEntryId, isNull);
-      expect(result2.lastEntryId, isNull);
-      expect(result2.consumers, isNull);
+      expect(result2.firstEntryId, '');
+      expect(result2.lastEntryId, '');
+      expect(result2.consumers, <StreamPendingConsumer<String, String>>[]);
 
       // Inspect a pending entries list.
       final key2 = uuid();
@@ -350,7 +351,7 @@ void main() {
 
       result1 = await commands.xpending(key2, group2);
       expect(result1, isA<StreamPendingSummary>());
-      // ignore: avoid_as
+
       result2 = result1 as StreamPendingSummary<String, String>;
       expect(result2.pendingCount, equals(2));
       expect(result2.firstEntryId, equals(id1));
@@ -372,8 +373,8 @@ void main() {
       var result3 =
           await commands.xpending(key3, group3, start: '-', end: '+', count: 1);
       expect(result3, isA<List>());
-      // ignore: avoid_as
-      var result4 = result3 as List<StreamPendingEntry<String, String>>;
+
+      var result4 = result3 as List<StreamPendingEntry<String?, String>>;
       expect(result4, isEmpty);
 
       // Inspect a range of a pending entries list.
@@ -391,8 +392,8 @@ void main() {
       result3 =
           await commands.xpending(key4, group4, start: '-', end: '+', count: 2);
       expect(result3, isA<List>());
-      // ignore: avoid_as
-      result4 = result3 as List<StreamPendingEntry<String, String>>;
+
+      result4 = result3 as List<StreamPendingEntry<String?, String>>;
       expect(result4, hasLength(2));
       expect(result4[0].id, equals(id3));
       expect(result4[0].consumer, equals(consumer5));
@@ -418,8 +419,8 @@ void main() {
       result3 = await commands.xpending(key5, group5,
           start: '-', end: '+', count: 1, consumer: consumer7);
       expect(result3, isA<List>());
-      // ignore: avoid_as
-      result4 = result3 as List<StreamPendingEntry<String, String>>;
+
+      result4 = result3 as List<StreamPendingEntry<String?, String>>;
       expect(result4, hasLength(1));
       expect(result4[0].id, equals(id5));
       expect(result4[0].consumer, equals(consumer7));
@@ -479,10 +480,10 @@ void main() {
 
       var result = await commands.xread(key: key2, id: '0');
       expect(result, hasLength(1));
-      expect(result.keys.first, equals(key2));
+      expect(result!.keys.first, equals(key2));
       expect(result[key2], hasLength(1));
-      expect(result[key2][0].id, equals('1-0'));
-      expect(result[key2][0].fields, equals({'pressure': '1'}));
+      expect(result[key2]![0]!.id, equals('1-0'));
+      expect(result[key2]![0]!.fields, equals({'pressure': '1'}));
 
       // Read from multiple streams.
       final key3 = uuid();
@@ -491,13 +492,13 @@ void main() {
       await commands.xadd(key4, id: '2-0', fields: {'pressure': '2'});
 
       result = await commands.xread(keys: [key3, key4], ids: ['0', '0']);
-      expect(result, hasLength(2));
+      expect(result!, hasLength(2));
       expect(result[key3], hasLength(1));
-      expect(result[key3][0].id, equals('1-0'));
-      expect(result[key3][0].fields, equals({'pressure': '1'}));
+      expect(result[key3]![0]!.id, equals('1-0'));
+      expect(result[key3]![0]!.fields, equals({'pressure': '1'}));
       expect(result[key4], hasLength(1));
-      expect(result[key4][0].id, equals('2-0'));
-      expect(result[key4][0].fields, equals({'pressure': '2'}));
+      expect(result[key4]![0]!.id, equals('2-0'));
+      expect(result[key4]![0]!.fields, equals({'pressure': '2'}));
 
       // Read partial range from stream.
       final key5 = uuid();
@@ -507,12 +508,12 @@ void main() {
       await commands.xadd(key5, id: '1-3', fields: {'pressure': '4'});
 
       result = await commands.xread(key: key5, id: '1-1');
-      expect(result, hasLength(1));
+      expect(result!, hasLength(1));
       expect(result[key5], hasLength(2));
-      expect(result[key5][0].id, equals('1-2'));
-      expect(result[key5][0].fields, equals({'pressure': '3'}));
-      expect(result[key5][1].id, equals('1-3'));
-      expect(result[key5][1].fields, equals({'pressure': '4'}));
+      expect(result[key5]![0]!.id, equals('1-2'));
+      expect(result[key5]![0]!.fields, equals({'pressure': '3'}));
+      expect(result[key5]![1]!.id, equals('1-3'));
+      expect(result[key5]![1]!.fields, equals({'pressure': '4'}));
 
       // Read capped range from stream.
       final key6 = uuid();
@@ -522,10 +523,10 @@ void main() {
       await commands.xadd(key6, id: '1-3', fields: {'pressure': '4'});
 
       result = await commands.xread(key: key6, id: '1-1', count: 1);
-      expect(result, hasLength(1));
+      expect(result!, hasLength(1));
       expect(result[key6], hasLength(1));
-      expect(result[key6][0].id, equals('1-2'));
-      expect(result[key6][0].fields, equals({'pressure': '3'}));
+      expect(result[key6]![0]!.id, equals('1-2'));
+      expect(result[key6]![0]!.fields, equals({'pressure': '3'}));
 
       // Read blocking entry from stream.
       final key7 = uuid();
@@ -534,10 +535,10 @@ void main() {
 
       result =
           await commands.xread(keys: [key7, key8], ids: ['0', '0'], timeout: 1);
-      expect(result, hasLength(1));
+      expect(result!, hasLength(1));
       expect(result[key7], hasLength(1));
-      expect(result[key7][0].id, equals('1-0'));
-      expect(result[key7][0].fields, equals({'pressure': '1'}));
+      expect(result[key7]![0]!.id, equals('1-0'));
+      expect(result[key7]![0]!.fields, equals({'pressure': '1'}));
     });
 
     test('xreadgroup', () async {
@@ -562,12 +563,12 @@ void main() {
       final id2 = await commands.xadd(key2, fields: {'temperature': '2'});
 
       result = await commands.xreadgroup(group2, consumer2, key: key2, id: '>');
-      expect(result, hasLength(1));
+      expect(result!, hasLength(1));
       expect(result[key2], hasLength(2));
-      expect(result[key2][0].id, id1);
-      expect(result[key2][0].fields, equals({'pressure': '1'}));
-      expect(result[key2][1].id, id2);
-      expect(result[key2][1].fields, equals({'temperature': '2'}));
+      expect(result[key2]![0]!.id, id1);
+      expect(result[key2]![0]!.fields, equals({'pressure': '1'}));
+      expect(result[key2]![1]!.id, id2);
+      expect(result[key2]![1]!.fields, equals({'temperature': '2'}));
 
       // Read from multiple streams.
       final key3 = uuid();
@@ -583,13 +584,13 @@ void main() {
 
       result = await commands
           .xreadgroup(group3, consumer3, keys: [key3, key4], ids: ['>', '>']);
-      expect(result, hasLength(2));
+      expect(result!, hasLength(2));
       expect(result[key3], hasLength(1));
-      expect(result[key3][0].id, id3);
-      expect(result[key3][0].fields, equals({'pressure': '1'}));
+      expect(result[key3]![0]!.id, id3);
+      expect(result[key3]![0]!.fields, equals({'pressure': '1'}));
       expect(result[key4], hasLength(1));
-      expect(result[key4][0].id, id4);
-      expect(result[key4][0].fields, equals({'temperature': '2'}));
+      expect(result[key4]![0]!.id, id4);
+      expect(result[key4]![0]!.fields, equals({'temperature': '2'}));
 
       // Read partial pending range from stream.
       final key5 = uuid();
@@ -605,12 +606,12 @@ void main() {
 
       result =
           await commands.xreadgroup(group4, consumer4, key: key5, id: '1-1');
-      expect(result, hasLength(1));
+      expect(result!, hasLength(1));
       expect(result[key5], hasLength(2));
-      expect(result[key5][0].id, equals('1-2'));
-      expect(result[key5][0].fields, equals({'pressure': '3'}));
-      expect(result[key5][1].id, equals('1-3'));
-      expect(result[key5][1].fields, equals({'pressure': '4'}));
+      expect(result[key5]![0]!.id, equals('1-2'));
+      expect(result[key5]![0]!.fields, equals({'pressure': '3'}));
+      expect(result[key5]![1]!.id, equals('1-3'));
+      expect(result[key5]![1]!.fields, equals({'pressure': '4'}));
 
       // Read capped pending range from stream.
       final key6 = uuid();
@@ -626,10 +627,10 @@ void main() {
 
       result = await commands.xreadgroup(group5, consumer5,
           key: key6, id: '1-1', count: 1);
-      expect(result, hasLength(1));
+      expect(result!, hasLength(1));
       expect(result[key6], hasLength(1));
-      expect(result[key6][0].id, equals('1-2'));
-      expect(result[key6][0].fields, equals({'pressure': '3'}));
+      expect(result[key6]![0]!.id, equals('1-2'));
+      expect(result[key6]![0]!.fields, equals({'pressure': '3'}));
 
       // Read blocking pending entry from stream.
       final key7 = uuid();
@@ -642,10 +643,10 @@ void main() {
 
       result = await commands.xreadgroup(group6, consumer6,
           key: key7, id: '0', timeout: 1);
-      expect(result, hasLength(1));
+      expect(result!, hasLength(1));
       expect(result[key7], hasLength(1));
-      expect(result[key7][0].id, equals('1-0'));
-      expect(result[key7][0].fields, equals({'pressure': '1'}));
+      expect(result[key7]![0]!.id, equals('1-0'));
+      expect(result[key7]![0]!.fields, equals({'pressure': '1'}));
 
       // Read acknowledging from stream.
       final key8 = uuid();
@@ -659,7 +660,7 @@ void main() {
 
       result = await commands.xreadgroup(group7, consumer7,
           key: key8, id: '0', timeout: 1);
-      expect(result, hasLength(1));
+      expect(result!, hasLength(1));
       expect(result[key8], isEmpty);
     });
 
@@ -673,8 +674,8 @@ void main() {
       await commands.xadd(key2, id: '1-0', field: 'pressure', value: '1');
       var result = await commands.xrevrange(key2, '+', '-');
       expect(result, hasLength(1));
-      expect(result[0].id, equals('1-0'));
-      expect(result[0].fields, equals({'pressure': '1'}));
+      expect(result[0]!.id, equals('1-0'));
+      expect(result[0]!.fields, equals({'pressure': '1'}));
 
       // Get partial range from stream.
       final key3 = uuid();
@@ -684,10 +685,10 @@ void main() {
       await commands.xadd(key3, id: '1-3', fields: {'pressure': '4'});
       result = await commands.xrevrange(key3, '1-2', '1-1');
       expect(result, hasLength(2));
-      expect(result[0].id, equals('1-2'));
-      expect(result[0].fields, equals({'pressure': '3'}));
-      expect(result[1].id, equals('1-1'));
-      expect(result[1].fields, equals({'pressure': '2'}));
+      expect(result[0]!.id, equals('1-2'));
+      expect(result[0]!.fields, equals({'pressure': '3'}));
+      expect(result[1]!.id, equals('1-1'));
+      expect(result[1]!.fields, equals({'pressure': '2'}));
 
       // Get capped range from stream.
       final key4 = uuid();
@@ -697,8 +698,8 @@ void main() {
       await commands.xadd(key4, id: '1-3', fields: {'pressure': '4'});
       result = await commands.xrevrange(key4, '1-2', '1-1', count: 1);
       expect(result, hasLength(1));
-      expect(result[0].id, equals('1-2'));
-      expect(result[0].fields, equals({'pressure': '3'}));
+      expect(result[0]!.id, equals('1-2'));
+      expect(result[0]!.fields, equals({'pressure': '3'}));
     });
 
     test('xtrim', () async {
@@ -739,34 +740,34 @@ void main() {
 
       group('StreamEntry', () {
         test('toString', () {
-          const value = StreamEntry<String, String>(null, null);
-          expect(value.toString(), startsWith('StreamEntry<String, String>:'));
+          const value = StreamEntry<String?, String>(null, null);
+          expect(value.toString(), startsWith('StreamEntry<String?, String>:'));
         });
       });
 
       group('StreamPendingSummary', () {
         test('toString', () {
           const value =
-              StreamPendingSummary<String, String>(null, null, null, null);
+              StreamPendingSummary<String?, String>(null, null, null, []);
           expect(value.toString(),
-              startsWith('StreamPendingSummary<String, String>:'));
+              startsWith('StreamPendingSummary<String?, String>:'));
         });
       });
 
       group('StreamPendingConsumer', () {
         test('toString', () {
-          const value = StreamPendingConsumer<String, String>(null, null);
+          const value = StreamPendingConsumer<String?, String>(null, null);
           expect(value.toString(),
-              startsWith('StreamPendingConsumer<String, String>:'));
+              startsWith('StreamPendingConsumer<String?, String>:'));
         });
       });
 
       group('StreamPendingEntry', () {
         test('toString', () {
           const value =
-              StreamPendingEntry<String, String>(null, null, null, null);
+              StreamPendingEntry<String?, String>(null, null, null, null);
           expect(value.toString(),
-              startsWith('StreamPendingEntry<String, String>:'));
+              startsWith('StreamPendingEntry<String?, String>:'));
         });
       });
     });

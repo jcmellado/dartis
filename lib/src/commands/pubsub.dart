@@ -21,7 +21,7 @@ abstract class PubSubCommands<K, V> {
   /// See [pubsubNumsub] and [pubsubNumpat].
   ///
   /// See https://redis.io/commands/pubsub
-  Future<List<K>> pubsubChannels({K pattern});
+  Future<List<K>> pubsubChannels({K? pattern});
 
   /// Returns the number of subscribers (not counting clients subscribed
   /// to patterns) for the specified [channels].
@@ -45,7 +45,7 @@ class PubsubResult<K> {
   final K channel;
 
   /// The number of subscribers.
-  final int subscriberCount;
+  final int? subscriberCount;
 
   /// Creates a [PubsubResult] instance.
   const PubsubResult(this.channel, this.subscriberCount);

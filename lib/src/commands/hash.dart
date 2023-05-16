@@ -14,7 +14,7 @@ abstract class HashCommands<K, V> {
   /// Returns the number of fields that were removed from the hash.
   ///
   /// See https://redis.io/commands/hdel
-  Future<int> hdel(K key, {K field, Iterable<K> fields = const []});
+  Future<int?> hdel(K key, {K? field, Iterable<K> fields = const []});
 
   /// Ckecks if [field] is an existing field in the hash stored at [key].
   ///
@@ -22,17 +22,17 @@ abstract class HashCommands<K, V> {
   /// contain [field] or [key] does not exist.
   ///
   /// See https://redis.io/commands/hexists
-  Future<int> hexists(K key, K field);
+  Future<int?> hexists(K key, K field);
 
   /// Returns the value associated with [field] in the hash stored at [key].
   ///
   /// See https://redis.io/commands/hget
-  Future<V> hget(K key, K field);
+  Future<V?> hget(K key, K field);
 
   /// Returns all fields and values of the hash stored at [key].
   ///
   /// See https://redis.io/commands/hgetall
-  Future<Map<K, V>> hgetall(K key);
+  Future<Map<K, V?>?> hgetall(K key);
 
   /// Increments the number stored at [field] in the hash stored at [key]
   /// by [increment].
@@ -40,7 +40,7 @@ abstract class HashCommands<K, V> {
   /// Returns the value at [field] after the increment operation.
   ///
   /// See https://redis.io/commands/hincrby
-  Future<int> hincrby(K key, K field, int increment);
+  Future<int?> hincrby(K key, K field, int increment);
 
   /// Increments the specified [field] of a hash stored at [key], and
   /// representing a floating point number, by the specified [increment].
@@ -48,34 +48,35 @@ abstract class HashCommands<K, V> {
   /// Returns the value at [field] after the increment operation.
   ///
   /// See https://redis.io/commands/hincrbyfloat
-  Future<double> hincrbyfloat(K key, K field, double increment);
+  Future<double?> hincrbyfloat(K key, K field, double increment);
 
   /// Returns all field names in the hash stored at [key].
   ///
   /// See https://redis.io/commands/hkeys
-  Future<List<K>> hkeys(K key);
+  Future<List<K>?> hkeys(K key);
 
   /// Returns the number of fields contained in the hash stored at [key].
   ///
   /// See https://redis.io/commands/hlen
-  Future<int> hlen(K key);
+  Future<int?> hlen(K key);
 
   /// Returns the values associated with the specified fields in the hash
   /// stored at [key].
   ///
   /// See https://redis.io/commands/hmget
-  Future<List<V>> hmget(K key, {K field, Iterable<K> fields = const []});
+  Future<List<V?>> hmget(K key, {K? field, Iterable<K> fields = const []});
 
   /// Sets the specified fields to their respective values in the hash
   /// stored at [key].
   ///
   /// See https://redis.io/commands/hmset
-  Future<void> hmset(K key, {K field, V value, Map<K, V> hash = const {}});
+  Future<void> hmset(K key, {K? field, V? value, Map<K, V?> hash = const {}});
 
   /// Incrementally iterates fields and values of a hash stored at [key].
   ///
   /// See https://redis.io/commands/hscan
-  Future<HashScanResult<K, V>> hscan(K key, int cursor, {K pattern, int count});
+  Future<HashScanResult<K, V?>?> hscan(K key, int cursor,
+      {K? pattern, int? count});
 
   /// Sets [field] in the hash stored at [key] to [value].
   ///
@@ -83,7 +84,7 @@ abstract class HashCommands<K, V> {
   /// `0` if [field] already exists in the hash and the value was updated.
   ///
   /// See https://redis.io/commands/hset
-  Future<int> hset(K key, K field, V value);
+  Future<int?> hset(K key, K field, V? value);
 
   /// Sets [field] in the hash stored at [key] to [value], only if [field]
   /// does not yet exist.
@@ -92,18 +93,18 @@ abstract class HashCommands<K, V> {
   /// `0` if [field] already exists in the hash and no operation was performed.
   ///
   /// See https://redis.io/commands/hsetnx
-  Future<int> hsetnx(K key, K field, V value);
+  Future<int?> hsetnx(K key, K field, V? value);
 
   /// Returns the string length of the value associated with [field] in the
   /// hash stored at [key].
   ///
   /// See https://redis.io/commands/hstrlen
-  Future<int> hstrlen(K key, K field);
+  Future<int?> hstrlen(K key, K field);
 
   /// Returns all values in the hash stored at [key].
   ///
   /// See https://redis.io/commands/hvals
-  Future<List<V>> hvals(K key);
+  Future<List<V?>?> hvals(K key);
 }
 
 /// Result of the HSCAN command.
@@ -112,7 +113,7 @@ class HashScanResult<K, V> {
   final int cursor;
 
   /// The fields.
-  final Map<K, V> fields;
+  final Map<K, V?> fields;
 
   /// Creates a [HashScanResult] instance.
   const HashScanResult(this.cursor, this.fields);
@@ -123,11 +124,10 @@ class HashScanResult<K, V> {
 }
 
 /// A mapper for the HSCAN command.
-class HashScanMapper<K, V> implements Mapper<HashScanResult<K, V>> {
+class HashScanMapper<K, V> implements Mapper<HashScanResult<K, V?>> {
   @override
-  HashScanResult<K, V> map(covariant ArrayReply reply, RedisCodec codec) {
+  HashScanResult<K, V?> map(covariant ArrayReply reply, RedisCodec codec) {
     final cursor = codec.decode<int>(reply.array[0]);
-    // ignore: avoid_as
     final fields = _mapHash(reply.array[1] as ArrayReply, codec);
 
     return HashScanResult<K, V>(cursor, fields);
@@ -151,18 +151,18 @@ class HashScanMapper<K, V> implements Mapper<HashScanResult<K, V>> {
 }
 
 /// A mapper for the HGETALL command.
-class HashMapper<K, V> implements Mapper<Map<K, V>> {
+class HashMapper<K, V> implements Mapper<Map<K, V?>> {
   @override
-  Map<K, V> map(covariant ArrayReply reply, RedisCodec codec) {
+  Map<K, V?> map(covariant ArrayReply reply, RedisCodec codec) {
     // ignore: prefer_collection_literals
-    final hash = LinkedHashMap<K, V>();
+    final hash = LinkedHashMap<K, V?>();
 
     final array = reply.array;
     for (var i = 0; i < array.length; i += 2) {
       final key = codec.decode<K>(array[i]);
       final value = codec.decode<V>(array[i + 1]);
 
-      hash[key] = value;
+      hash[key!] = value;
     }
 
     return hash;

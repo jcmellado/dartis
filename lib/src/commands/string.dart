@@ -21,7 +21,7 @@ abstract class StringCommands<K, V> {
   /// Returns the number of bits set to 1 in a string.
   ///
   /// See https://redis.io/commands/bitcount
-  Future<int> bitcount(K key, [int start, int end]);
+  Future<int> bitcount(K key, [int? start, int? end]);
 
   /// Performs arbitrary bitfield integer [operations] in a string.
   ///
@@ -29,7 +29,7 @@ abstract class StringCommands<K, V> {
   /// the operation given at the same position.
   ///
   /// See https://redis.io/commands/bitfield
-  Future<List<int>> bitfield(K key, List<BitfieldOperation> operations);
+  Future<List<int?>> bitfield(K key, List<BitfieldOperation> operations);
 
   /// Performs bitwise operations between strings.
   ///
@@ -37,13 +37,13 @@ abstract class StringCommands<K, V> {
   ///
   /// See https://redis.io/commands/bitop
   Future<int> bitop(BitopOperation operation, K destkey,
-      {K key, Iterable<K> keys = const []});
+      {K? key, Iterable<K> keys = const []});
 
   /// Returns the position of the first bit set to 1 or 0 according to the
   /// request.
   ///
   /// See https://redis.io/commands/bitpos
-  Future<int> bitpos(K key, int bit, [int start, int end]);
+  Future<int> bitpos(K key, int bit, [int? start, int? end]);
 
   /// Decrements the number stored at [key] by one.
   ///
@@ -62,7 +62,7 @@ abstract class StringCommands<K, V> {
   /// Returns the value of [key].
   ///
   /// See https://redis.io/commands/get
-  Future<V> get(K key);
+  Future<V?> get(K key);
 
   /// Returns the bit value at [offset] in the string value stored at [key].
   ///
@@ -79,7 +79,7 @@ abstract class StringCommands<K, V> {
   /// at [key].
   ///
   /// See https://redis.io/commands/getset
-  Future<V> getset(K key, V value);
+  Future<V?> getset(K key, V value);
 
   /// Increments the number stored at [key] by one.
   ///
@@ -106,12 +106,12 @@ abstract class StringCommands<K, V> {
   /// Returns the values of all specified keys.
   ///
   /// See https://redis.io/commands/mget
-  Future<List<V>> mget({K key, Iterable<K> keys = const []});
+  Future<List<V?>> mget({K? key, Iterable<K> keys = const []});
 
   /// Sets the given keys to their respective values.
   ///
   /// See https://redis.io/commands/mset
-  Future<void> mset({K key, V value, Map<K, V> map = const {}});
+  Future<void> mset({K? key, V? value, Map<K, V> map = const {}});
 
   /// Sets the given keys to their respective values, but only if all keys
   /// already exist.
@@ -119,7 +119,7 @@ abstract class StringCommands<K, V> {
   /// Returns `1` if the all the keys were set, `0` if no key was set.
   ///
   /// See https://redis.io/commands/msetnx
-  Future<int> msetnx({K key, V value, Map<K, V> map = const {}});
+  Future<int> msetnx({K? key, V? value, Map<K, V> map = const {}});
 
   /// Sets the [value] and expiration in [milliseconds] of a [key].
   ///
@@ -132,7 +132,7 @@ abstract class StringCommands<K, V> {
   ///
   /// See https://redis.io/commands/set
   Future<bool> set(K key, V value,
-      {int seconds, int milliseconds, SetExistMode mode});
+      {int? seconds, int? milliseconds, SetExistMode? mode});
 
   /// Sets or clears the bit at [offset] in the string value stored at [key].
   ///
@@ -251,19 +251,19 @@ class SetExistMode {
 /// Operations to be performed for the BITFIELD command.
 class BitfieldOperation {
   /// The command.
-  final BitfieldCommand command;
+  final BitfieldCommand? command;
 
   /// The type.
-  final String type;
+  final String? type;
 
   /// The offset.
-  final String offset;
+  final String? offset;
 
   /// The value/increment.
-  final int value;
+  final int? value;
 
   /// The overflow.
-  final BitfieldOverflow overflow;
+  final BitfieldOverflow? overflow;
 
   /// Creates a [BitfieldOperation] instance.
   const BitfieldOperation(this.command, this.type, this.offset,

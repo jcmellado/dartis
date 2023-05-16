@@ -3,6 +3,7 @@
 
 import 'package:test/test.dart';
 
+// ignore: directives_ordering
 import 'package:dartis/dartis.dart';
 
 class _ReverseMapper implements Mapper<String> {
@@ -29,7 +30,7 @@ void main() {
       });
 
       test('with some null values', () {
-        final command = Command<String>(<Object>['PING', null]);
+        final command = Command<String>(['PING', null]);
         expect(command.line.toList(), equals(['PING']));
       });
     });

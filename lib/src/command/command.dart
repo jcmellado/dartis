@@ -17,7 +17,7 @@ abstract class Mapper<T> {
 abstract class Command<T> {
   /// Creates a [Command] instance for a given command [line] and an
   /// optional [mapper] for processing of the results.
-  factory Command(Iterable<Object> line, {Mapper<T> mapper}) =>
+  factory Command(Iterable<Object?> line, {Mapper<T>? mapper}) =>
       CommandBase<T>(line, mapper: mapper);
 
   /// Returns the original command [line] used to create this command.
@@ -33,7 +33,7 @@ abstract class Command<T> {
   void completeErrorReply(ErrorReply reply, RedisCodec codec);
 
   /// Completes this command with an error, typically due to socket errors.
-  void completeError(Object error, [StackTrace stackTrace]);
+  void completeError(Object error, [StackTrace? stackTrace]);
 }
 
 /// Base class for implementing commands.
@@ -44,14 +44,14 @@ class CommandBase<T> implements Command<T> {
   final Iterable<Object> _line;
 
   /// The optional mapper.
-  final Mapper<T> _mapper;
+  final Mapper<T>? _mapper;
 
   /// Creates a [CommandBase] instancefor a given command [line] and an
   /// optional [mapper] for processing of the results.
   ///
   /// Null values are removed from the given command line.
-  CommandBase(Iterable<Object> line, {Mapper<T> mapper})
-      : _line = line.where((value) => value != null),
+  CommandBase(Iterable<Object?> line, {Mapper<T>? mapper})
+      : _line = line.where((value) => value != null).map((value) => value!),
         _mapper = mapper;
 
   @override
@@ -75,12 +75,15 @@ class CommandBase<T> implements Command<T> {
   }
 
   @override
-  void completeError(Object error, [StackTrace stackTrace]) =>
+  void completeError(Object error, [StackTrace? stackTrace]) =>
       _completer.completeError(error, stackTrace);
 
   /// Completes this command with the value in the given [reply].
-  T _complete(Reply reply, RedisCodec codec) {
+  T? _complete(Reply reply, RedisCodec codec) {
     if (T.toString() == 'void') {
+      return null;
+    }
+    if (reply is NullReply) {
       return null;
     }
 
@@ -88,7 +91,7 @@ class CommandBase<T> implements Command<T> {
       return codec.decode<T>(reply);
     }
 
-    return _mapper.map(reply, codec);
+    return _mapper!.map(reply, codec);
   }
 
   @override
