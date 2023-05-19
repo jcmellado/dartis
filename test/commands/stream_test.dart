@@ -357,10 +357,10 @@ void main() {
       expect(result2.firstEntryId, equals(id1));
       expect(result2.lastEntryId, equals(id2));
       expect(result2.consumers, hasLength(2));
-      expect(result2.consumers[0].name, isNotNull);
-      expect(result2.consumers[0].pendingCount, equals(1));
-      expect(result2.consumers[1].name, isNotNull);
-      expect(result2.consumers[1].pendingCount, equals(1));
+      expect(result2.consumers![0].name, isNotNull);
+      expect(result2.consumers![0].pendingCount, equals(1));
+      expect(result2.consumers![1].name, isNotNull);
+      expect(result2.consumers![1].pendingCount, equals(1));
 
       // Inspect an empty range of a pending entries list.
       final key3 = uuid();

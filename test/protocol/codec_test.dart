@@ -19,7 +19,7 @@ class _DateTimeEncoder extends Encoder<DateTime> {
 class _DateTimeDecoder extends Decoder<SingleReply, DateTime> {
   @override
   DateTime convert(SingleReply value, RedisCodec codec) =>
-      DateTime.parse(utf8.decode(value.bytes));
+      DateTime.parse(utf8.decode(value.bytes!));
 }
 
 /// A encoder that encodes a [DateTime] to a list of bytes.
