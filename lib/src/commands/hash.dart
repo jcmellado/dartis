@@ -130,20 +130,20 @@ class HashScanMapper<K, V> implements Mapper<HashScanResult<K, V?>> {
     final cursor = codec.decode<int>(reply.array[0]);
     final fields = _mapHash(reply.array[1] as ArrayReply, codec);
 
-    return HashScanResult<K, V>(cursor, fields);
+    return HashScanResult<K, V?>(cursor!, fields);
   }
 
   /// Maps a [reply] to a [Map] instance.
-  Map<K, V> _mapHash(ArrayReply reply, RedisCodec codec) {
+  Map<K, V?> _mapHash(ArrayReply reply, RedisCodec codec) {
     // ignore: prefer_collection_literals
-    final hash = LinkedHashMap<K, V>();
+    final hash = LinkedHashMap<K, V?>();
 
-    final array = reply.array;
+    final array = reply.array!;
     for (var i = 0; i < array.length; i += 2) {
       final key = codec.decode<K>(array[i]);
       final value = codec.decode<V>(array[i + 1]);
 
-      hash[key] = value;
+      hash[key!] = value;
     }
 
     return hash;
@@ -157,7 +157,7 @@ class HashMapper<K, V> implements Mapper<Map<K, V?>> {
     // ignore: prefer_collection_literals
     final hash = LinkedHashMap<K, V?>();
 
-    final array = reply.array;
+    final array = reply.array!;
     for (var i = 0; i < array.length; i += 2) {
       final key = codec.decode<K>(array[i]);
       final value = codec.decode<V>(array[i + 1]);

@@ -527,7 +527,7 @@ class CommandMapper implements Mapper<List<ClientCommand?>> {
 
   /// Maps a [reply] to a [ClientCommand] instance.
   ClientCommand _mapCommand(ArrayReply reply, RedisCodec codec) {
-    final array = reply.array;
+    final array = reply.array!;
 
     final name = codec.decode<String>(array[0]);
     final arity = codec.decode<int>(array[1]);
@@ -542,12 +542,12 @@ class CommandMapper implements Mapper<List<ClientCommand?>> {
 }
 
 /// A mapper for the CLIENT KILL command.
-class ClientKillMapper implements Mapper<int> {
+class ClientKillMapper implements Mapper<int?> {
   /// Creates a [ClientKillMapper] instance.
   const ClientKillMapper();
 
   @override
-  int map(Reply reply, RedisCodec codec) {
+  int? map(Reply reply, RedisCodec codec) {
     if (reply is StringReply) {
       return 1;
     }
@@ -565,7 +565,7 @@ class ClientListMapper implements Mapper<List<Map<String, String>>> {
   List<Map<String, String>> map(Reply reply, RedisCodec codec) {
     final clients = <Map<String, String>>[];
 
-    final raw = codec.decode<String>(reply);
+    final raw = codec.decode<String>(reply)!;
     final lines = raw.split('\n');
 
     for (final line in lines.where((line) => line.isNotEmpty)) {
@@ -602,7 +602,7 @@ class ConfigMapper implements Mapper<Map<String?, String?>> {
     // ignore: prefer_collection_literals
     final hash = LinkedHashMap<String?, String?>();
 
-    final array = reply.array;
+    final array = reply.array!;
     for (var i = 0; i < array.length; i += 2) {
       final key = codec.decode<String>(array[i]);
       final value = codec.decode<String>(array[i + 1]);
@@ -624,7 +624,7 @@ class MemoryStatsMapper implements Mapper<Map<String?, Object?>> {
     // ignore: prefer_collection_literals
     final stats = LinkedHashMap<String?, Object?>();
 
-    final array = reply.array;
+    final array = reply.array!;
     for (var i = 0; i < array.length; i += 2) {
       final key = codec.decode<String>(array[i]);
 
@@ -646,7 +646,7 @@ class RoleMapper implements Mapper<Role> {
 
   @override
   Role map(covariant ArrayReply reply, RedisCodec codec) {
-    final type = codec.decode<String>(reply.array[0]);
+    final type = codec.decode<String>(reply.array![0]);
 
     MasterRole? master;
     SlaveRole? slave;
@@ -671,7 +671,7 @@ class RoleMapper implements Mapper<Role> {
 
   /// Maps a [reply] to a [MasterRole] instance.
   MasterRole _mapMaster(ArrayReply reply, RedisCodec codec) {
-    final array = reply.array;
+    final array = reply.array!;
 
     final offset = codec.decode<int>(array[1]);
     final slaves = _mapSlaves(array[2] as ArrayReply, codec);
@@ -686,7 +686,7 @@ class RoleMapper implements Mapper<Role> {
 
   /// Maps a [reply] to a [Slave] instance.
   Slave _mapSlaveItem(ArrayReply reply, RedisCodec codec) {
-    final array = reply.array;
+    final array = reply.array!;
 
     final ip = codec.decode<String>(array[0]);
     final port = codec.decode<int>(array[1]);
@@ -697,7 +697,7 @@ class RoleMapper implements Mapper<Role> {
 
   /// Maps a [reply] to a [SlaveRole] instance.
   SlaveRole _mapSlave(ArrayReply reply, RedisCodec codec) {
-    final array = reply.array;
+    final array = reply.array!;
 
     final ip = codec.decode<String>(array[1]);
     final port = codec.decode<int>(array[2]);
@@ -709,7 +709,7 @@ class RoleMapper implements Mapper<Role> {
 
   /// Maps a [reply] to a [SentinelRole] instance.
   SentinelRole _mapSentinel(ArrayReply reply, RedisCodec codec) {
-    final masters = codec.decode<List<String>>(reply.array[1]);
+    final masters = codec.decode<List<String>>(reply.array![1]);
 
     return SentinelRole(masters);
   }
@@ -728,7 +728,7 @@ class SlowLogMapper implements Mapper<List<SlowLogEntry>> {
 
   /// Maps a [reply] to a [SlowLogEntry] instance.
   SlowLogEntry _mapEntry(ArrayReply reply, RedisCodec codec) {
-    final array = reply.array;
+    final array = reply.array!;
 
     final id = codec.decode<int>(array[0]);
     final timestamp = codec.decode<int>(array[1]);
@@ -754,7 +754,7 @@ class TimeMapper implements Mapper<ServerTime> {
 
   @override
   ServerTime map(covariant ArrayReply reply, RedisCodec codec) {
-    final array = reply.array;
+    final array = reply.array!;
 
     final timestamp = codec.decode<int>(array[0]);
     final microseconds = codec.decode<int>(array[1]);

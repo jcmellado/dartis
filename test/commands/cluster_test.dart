@@ -204,15 +204,15 @@ void main() {
 
         expect(results[0].start, equals(0));
         expect(results[0].end, equals(1));
-        expect(results[0].nodes[0].ip, equals('A'));
-        expect(results[0].nodes[0].port, equals(0));
-        expect(results[0].nodes[0].id, isNull);
+        expect(results[0].nodes![0].ip, equals('A'));
+        expect(results[0].nodes![0].port, equals(0));
+        expect(results[0].nodes![0].id, isNull);
 
         expect(results[1].start, equals(2));
         expect(results[1].end, equals(3));
-        expect(results[1].nodes[0].ip, equals('B'));
-        expect(results[1].nodes[0].port, equals(1));
-        expect(results[1].nodes[0].id, equals('C'));
+        expect(results[1].nodes![0].ip, equals('B'));
+        expect(results[1].nodes![0].port, equals(1));
+        expect(results[1].nodes![0].id, equals('C'));
       });
     });
   });

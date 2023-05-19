@@ -56,16 +56,16 @@ class PubsubResult<K> {
 }
 
 /// A mapper for the PUBSUB NUMSUB command.
-class PubsubResultMapper<K> implements Mapper<List<PubsubResult<K>>> {
+class PubsubResultMapper<K> implements Mapper<List<PubsubResult<K?>>> {
   @override
-  List<PubsubResult<K>> map(covariant ArrayReply reply, RedisCodec codec) {
-    final results = <PubsubResult<K>>[];
+  List<PubsubResult<K?>> map(covariant ArrayReply reply, RedisCodec codec) {
+    final List<PubsubResult<K?>> results = <PubsubResult<K>>[];
 
-    final array = reply.array;
+    final array = reply.array!;
     for (var i = 0; i < array.length; i += 2) {
       final channel = codec.decode<K>(array[i]);
       final subscriberCount = codec.decode<int>(array[i + 1]);
-      final result = PubsubResult<K>(channel, subscriberCount);
+      final result = PubsubResult<K?>(channel, subscriberCount);
 
       results.add(result);
     }

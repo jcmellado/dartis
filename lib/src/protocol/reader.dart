@@ -51,7 +51,7 @@ abstract class _ReaderBase implements Reader {
   @override
   bool get done => _done;
 
-  List<int> _takeBytes() {
+  List<int>? _takeBytes() {
     assert(_done);
     assert(!_isNull);
 
@@ -150,7 +150,7 @@ abstract class _LengthReader extends _LineReader {
     final end = super.read(bytes, start);
 
     if (_done) {
-      _length = int.parse(String.fromCharCodes(_takeBytes()));
+      _length = int.parse(String.fromCharCodes(_takeBytes()!));
 
       _isNull = _length == -1;
     }

@@ -309,7 +309,7 @@ class Commands<K extends Object, V extends Object> extends ModuleBase
         pattern,
         count == null ? null : r'COUNT',
         count
-      ], mapper: HashScanMapper<K, V>());
+      ], mapper: HashScanMapper<K, V?>());
 
   @override
   Future<int?> hset(K key, K field, V? value) =>
@@ -356,14 +356,14 @@ class Commands<K extends Object, V extends Object> extends ModuleBase
 
   @override
   Future<int> expire(K key, int seconds) =>
-      run<int>(<Object>[r'EXPIRE', key, seconds]);
+      run<int>(<Object?>[r'EXPIRE', key, seconds]);
 
   @override
   Future<int> expireat(K key, int timestamp) =>
-      run<int>(<Object>[r'EXPIREAT', key, timestamp]);
+      run<int>(<Object?>[r'EXPIREAT', key, timestamp]);
 
   @override
-  Future<List<K>> keys(K pattern) => run<List<K>>(<Object>[r'KEYS', pattern]);
+  Future<List<K>> keys(K pattern) => run<List<K>>(<Object?>[r'KEYS', pattern]);
 
   @override
   Future<String> migrate(String host, int port, int destinationDb, int timeout,
@@ -371,7 +371,7 @@ class Commands<K extends Object, V extends Object> extends ModuleBase
           bool replace = false,
           K? key,
           Iterable<K> keys = const []}) =>
-      run<String>(<Object>[
+      run<String>(<Object?>[
         r'MIGRATE',
         host,
         port,
@@ -385,7 +385,7 @@ class Commands<K extends Object, V extends Object> extends ModuleBase
       ]);
 
   @override
-  Future<int> move(K key, int db) => run<int>(<Object>[r'MOVE', key, db]);
+  Future<int> move(K key, int db) => run<int>(<Object?>[r'MOVE', key, db]);
 
   @override
   Future<String?> object(ObjectSubcommand subcommand, K key) =>
@@ -396,18 +396,18 @@ class Commands<K extends Object, V extends Object> extends ModuleBase
       run<List<String>>(<Object>[r'OBJECT', r'HELP']);
 
   @override
-  Future<int> persist(K key) => run<int>(<Object>[r'PERSIST', key]);
+  Future<int> persist(K key) => run<int>(<Object?>[r'PERSIST', key]);
 
   @override
   Future<int> pexpire(K key, int milliseconds) =>
-      run<int>(<Object>[r'PEXPIRE', key, milliseconds]);
+      run<int>(<Object?>[r'PEXPIRE', key, milliseconds]);
 
   @override
   Future<int> pexpireat(K key, int millisecondsTimestamp) =>
-      run<int>(<Object>[r'PEXPIREAT', key, millisecondsTimestamp]);
+      run<int>(<Object?>[r'PEXPIREAT', key, millisecondsTimestamp]);
 
   @override
-  Future<int> pttl(K key) => run<int>(<Object>[r'PTTL', key]);
+  Future<int> pttl(K key) => run<int>(<Object?>[r'PTTL', key]);
 
   @override
   Future<K> randomkey() => run<K>(<Object>[r'RANDOMKEY']);
@@ -418,7 +418,7 @@ class Commands<K extends Object, V extends Object> extends ModuleBase
 
   @override
   Future<int> renamenx(K key, K newkey) =>
-      run<int>(<Object>[r'RENAMENX', key, newkey]);
+      run<int>(<Object?>[r'RENAMENX', key, newkey]);
 
   @override
   Future<void> restore(K key, int ttl, List<int> serializedValue,

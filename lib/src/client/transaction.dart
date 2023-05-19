@@ -33,9 +33,9 @@ class Transaction {
     assert(command is! MultiCommand);
 
     if (command is ExecCommand) {
-      _exec(command, reply, codec);
+      _exec(command as Command<Object>, reply, codec);
     } else if (command is DiscardCommand) {
-      _discard(command, reply, codec);
+      _discard(command as Command<Object>, reply, codec);
     } else {
       _enqueue(command, reply, codec);
     }

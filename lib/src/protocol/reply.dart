@@ -13,7 +13,7 @@ abstract class Reply {
 /// Base class for implementing replies.
 abstract class SingleReply implements Reply {
   /// The raw content.
-  final List<int> bytes;
+  final List<int>? bytes;
 
   /// Creates a [SingleReply] instance.
   const SingleReply(this.bytes);
@@ -40,7 +40,7 @@ class StringReply extends SingleReply {
   const StringReply(super.bytes);
 
   @override
-  String toString() => 'StringReply: "${String.fromCharCodes(bytes)}"';
+  String toString() => 'StringReply: "${String.fromCharCodes(bytes!)}"';
 }
 
 /// RESP integer.
@@ -49,7 +49,7 @@ class IntReply extends SingleReply {
   const IntReply(super.bytes);
 
   @override
-  String toString() => 'IntReply: ${int.parse(String.fromCharCodes(bytes))}';
+  String toString() => 'IntReply: ${int.parse(String.fromCharCodes(bytes!))}';
 }
 
 /// RESP bulk string.
@@ -64,13 +64,13 @@ class BulkReply extends SingleReply {
 /// RESP array.
 class ArrayReply implements Reply {
   /// The array of replies.
-  final List<Reply> array;
+  final List<Reply>? array;
 
   /// Creates an [ArrayReply] instance.
   const ArrayReply(this.array);
 
   @override
-  Object get value => array;
+  Object? get value => array;
 
   @override
   String toString() => 'ArrayReply: $array';
@@ -82,5 +82,5 @@ class ErrorReply extends SingleReply {
   const ErrorReply(super.bytes);
 
   @override
-  String toString() => 'ErrorReply: "${String.fromCharCodes(bytes)}"';
+  String toString() => 'ErrorReply: "${String.fromCharCodes(bytes!)}"';
 }

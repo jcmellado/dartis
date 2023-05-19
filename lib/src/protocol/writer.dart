@@ -29,7 +29,7 @@ class Writer {
   }
 
   void _write(Iterable<Object> line, RedisCodec codec) {
-    final length = codec.encode<List<int>>(line.length);
+    final length = codec.encode<List<int>>(line.length)!;
 
     _buffer
       ..addByte(RespToken.array)
@@ -37,8 +37,8 @@ class Writer {
       ..add(_crlf);
 
     for (final value in line) {
-      final bytes = codec.encode<List<int>>(value);
-      final length = codec.encode<List<int>>(bytes.length);
+      final bytes = codec.encode<List<int>>(value)!;
+      final length = codec.encode<List<int>>(bytes.length)!;
 
       _buffer
         ..addByte(RespToken.bulk)
