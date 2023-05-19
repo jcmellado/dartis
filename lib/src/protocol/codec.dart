@@ -36,6 +36,9 @@ abstract class Encoder<S> extends Converter<S, List<int>> {}
 /// Extend from this class for building your own decoders.
 abstract class Decoder<S extends Reply?, T> extends Converter<S, T> {}
 
+// A converter that converts a server reply into a list of instance of type [T].
+///
+/// Extend from this class for building your own array decoders.
 abstract class ArrayDecoder<S extends Reply?, T>
     extends Converter<S, List<T?>> {
   @override

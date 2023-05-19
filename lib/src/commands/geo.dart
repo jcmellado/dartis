@@ -234,8 +234,8 @@ class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V>>> {
         final result = _mapResult(reply as ArrayReply, codec);
         results.add(result);
       } else {
-        final member = codec.decode<V>(reply);
-        results.add(GeoradiusResult<V>(member!));
+        final member = codec.decode<V>(reply) as V;
+        results.add(GeoradiusResult<V>(member));
       }
     }
 
@@ -247,7 +247,7 @@ class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V>>> {
     final array = reply.array!;
     var index = 0;
 
-    final member = codec.decode<V>(array[index++]);
+    final member = codec.decode<V>(array[index++]) as V;
 
     double? distance;
     if (withDist) {
@@ -264,7 +264,7 @@ class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V>>> {
       position = _mapPosition(array[index++] as ArrayReply, codec);
     }
 
-    return GeoradiusResult<V>(member!,
+    return GeoradiusResult<V>(member,
         distance: distance, hash: hash, position: position);
   }
 

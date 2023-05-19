@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    name: Run tests ${{matrix.sdk}} on ${{matrix.os}}
+    name: Run tests on ${{matrix.os}}
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-latest ]
