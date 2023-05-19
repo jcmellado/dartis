@@ -11,7 +11,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest, macos-latest ]
         redis: [ 6, 7 ]
-        dart-sdk: [ 'stable', 'beta' ]
+        dart-sdk: [ 'stable' ]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
