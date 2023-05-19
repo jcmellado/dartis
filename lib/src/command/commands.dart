@@ -889,16 +889,16 @@ class Commands<K extends Object, V extends Object> extends ModuleBase
   // Sorted sets.
 
   @override
-  Future<SortedSetPopResult<K, V>?> bzpopmax(
+  Future<SortedSetPopResult<K?, V?>?> bzpopmax(
           {K? key, Iterable<K?> keys = const [], int timeout = 0}) =>
-      run<SortedSetPopResult<K, V>?>(
+      run<SortedSetPopResult<K?, V?>?>(
           <Object?>[r'BZPOPMAX', key, ...keys, timeout],
           mapper: SortedSetPopResultMapper<K, V>());
 
   @override
-  Future<SortedSetPopResult<K, V>?> bzpopmin(
+  Future<SortedSetPopResult<K?, V?>?> bzpopmin(
           {K? key, Iterable<K?> keys = const [], int timeout = 0}) =>
-      run<SortedSetPopResult<K, V>?>(
+      run<SortedSetPopResult<K?, V?>?>(
           <Object?>[r'BZPOPMIN', key, ...keys, timeout],
           mapper: SortedSetPopResultMapper<K, V>());
 
@@ -1080,9 +1080,9 @@ class Commands<K extends Object, V extends Object> extends ModuleBase
       run<int?>(<Object?>[r'ZREVRANK', key, member]);
 
   @override
-  Future<SortedSetScanResult<K>> zscan(K? key, int cursor,
+  Future<SortedSetScanResult<K?>> zscan(K? key, int cursor,
           {K? pattern, int? count}) =>
-      run<SortedSetScanResult<K>>(<Object?>[
+      run<SortedSetScanResult<K?>>(<Object?>[
         r'ZSCAN',
         key,
         cursor,
@@ -1201,9 +1201,9 @@ class Commands<K extends Object, V extends Object> extends ModuleBase
   }
 
   @override
-  Future<List<StreamEntry<K?, V?>>> xrange(K? key, K? start, K? end,
+  Future<List<StreamEntry<K?, V?>?>> xrange(K? key, K? start, K? end,
           {int? count}) =>
-      run<List<StreamEntry<K?, V?>>>(<Object?>[
+      run<List<StreamEntry<K?, V?>?>>(<Object?>[
         r'XRANGE',
         key,
         start,

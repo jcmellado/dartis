@@ -194,7 +194,7 @@ class GeoPositionMapper implements Mapper<List<GeoPosition?>> {
 
   @override
   List<GeoPosition?> map(covariant ArrayReply reply, RedisCodec codec) => reply
-      .array
+      .array!
       .map((value) =>
           value is NullReply ? null : _mapPosition(value as ArrayReply, codec))
       .toList();
@@ -203,7 +203,7 @@ class GeoPositionMapper implements Mapper<List<GeoPosition?>> {
   GeoPosition? _mapPosition(ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
-    final longitude = codec.decode<double>(array[0]);
+    final longitude = codec.decode<double>(array![0]);
     final latitude = codec.decode<double>(array[1]);
 
     return GeoPosition(longitude!, latitude!);

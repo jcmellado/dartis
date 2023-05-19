@@ -383,7 +383,7 @@ class StreamPendingSummaryMapper<K, V> implements StreamPendingMapper<K, V> {
       ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
-    return array
+    return array!
         .map((entry) => _mapConsumer(entry as ArrayReply, codec))
         .toList();
   }
@@ -404,7 +404,7 @@ class StreamPendingEntryMapper<K, V> implements StreamPendingMapper<K, V> {
   @override
   List<StreamPendingEntry<K?, V>> map(
           covariant ArrayReply reply, RedisCodec codec) =>
-      reply.array
+      reply.array!
           .map((entry) => _mapEntry(entry as ArrayReply, codec))
           .toList();
 
@@ -451,7 +451,7 @@ class StreamMapInfoMapper<K, V> implements StreamInfoMapper<K, V> {
       final key = codec.decode<String>(array[i]);
       final value = array[i + 1];
 
-      hash[key] = value is NullReply ? null : _mapValue(key, value, codec);
+      hash[key!] = value is NullReply ? null : _mapValue(key, value, codec);
     }
 
     return hash;
@@ -471,7 +471,7 @@ class StreamMapInfoMapper<K, V> implements StreamInfoMapper<K, V> {
 /// A mapper for the XINFO command.
 abstract class StreamListMapInfoMapper<K, V> extends StreamMapInfoMapper<K, V> {
   @override
-  Object map(covariant ArrayReply reply, RedisCodec codec) => reply.array
+  Object map(covariant ArrayReply reply, RedisCodec codec) => reply.array!
       .map((entry) => super.map(entry as ArrayReply, codec))
       .toList();
 }
@@ -547,14 +547,14 @@ class StreamsMapper<K, V>
       covariant ArrayReply reply, RedisCodec codec) {
     final items = reply.array;
 
-    final streams = <K, List<StreamEntry<K, V>>>{};
+    final streams = <K, List<StreamEntry<K?, V?>?>>{};
 
-    for (var item in items) {
+    for (var item in items!) {
       final entry = item as ArrayReply;
-      final key = codec.decode<K>(entry.array[0]);
-      final stream = _streamMapper.map(entry.array[1] as ArrayReply, codec);
+      final key = codec.decode<K>(entry.array![0]);
+      final stream = _streamMapper.map(entry.array![1] as ArrayReply, codec);
 
-      streams[key] = stream;
+      streams[key!] = stream;
     }
 
     return streams;
@@ -569,7 +569,7 @@ class StreamMapper<K, V> implements Mapper<List<StreamEntry<K?, V?>?>> {
   List<StreamEntry<K?, V?>?> map(covariant ArrayReply reply, RedisCodec codec) {
     final List<StreamEntry<K?, V?>?> stream = <StreamEntry<K, V>?>[];
 
-    for (var entry in reply.array) {
+    for (var entry in reply.array!) {
       if (entry is ArrayReply) {
         stream.add(_entryMapper.map(entry, codec));
       }
@@ -584,10 +584,10 @@ class StreamEntryMapper<K, V> implements Mapper<StreamEntry<K?, V?>?> {
   final StreamEntryFieldsMapper<K, V> _fieldsMapper = StreamEntryFieldsMapper();
 
   @override
-  StreamEntry<K, V> map(covariant ArrayReply reply, RedisCodec codec) {
+  StreamEntry<K?, V?> map(covariant ArrayReply reply, RedisCodec codec) {
     final entry = reply.array;
 
-    final id = codec.decode<K>(entry[0]);
+    final id = codec.decode<K>(entry![0]);
     final fields = _fieldsMapper.map(entry[1] as ArrayReply, codec);
 
     return StreamEntry<K?, V?>(id, fields);

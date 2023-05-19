@@ -158,7 +158,7 @@ class ListPopResultMapper<K, V> implements Mapper<ListPopResult<K?, V?>?> {
   ListPopResult<K?, V?>? map(covariant ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
-    if (array.isEmpty) {
+    if (array!.isEmpty) {
       return null;
     }
 
