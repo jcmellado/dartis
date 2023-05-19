@@ -19,7 +19,7 @@ abstract class KeyCommands<K, V> {
   /// Redis-specific format.
   ///
   /// See https://redis.io/commands/dump
-  Future<List<int>> dump(K key);
+  Future<List<int>?> dump(K key);
 
   /// Determines if a set of keys exist.
   ///
@@ -73,7 +73,7 @@ abstract class KeyCommands<K, V> {
   /// See [objectHelp].
   ///
   /// See https://redis.io/commands/object
-  Future<String> object(ObjectSubcommand subcommand, K key);
+  Future<String?> object(ObjectSubcommand subcommand, K key);
 
   /// Returns a succint help text for the OBJECT command.
   ///
@@ -147,7 +147,7 @@ abstract class KeyCommands<K, V> {
   /// See [sortStore].
   ///
   /// See https://redis.io/commands/sort
-  Future<List<V>> sort(K key,
+  Future<List<V?>> sort(K key,
       {K? by,
       int? offset,
       int? count,

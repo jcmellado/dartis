@@ -29,7 +29,7 @@ abstract class StringCommands<K, V> {
   /// the operation given at the same position.
   ///
   /// See https://redis.io/commands/bitfield
-  Future<List<int>> bitfield(K key, List<BitfieldOperation> operations);
+  Future<List<int?>> bitfield(K key, List<BitfieldOperation> operations);
 
   /// Performs bitwise operations between strings.
   ///
@@ -62,7 +62,7 @@ abstract class StringCommands<K, V> {
   /// Returns the value of [key].
   ///
   /// See https://redis.io/commands/get
-  Future<V> get(K key);
+  Future<V?> get(K key);
 
   /// Returns the bit value at [offset] in the string value stored at [key].
   ///
@@ -79,7 +79,7 @@ abstract class StringCommands<K, V> {
   /// at [key].
   ///
   /// See https://redis.io/commands/getset
-  Future<V> getset(K key, V value);
+  Future<V?> getset(K key, V value);
 
   /// Increments the number stored at [key] by one.
   ///
@@ -106,7 +106,7 @@ abstract class StringCommands<K, V> {
   /// Returns the values of all specified keys.
   ///
   /// See https://redis.io/commands/mget
-  Future<List<V>> mget({K? key, Iterable<K> keys = const []});
+  Future<List<V?>> mget({K? key, Iterable<K> keys = const []});
 
   /// Sets the given keys to their respective values.
   ///

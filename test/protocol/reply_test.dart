@@ -57,7 +57,7 @@ void main() {
       });
 
       test('toString', () {
-        const reply = BulkReply(null);
+        const reply = BulkReply([]);
 
         expect(reply.toString(), startsWith('BulkReply:'));
       });
@@ -88,7 +88,7 @@ void main() {
       });
 
       test('toString', () {
-        const reply = ArrayReply(null);
+        const reply = ArrayReply([]);
 
         expect(reply.toString(), startsWith('ArrayReply:'));
       });

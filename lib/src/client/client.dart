@@ -104,7 +104,8 @@ class Client implements CommandRunner {
   /// existing ones.
   ///
   /// See [Commands].
-  Commands<K, V> asCommands<K, V>() => Commands<K, V>(this);
+  Commands<K, V> asCommands<K extends Object, V extends Object>() =>
+      Commands<K, V>(this);
 
   /// Starts the pipelined mode in order to send multiple commands to the
   /// server in only one call, instead of doing one call for each command.

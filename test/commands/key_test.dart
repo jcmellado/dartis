@@ -11,8 +11,8 @@ import 'package:dartis/dartis.dart';
 import '../util.dart' show uuid;
 
 void main() {
-  Client client;
-  Commands<String, String> commands;
+  late Client client;
+  late Commands<String, String> commands;
 
   setUp(() async {
     client = await Client.connect('redis://localhost:6379');
@@ -302,7 +302,7 @@ void main() {
       await commands.set(key1, 'abc');
 
       // Dump and restore.
-      final value = await commands.dump(key1);
+      final value = (await commands.dump(key1))!;
 
       final key2 = uuid();
       await commands.restore(key2, 0, value);

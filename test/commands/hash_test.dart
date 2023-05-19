@@ -114,7 +114,8 @@ void main() {
 
       // Increment.
       expect(await commands.hincrbyfloat(key1, 'height', 0.5), equals(2.3));
-      expect(await commands.hincrbyfloat(key1, 'height', -0.7), equals(1.6));
+      expect(await commands.hincrbyfloat(key1, 'height', -0.7),
+          closeTo(1.6, 0.001));
       expect(await commands.hincrbyfloat(key1, 'width', 79.0), equals(79.0));
 
       // Try to increment in an empty or non existing hash.
@@ -166,6 +167,10 @@ void main() {
 
       // Try to get a non existing field.
       expect(await commands.hmget(key1, field: 'sons'), equals([null]));
+
+      // Try to get a non existing key.
+      expect(() => commands.hmget('notakey'),
+          throwsA(const TypeMatcher<RedisException>()));
 
       // Try to get from an empty or non existing hash.
       final key2 = uuid();

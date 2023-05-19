@@ -7,7 +7,7 @@ import 'package:dartis/dartis.dart' as redis show Monitor;
 
 /// Starts a Redis client in Monitor mode.
 ///
-/// In this mode the client receives all the commands procesed by the
+/// In this mode the client receives all the commands processed by the
 /// Redis server.
 ///
 /// Open another console, start there a Redis client and type some commands.

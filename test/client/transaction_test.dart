@@ -158,7 +158,7 @@ void main() {
 
       // EXEC
       final exec = ExecCommand(<Object>['EXEC']);
-      const reply = BulkReply(null);
+      const reply = NullReply();
       transaction.onReply(exec, reply, codec);
 
       expect(set.future, throwRedisException);

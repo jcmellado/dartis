@@ -34,7 +34,7 @@ abstract class ListCommands<K, V> {
   /// Returns the element at index [index] in the list stored at [key].
   ///
   /// See https://redis.io/commands/lindex
-  Future<V> lindex(K key, int index);
+  Future<V?> lindex(K key, int index);
 
   /// Inserts [value] in the list stored at [key] either before or after the
   /// reference value [pivot].
@@ -53,7 +53,7 @@ abstract class ListCommands<K, V> {
   /// Removes and returns the first element of the list stored at [key].
   ///
   /// See https://redis.io/commands/lpop
-  Future<V> lpop(K key);
+  Future<V?> lpop(K key);
 
   /// Inserts all the specified values at the head of the list stored at [key].
   ///
@@ -97,13 +97,13 @@ abstract class ListCommands<K, V> {
   /// Removes and returns the last element of the list stored at [key].
   ///
   /// See https://redis.io/commands/rpop
-  Future<V> rpop(K key);
+  Future<V?> rpop(K key);
 
   /// Removes the last element in a list stored at [source], prepends it
   /// to another list stored at [destination] and returns it.
   ///
   /// See https://redis.io/commands/rpoplpush
-  Future<V> rpoplpush(K source, K destination);
+  Future<V?> rpoplpush(K source, K destination);
 
   /// Appends one or multiple values to a list stored at [key].
   ///
@@ -158,7 +158,7 @@ class ListPopResultMapper<K, V> implements Mapper<ListPopResult<K?, V?>?> {
   ListPopResult<K?, V?>? map(covariant ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
-    if (array == null) {
+    if (array.isEmpty) {
       return null;
     }
 

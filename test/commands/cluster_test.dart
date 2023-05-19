@@ -152,14 +152,14 @@ void main() {
 
     group('ClusterNode', () {
       test('toString', () {
-        const value = ClusterNode(null, null);
+        const value = ClusterNode('', 0);
         expect(value.toString(), startsWith('ClusterNode:'));
       });
     });
 
     group('ClusterSlotRange', () {
       test('toString', () {
-        const value = ClusterSlotRange(null, null, null);
+        const value = ClusterSlotRange(0, 0, []);
         expect(value.toString(), startsWith('ClusterSlotRange:'));
       });
     });

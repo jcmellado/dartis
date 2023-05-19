@@ -1,9 +1,8 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-import 'dart:io' show BytesBuilder;
 import 'dart:math' show min, max;
-import 'dart:typed_data' show Uint8List;
+import 'dart:typed_data' show BytesBuilder, Uint8List;
 
 import '../exception.dart';
 import 'reply.dart';
@@ -54,27 +53,28 @@ abstract class _ReaderBase implements Reader {
 
   List<int>? _takeBytes() {
     assert(_done);
+    assert(!_isNull);
 
-    return _isNull ? null : _buffer.takeBytes();
+    return _buffer.takeBytes();
   }
 }
 
 /// A reader that reads a RESP simple string.
 class _StringReplyReader extends _LineReader {
   @override
-  Reply consume() => StringReply(_takeBytes());
+  Reply consume() => _isNull ? nullReply : StringReply(_takeBytes());
 }
 
 /// A reader that reads a RESP integer.
 class _IntReplyReader extends _LineReader {
   @override
-  Reply consume() => IntReply(_takeBytes());
+  Reply consume() => _isNull ? nullReply : IntReply(_takeBytes());
 }
 
 /// A reader that reads a RESP bulk string.
 class _BulkReplyReader extends _BulkReader {
   @override
-  Reply consume() => BulkReply(_takeBytes());
+  Reply consume() => _isNull ? nullReply : BulkReply(_takeBytes());
 }
 
 /// A reader that reads a RESP array.
@@ -83,7 +83,10 @@ class _ArrayReplyReader extends _ArrayReader {
   Reply consume() {
     assert(_done);
 
-    return ArrayReply(_isNull ? null : _array);
+    if (_isNull) {
+      return nullReply;
+    }
+    return ArrayReply(_array);
   }
 }
 

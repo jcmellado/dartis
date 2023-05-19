@@ -8,7 +8,7 @@ import 'command.dart';
 import 'module.dart';
 
 /// Redis commands.
-class Commands<K, V> extends ModuleBase
+class Commands<K extends Object, V extends Object> extends ModuleBase
     implements
         ClusterCommands<K>,
         ConnectionCommands,
@@ -118,11 +118,11 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<String?> echo(String? message) =>
-      run<String>(<Object?>[r'ECHO', message]);
+      run<String?>(<Object?>[r'ECHO', message]);
 
   @override
   Future<String?> ping([String? message]) =>
-      run<String>(<Object?>[r'PING', message]);
+      run(<Object>[r'PING', if (message != null) message]);
 
   @override
   Future<void> quit() => run<void>(<Object>[r'QUIT']);
@@ -155,9 +155,9 @@ class Commands<K, V> extends ModuleBase
       run<double?>(<Object?>[r'GEODIST', key, member1, member2, unit?.name]);
 
   @override
-  Future<List<String>?> geohash(K key,
+  Future<List<String?>?> geohash(K key,
           {V? member, Iterable<V> members = const []}) =>
-      run<List<String>?>(<Object?>[r'GEOHASH', key, member, ...members]);
+      run<List<String?>?>(<Object?>[r'GEOHASH', key, member, ...members]);
 
   @override
   Future<List<GeoPosition?>?> geopos(K key,
@@ -268,7 +268,7 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<Map<K, V?>?> hgetall(K key) =>
-      run<Map<K, V?>?>(<Object?>[r'HGETALL', key], mapper: HashMapper<K, V?>());
+      run<Map<K, V?>?>(<Object?>[r'HGETALL', key], mapper: HashMapper<K, V>());
 
   @override
   Future<int?> hincrby(K key, K field, int increment) =>
@@ -285,8 +285,8 @@ class Commands<K, V> extends ModuleBase
   Future<int?> hlen(K key) => run<int?>(<Object?>[r'HLEN', key]);
 
   @override
-  Future<List<V>?> hmget(K key, {K? field, Iterable<K> fields = const []}) =>
-      run<List<V>?>(<Object?>[r'HMGET', key, field, ...fields]);
+  Future<List<V?>> hmget(K key, {K? field, Iterable<K> fields = const []}) =>
+      run<List<V?>>(<Object?>[r'HMGET', key, field, ...fields]);
 
   @override
   Future<void> hmset(K key, {K? field, V? value, Map<K, V?> hash = const {}}) =>
@@ -345,14 +345,14 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<int> del({K? key, Iterable<K> keys = const []}) =>
-      run<int>(<Object?>[r'DEL', key, ...keys]);
+      run<int>(<Object>[r'DEL', if (key != null) key, ...keys]);
 
   @override
-  Future<List<int>> dump(K key) => run<List<int>>(<Object?>[r'DUMP', key]);
+  Future<List<int>?> dump(K key) => run<List<int>?>(<Object>[r'DUMP', key]);
 
   @override
   Future<int> exists({K? key, Iterable<K> keys = const []}) =>
-      run<int>(<Object?>[r'EXISTS', key, ...keys]);
+      run<int>(<Object>[r'EXISTS', if (key != null) key, ...keys]);
 
   @override
   Future<int> expire(K key, int seconds) =>
@@ -378,9 +378,9 @@ class Commands<K, V> extends ModuleBase
         key ?? r'',
         destinationDb,
         timeout,
-        copy ? r'COPY' : null,
-        replace ? r'REPLACE' : null,
-        keys.isNotEmpty ? r'KEYS' : null,
+        if (copy) r'COPY',
+        if (replace) r'REPLACE',
+        if (keys.isNotEmpty) r'KEYS',
         ...keys
       ]);
 
@@ -388,8 +388,8 @@ class Commands<K, V> extends ModuleBase
   Future<int> move(K key, int db) => run<int>(<Object?>[r'MOVE', key, db]);
 
   @override
-  Future<String> object(ObjectSubcommand subcommand, K key) =>
-      run<String>(<Object?>[r'OBJECT', subcommand.name, key]);
+  Future<String?> object(ObjectSubcommand subcommand, K key) =>
+      run<String?>(<Object>[r'OBJECT', subcommand.name, key]);
 
   @override
   Future<List<String>> objectHelp() =>
@@ -433,7 +433,7 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<KeyScanResult<K>> scan(int cursor, {K? pattern, int? count}) =>
-      run<KeyScanResult<K>>(<void>[
+      run<KeyScanResult<K>>(<Object?>[
         r'SCAN',
         cursor,
         pattern == null ? null : r'MATCH',
@@ -443,7 +443,7 @@ class Commands<K, V> extends ModuleBase
       ], mapper: KeyScanMapper<K>());
 
   @override
-  Future<List<V>> sort(K key,
+  Future<List<V?>> sort(K key,
       {K? by,
       int? offset,
       int? count,
@@ -453,7 +453,7 @@ class Commands<K, V> extends ModuleBase
     assert(
         (offset == null && count == null) || (offset != null && count != null));
 
-    return run<List<V>>(<Object?>[
+    return run<List<V?>>(<Object?>[
       r'SORT',
       key,
       by == null ? null : r'BY',
@@ -532,8 +532,8 @@ class Commands<K, V> extends ModuleBase
           mapper: BrpoplpushMapper<V>());
 
   @override
-  Future<V> lindex(K? key, int index) =>
-      run<V>(<Object?>[r'LINDEX', key, index]);
+  Future<V?> lindex(K? key, int index) =>
+      run<V?>(<Object?>[r'LINDEX', key, index]);
 
   @override
   Future<int> linsert(K? key, InsertPosition position, V? pivot, V? value) =>
@@ -543,7 +543,7 @@ class Commands<K, V> extends ModuleBase
   Future<int> llen(K? key) => run<int>(<Object?>[r'LLEN', key]);
 
   @override
-  Future<V> lpop(K? key) => run<V>(<Object?>[r'LPOP', key]);
+  Future<V?> lpop(K? key) => run<V?>(<Object?>[r'LPOP', key]);
 
   @override
   Future<int> lpush(K? key, {V? value, Iterable<V?> values = const []}) =>
@@ -570,11 +570,11 @@ class Commands<K, V> extends ModuleBase
       run<void>(<Object?>[r'LTRIM', key, start, stop]);
 
   @override
-  Future<V> rpop(K? key) => run<V>(<Object?>[r'RPOP', key]);
+  Future<V?> rpop(K? key) => run<V?>(<Object?>[r'RPOP', key]);
 
   @override
-  Future<V> rpoplpush(K? source, K? destination) =>
-      run<V>(<Object?>[r'RPOPLPUSH', source, destination]);
+  Future<V?> rpoplpush(K? source, K? destination) =>
+      run<V?>(<Object?>[r'RPOPLPUSH', source, destination]);
 
   @override
   Future<int> rpush(K? key, {V? value, Iterable<V?> values = const []}) =>
@@ -649,8 +649,8 @@ class Commands<K, V> extends ModuleBase
   Future<String> bgsave() => run<String>(<Object>[r'BGSAVE']);
 
   @override
-  Future<String> clientGetname() =>
-      run<String>(<Object>[r'CLIENT', r'GETNAME']);
+  Future<String?> clientGetname() =>
+      run<String?>(<Object>[r'CLIENT', r'GETNAME']);
 
   @override
   Future<int?> clientKill(
@@ -773,7 +773,7 @@ class Commands<K, V> extends ModuleBase
           mapper: memoryStatsMapper);
 
   @override
-  Future<int> memoryUsage(K key, {int? count}) => run<int>(<Object?>[
+  Future<int?> memoryUsage(K key, {int? count}) => run<int?>(<Object?>[
         r'MEMORY',
         r'USAGE',
         key,
@@ -848,14 +848,14 @@ class Commands<K, V> extends ModuleBase
       run<int>(<Object?>[r'SMOVE', source, destination, member]);
 
   @override
-  Future<V> spop(K key) => run<V>(<Object?>[r'SPOP', key]);
+  Future<V?> spop(K key) => run<V?>(<Object?>[r'SPOP', key]);
 
   @override
   Future<List<V>> spopCount(K key, int count) =>
       run<List<V>>(<Object?>[r'SPOP', key, count]);
 
   @override
-  Future<V> srandmember(K key) => run<V>(<Object?>[r'SRANDMEMBER', key]);
+  Future<V?> srandmember(K key) => run<V?>(<Object?>[r'SRANDMEMBER', key]);
 
   @override
   Future<List<V>> srandmemberCount(K key, int count) =>
@@ -889,16 +889,16 @@ class Commands<K, V> extends ModuleBase
   // Sorted sets.
 
   @override
-  Future<SortedSetPopResult<K?, V?>?> bzpopmax(
+  Future<SortedSetPopResult<K, V>?> bzpopmax(
           {K? key, Iterable<K?> keys = const [], int timeout = 0}) =>
-      run<SortedSetPopResult<K?, V?>?>(
+      run<SortedSetPopResult<K, V>?>(
           <Object?>[r'BZPOPMAX', key, ...keys, timeout],
           mapper: SortedSetPopResultMapper<K, V>());
 
   @override
-  Future<SortedSetPopResult<K?, V?>?> bzpopmin(
+  Future<SortedSetPopResult<K, V>?> bzpopmin(
           {K? key, Iterable<K?> keys = const [], int timeout = 0}) =>
-      run<SortedSetPopResult<K?, V?>?>(
+      run<SortedSetPopResult<K, V>?>(
           <Object?>[r'BZPOPMIN', key, ...keys, timeout],
           mapper: SortedSetPopResultMapper<K, V>());
 
@@ -920,9 +920,9 @@ class Commands<K, V> extends ModuleBase
       ]);
 
   @override
-  Future<double> zaddIncr(K? key, double score, V? member,
+  Future<double?> zaddIncr(K? key, double score, V? member,
           {SortedSetExistMode? mode}) =>
-      run<double>(<Object?>[r'ZADD', key, mode?.name, r'INCR', score, member]);
+      run<double?>(<Object?>[r'ZADD', key, mode?.name, r'INCR', score, member]);
 
   @override
   Future<int> zcard(K? key) => run<int>(<Object?>[r'ZCARD', key]);
@@ -1010,8 +1010,8 @@ class Commands<K, V> extends ModuleBase
   }
 
   @override
-  Future<int> zrank(K? key, V? member) =>
-      run<int>(<Object?>[r'ZRANK', key, member]);
+  Future<int?> zrank(K? key, V? member) =>
+      run<int?>(<Object?>[r'ZRANK', key, member]);
 
   @override
   Future<int> zrem(K? key, {V? member, Iterable<V?> members = const []}) =>
@@ -1076,13 +1076,13 @@ class Commands<K, V> extends ModuleBase
   }
 
   @override
-  Future<int> zrevrank(K? key, V? member) =>
-      run<int>(<Object?>[r'ZREVRANK', key, member]);
+  Future<int?> zrevrank(K? key, V? member) =>
+      run<int?>(<Object?>[r'ZREVRANK', key, member]);
 
   @override
-  Future<SortedSetScanResult<K?>> zscan(K? key, int cursor,
+  Future<SortedSetScanResult<K>> zscan(K? key, int cursor,
           {K? pattern, int? count}) =>
-      run<SortedSetScanResult<K?>>(<Object?>[
+      run<SortedSetScanResult<K>>(<Object?>[
         r'ZSCAN',
         key,
         cursor,
@@ -1093,8 +1093,8 @@ class Commands<K, V> extends ModuleBase
       ], mapper: SortedSetScanMapper<K>());
 
   @override
-  Future<double> zscore(K? key, V? member) =>
-      run<double>(<Object?>[r'ZSCORE', key, member]);
+  Future<double?> zscore(K? key, V? member) =>
+      run<double?>(<Object?>[r'ZSCORE', key, member]);
 
   @override
   Future<int> zunionstore(K? destination, List<K?> keys,
@@ -1201,9 +1201,9 @@ class Commands<K, V> extends ModuleBase
   }
 
   @override
-  Future<List<StreamEntry<K?, V?>?>> xrange(K? key, K? start, K? end,
+  Future<List<StreamEntry<K?, V?>>> xrange(K? key, K? start, K? end,
           {int? count}) =>
-      run<List<StreamEntry<K?, V?>?>>(<Object?>[
+      run<List<StreamEntry<K?, V?>>>(<Object?>[
         r'XRANGE',
         key,
         start,
@@ -1288,8 +1288,8 @@ class Commands<K, V> extends ModuleBase
   }
 
   @override
-  Future<List<int>> bitfield(K key, List<BitfieldOperation> operations) =>
-      run<List<int>>(
+  Future<List<int?>> bitfield(K key, List<BitfieldOperation> operations) =>
+      run<List<int?>>(
           <Object?>[r'BITFIELD', key, ...operations.expand(_expandBitfield)]);
 
   List<Object?> _expandBitfield(BitfieldOperation operation) => <Object?>[
@@ -1318,7 +1318,7 @@ class Commands<K, V> extends ModuleBase
       run<int>(<Object?>[r'DECRBY', key, decrement]);
 
   @override
-  Future<V> get(K key) => run<V>(<Object?>[r'GET', key]);
+  Future<V?> get(K key) => run<V?>(<Object?>[r'GET', key]);
 
   @override
   Future<int> getbit(K key, int offset) =>
@@ -1329,7 +1329,8 @@ class Commands<K, V> extends ModuleBase
       run<V>(<Object?>[r'GETRANGE', key, start, end]);
 
   @override
-  Future<V> getset(K key, V value) => run<V>(<Object?>[r'GETSET', key, value]);
+  Future<V?> getset(K key, V value) =>
+      run<V?>(<Object?>[r'GETSET', key, value]);
 
   @override
   Future<int> incr(K key) => run<int>(<Object?>[r'INCR', key]);
@@ -1343,8 +1344,8 @@ class Commands<K, V> extends ModuleBase
       run<double>(<Object?>[r'INCRBYFLOAT', key, increment]);
 
   @override
-  Future<List<V>> mget({K? key, Iterable<K> keys = const []}) =>
-      run<List<V>>(<Object?>[r'MGET', key, ...keys]);
+  Future<List<V?>> mget({K? key, Iterable<K> keys = const []}) =>
+      run<List<V?>>(<Object?>[r'MGET', key, ...keys]);
 
   @override
   Future<void> mset({K? key, V? value, Map<K, V> map = const {}}) =>
@@ -1370,21 +1371,22 @@ class Commands<K, V> extends ModuleBase
 
   @override
   Future<bool> set(K key, V value,
-      {int? seconds, int? milliseconds, SetExistMode? mode}) {
+      {int? seconds, int? milliseconds, SetExistMode? mode}) async {
     assert((seconds == null && milliseconds == null) ||
         (seconds != null && milliseconds == null) ||
         (seconds == null && milliseconds != null));
 
-    return run<bool>(<Object?>[
-      r'SET',
-      key,
-      value,
-      seconds == null ? null : r'EX',
-      seconds,
-      milliseconds == null ? null : r'PX',
-      milliseconds,
-      mode?.name
-    ], mapper: stringSetMapper);
+    return await run<bool?>(<Object?>[
+          r'SET',
+          key,
+          value,
+          seconds == null ? null : r'EX',
+          seconds,
+          milliseconds == null ? null : r'PX',
+          milliseconds,
+          mode?.name
+        ], mapper: stringSetMapper) ??
+        false;
   }
 
   @override

@@ -11,8 +11,8 @@ import 'package:dartis/dartis.dart';
 import '../util.dart' show uuid;
 
 void main() {
-  Client client;
-  Commands<String, String> commands;
+  late Client client;
+  late Commands<String, String> commands;
 
   /// A convenient matcher.
   final throwRedisException = throwsA(const TypeMatcher<RedisException>());

@@ -64,7 +64,7 @@ abstract class HashCommands<K, V> {
   /// stored at [key].
   ///
   /// See https://redis.io/commands/hmget
-  Future<List<V?>?> hmget(K key, {K? field, Iterable<K> fields = const []});
+  Future<List<V?>> hmget(K key, {K? field, Iterable<K> fields = const []});
 
   /// Sets the specified fields to their respective values in the hash
   /// stored at [key].
@@ -127,8 +127,8 @@ class HashScanResult<K, V> {
 class HashScanMapper<K, V> implements Mapper<HashScanResult<K, V?>> {
   @override
   HashScanResult<K, V?> map(covariant ArrayReply reply, RedisCodec codec) {
-    final cursor = codec.decode<int>(reply.array![0]);
-    final fields = _mapHash(reply.array![1] as ArrayReply, codec);
+    final cursor = codec.decode<int>(reply.array[0]);
+    final fields = _mapHash(reply.array[1] as ArrayReply, codec);
 
     return HashScanResult<K, V?>(cursor!, fields);
   }

@@ -75,8 +75,7 @@ void main() {
       // Flush.
       final futures = client.flush();
 
-      expect(
-          await Future.wait<Object>(futures), equals(['PONG', 'PONG', 'PONG']));
+      expect(await Future.wait(futures), equals(['PONG', 'PONG', 'PONG']));
 
       await client.disconnect();
     });

@@ -32,7 +32,7 @@ void main() {
       });
 
       test('with some null values', () {
-        final command = Command<String>(<Object>['PING', null]);
+        final command = Command<String>(['PING', null]);
         expect(command.line.toList(), equals(['PING']));
       });
     });

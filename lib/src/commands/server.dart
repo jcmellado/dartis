@@ -51,7 +51,7 @@ abstract class ServerCommands<K> {
   /// Gets the current connection name.
   ///
   /// See https://redis.io/commands/client-getname
-  Future<String> clientGetname();
+  Future<String?> clientGetname();
 
   /// Closes a given client connection.
   ///
@@ -190,7 +190,7 @@ abstract class ServerCommands<K> {
   /// stored in RAM.
   ///
   /// See https://redis.io/commands/memory-usage
-  Future<int> memoryUsage(K key, {int? count});
+  Future<int?> memoryUsage(K key, {int? count});
 
   /// Returns the role of the instance in the context of replication.
   ///
@@ -519,7 +519,7 @@ class CommandMapper implements Mapper<List<ClientCommand?>> {
 
   @override
   List<ClientCommand?> map(covariant ArrayReply reply, RedisCodec codec) =>
-      reply.array!
+      reply.array
           .map((value) => value.value == null
               ? null
               : _mapCommand(value as ArrayReply, codec))
@@ -680,7 +680,7 @@ class RoleMapper implements Mapper<Role> {
   }
 
   /// Maps a [reply] to a list of [Slave] instances.
-  List<Slave> _mapSlaves(ArrayReply reply, RedisCodec codec) => reply.array!
+  List<Slave> _mapSlaves(ArrayReply reply, RedisCodec codec) => reply.array
       .map((value) => _mapSlaveItem(value as ArrayReply, codec))
       .toList();
 
@@ -722,7 +722,7 @@ class SlowLogMapper implements Mapper<List<SlowLogEntry>> {
 
   @override
   List<SlowLogEntry> map(covariant ArrayReply reply, RedisCodec codec) =>
-      reply.array!
+      reply.array
           .map((value) => _mapEntry(value as ArrayReply, codec))
           .toList();
 

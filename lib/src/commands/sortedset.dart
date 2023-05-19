@@ -45,7 +45,7 @@ abstract class SortedSetCommands<K, V> {
   /// See [zadd] and [zincrby].
   ///
   /// See https://redis.io/commands/zadd
-  Future<double> zaddIncr(K key, double score, V member,
+  Future<double?> zaddIncr(K key, double score, V member,
       {SortedSetExistMode? mode});
 
   /// Returns the cardinality (number of elements) of the sorted set stored
@@ -123,7 +123,7 @@ abstract class SortedSetCommands<K, V> {
   /// the scores ordered from low to high.
   ///
   /// See https://redis.io/commands/zrank
-  Future<int> zrank(K key, V member);
+  Future<int?> zrank(K key, V member);
 
   /// Removes the specified members from the sorted set stored at [key].
   ///
@@ -178,7 +178,7 @@ abstract class SortedSetCommands<K, V> {
   /// the scores ordered from high to low.
   ///
   /// See https://redis.io/commands/zrevrank
-  Future<int> zrevrank(K key, V member);
+  Future<int?> zrevrank(K key, V member);
 
   /// Incrementally iterates members and scores of a sorted set stored at [key].
   ///
@@ -189,7 +189,7 @@ abstract class SortedSetCommands<K, V> {
   /// Returns the score of [member] in the sorted set at [key].
   ///
   /// See https://redis.io/commands/zscore
-  Future<double> zscore(K key, V member);
+  Future<double?> zscore(K key, V member);
 
   /// Adds multiple sorted sets and stores the resulting sorted set in a
   /// new key.
@@ -261,7 +261,7 @@ class SortedSetScanResult<K> {
   final int? cursor;
 
   /// The members with theirs scores.
-  final Map<K, double?>? members;
+  final Map<K?, double?>? members;
 
   /// Creates a [SortedSetScanResult] instance.
   const SortedSetScanResult(this.cursor, this.members);
@@ -279,10 +279,6 @@ class SortedSetPopResultMapper<K, V>
       covariant ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
-    if (array == null) {
-      return null;
-    }
-
     final key = codec.decode<K>(array[0]);
     final value = codec.decode<V>(array[1]);
     final score = codec.decode<double>(array[2]);
@@ -295,9 +291,9 @@ class SortedSetPopResultMapper<K, V>
 /// A mapper for the ZSCAN command.
 class SortedSetScanMapper<K> implements Mapper<SortedSetScanResult<K?>> {
   @override
-  SortedSetScanResult<K?> map(covariant ArrayReply reply, RedisCodec codec) {
-    final cursor = codec.decode<int>(reply.array![0]);
-    final members = _mapSet(reply.array![1] as ArrayReply, codec);
+  SortedSetScanResult<K> map(covariant ArrayReply reply, RedisCodec codec) {
+    final cursor = codec.decode<int>(reply.array[0]);
+    final members = _mapSet(reply.array[1] as ArrayReply, codec);
 
     return SortedSetScanResult<K?>(cursor, members);
   }
@@ -320,7 +316,7 @@ class SortedSetScanMapper<K> implements Mapper<SortedSetScanResult<K?>> {
 }
 
 /// A mapper to be used with some sorted set commands.
-class SortedSetMapper<V> implements Mapper<Map<V?, double?>?> {
+class SortedSetMapper<V> implements Mapper<Map<V, double?>> {
   /// Retrieves the scores.
   final bool withScores;
 
@@ -328,15 +324,11 @@ class SortedSetMapper<V> implements Mapper<Map<V?, double?>?> {
   SortedSetMapper({this.withScores = false});
 
   @override
-  Map<V?, double?>? map(covariant ArrayReply reply, RedisCodec codec) {
+  Map<V, double?> map(covariant ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
-    if (array == null) {
-      return null;
-    }
-
     // ignore: prefer_collection_literals
-    final set = LinkedHashMap<V?, double?>();
+    final set = LinkedHashMap<V, double?>();
 
     final incr = withScores ? 2 : 1;
 

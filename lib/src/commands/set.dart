@@ -73,7 +73,7 @@ abstract class SetCommands<K, V> {
   /// See [spopCount].
   ///
   /// See https://redis.io/commands/spop
-  Future<V> spop(K key);
+  Future<V?> spop(K key);
 
   /// Removes and returns [count] random elements from the set value
   /// stored at [key].
@@ -88,7 +88,7 @@ abstract class SetCommands<K, V> {
   /// See [srandmemberCount].
   ///
   /// See https://redis.io/commands/srandmember
-  Future<V> srandmember(K key);
+  Future<V?> srandmember(K key);
 
   /// Returns one random members from a set.
   ///

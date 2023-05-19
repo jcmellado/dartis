@@ -83,6 +83,9 @@ class CommandBase<T> implements Command<T> {
     if (T.toString() == 'void') {
       return null;
     }
+    if (reply is NullReply) {
+      return null;
+    }
 
     if (_mapper == null) {
       return codec.decode<T>(reply);
