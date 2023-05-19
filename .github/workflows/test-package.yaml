@@ -6,12 +6,12 @@ on:
 
 jobs:
   test:
-    name: Run tests ${{matrix.sdk}} on ${{matrix.os}}
+    name: Run tests on ${{matrix.os}}
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-latest ]
         redis: [ 6, 7 ]
-        dart-sdk: [ 'stable', 'beta' ]
+        dart-sdk: [ 'stable' ]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -26,12 +26,9 @@ jobs:
       - id: install
         name: Install dependencies
         run: dart pub get
-      - name: Analyze code
-        run: dart analyze --fatal-infos
-        if: always() && steps.install.outcome == 'success'
-      - name: Run tests
-        run: dart test
-        if: always() && steps.install.outcome == 'success'
       - name: Check formatting
         run: dart format --output=none --set-exit-if-changed .
-        if: always() && steps.install.outcome == 'success'
+      - name: Analyze code
+        run: dart analyze --fatal-infos
+      - name: Run tests
+        run: dart test

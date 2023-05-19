@@ -279,7 +279,7 @@ class SortedSetPopResultMapper<K, V>
       covariant ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
-    final key = codec.decode<K>(array[0]);
+    final key = codec.decode<K>(array![0]);
     final value = codec.decode<V>(array[1]);
     final score = codec.decode<double>(array[2]);
     final member = MapEntry<V?, double?>(value, score);
@@ -292,10 +292,10 @@ class SortedSetPopResultMapper<K, V>
 class SortedSetScanMapper<K> implements Mapper<SortedSetScanResult<K?>> {
   @override
   SortedSetScanResult<K> map(covariant ArrayReply reply, RedisCodec codec) {
-    final cursor = codec.decode<int>(reply.array[0]);
-    final members = _mapSet(reply.array[1] as ArrayReply, codec);
+    final cursor = codec.decode<int>(reply.array![0]);
+    final members = _mapSet(reply.array![1] as ArrayReply, codec);
 
-    return SortedSetScanResult<K?>(cursor, members);
+    return SortedSetScanResult<K>(cursor, members);
   }
 
   /// Maps a [reply] to a Map<K, double>.
@@ -332,11 +332,11 @@ class SortedSetMapper<V> implements Mapper<Map<V, double?>> {
 
     final incr = withScores ? 2 : 1;
 
-    for (var i = 0; i < array.length; i += incr) {
+    for (var i = 0; i < array!.length; i += incr) {
       final member = codec.decode<V>(array[i]);
       final score = withScores ? codec.decode<double>(array[i + 1]) : null;
 
-      set[member] = score;
+      set[member!] = score;
     }
 
     return set;

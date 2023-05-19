@@ -1,8 +1,6 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-// @dart=2.9
-
 import 'package:test/test.dart';
 
 // ignore: directives_ordering
@@ -11,7 +9,7 @@ import 'package:dartis/dartis.dart';
 class _ReverseMapper implements Mapper<String> {
   @override
   String map(covariant StringReply reply, RedisCodec codec) =>
-      String.fromCharCodes(reply.bytes.reversed);
+      String.fromCharCodes(reply.bytes!.reversed);
 }
 
 void main() {

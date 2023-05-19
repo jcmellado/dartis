@@ -519,7 +519,7 @@ class CommandMapper implements Mapper<List<ClientCommand?>> {
 
   @override
   List<ClientCommand?> map(covariant ArrayReply reply, RedisCodec codec) =>
-      reply.array
+      reply.array!
           .map((value) => value.value == null
               ? null
               : _mapCommand(value as ArrayReply, codec))
@@ -680,7 +680,7 @@ class RoleMapper implements Mapper<Role> {
   }
 
   /// Maps a [reply] to a list of [Slave] instances.
-  List<Slave> _mapSlaves(ArrayReply reply, RedisCodec codec) => reply.array
+  List<Slave> _mapSlaves(ArrayReply reply, RedisCodec codec) => reply.array!
       .map((value) => _mapSlaveItem(value as ArrayReply, codec))
       .toList();
 
@@ -722,7 +722,7 @@ class SlowLogMapper implements Mapper<List<SlowLogEntry>> {
 
   @override
   List<SlowLogEntry> map(covariant ArrayReply reply, RedisCodec codec) =>
-      reply.array
+      reply.array!
           .map((value) => _mapEntry(value as ArrayReply, codec))
           .toList();
 

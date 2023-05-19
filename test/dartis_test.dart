@@ -1,8 +1,6 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-// @dart=2.9
-
 @Skip('Avoid to run all the tests two times.')
 
 import 'package:test/test.dart' show Skip;

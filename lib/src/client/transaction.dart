@@ -119,7 +119,7 @@ class Transaction {
   void _dequeue(Command command, ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
-    if (array.length != _queued.length) {
+    if (array!.length != _queued.length) {
       throw RedisException('''Expected ${_queued.length} replies,'''
           ''' but "${array.length}" found instead.''');
     }

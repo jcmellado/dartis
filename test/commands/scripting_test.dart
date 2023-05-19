@@ -1,8 +1,6 @@
 // Copyright (c) 2018, Juan Mellado. All rights reserved. Use of this source
 // is governed by a MIT-style license that can be found in the LICENSE file.
 
-// @dart=2.9
-
 import 'package:test/test.dart';
 
 // ignore: directives_ordering
@@ -12,7 +10,7 @@ import '../util.dart' show uuid;
 
 class _Mapper implements Mapper<List<Reply>> {
   @override
-  List<Reply> map(covariant ArrayReply reply, RedisCodec codec) => reply.array;
+  List<Reply> map(covariant ArrayReply reply, RedisCodec codec) => reply.array!;
 }
 
 void main() {

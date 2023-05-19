@@ -248,7 +248,7 @@ class ClusterSlotRangeMapper implements Mapper<List<ClusterSlotRange>> {
 
   @override
   List<ClusterSlotRange> map(covariant ArrayReply reply, RedisCodec codec) =>
-      reply.array
+      reply.array!
           .map((value) => _mapRange(value as ArrayReply, codec))
           .toList();
 
