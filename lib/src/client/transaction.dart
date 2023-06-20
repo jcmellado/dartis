@@ -33,9 +33,9 @@ class Transaction {
     assert(command is! MultiCommand);
 
     if (command is ExecCommand) {
-      _exec(command as Command<Object>, reply, codec);
+      _exec(command, reply, codec);
     } else if (command is DiscardCommand) {
-      _discard(command as Command<Object>, reply, codec);
+      _discard(command, reply, codec);
     } else {
       _enqueue(command, reply, codec);
     }
@@ -119,7 +119,7 @@ class Transaction {
   void _dequeue(Command command, ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
-    if (array!.length != _queued.length) {
+    if (array.length != _queued.length) {
       throw RedisException('''Expected ${_queued.length} replies,'''
           ''' but "${array.length}" found instead.''');
     }

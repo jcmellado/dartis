@@ -184,10 +184,10 @@ class ClusterSetslotCommand {
 /// A cluster node instance.
 class ClusterNode {
   /// The IP.
-  final String? ip;
+  final String ip;
 
   /// The port.
-  final int? port;
+  final int port;
 
   /// The ID.
   final String? id;
@@ -202,13 +202,13 @@ class ClusterNode {
 /// A slot range.
 class ClusterSlotRange {
   /// The start slot range.
-  final int? start;
+  final int start;
 
   /// The end slot range.
-  final int? end;
+  final int end;
 
   /// The Redis node instances.
-  final List<ClusterNode>? nodes;
+  final List<ClusterNode> nodes;
 
   /// Creates a [ClusterSlotRange] instance.
   const ClusterSlotRange(this.start, this.end, this.nodes);
@@ -228,7 +228,7 @@ class ClusterInfoMapper implements Mapper<Map<String, String>> {
     // ignore: prefer_collection_literals
     final map = LinkedHashMap<String, String>();
 
-    final raw = codec.decode<String>(reply)!;
+    final raw = codec.decode<String>(reply);
     final lines = raw.split('\r\n');
 
     for (final line in lines.where((line) => line.isNotEmpty)) {
@@ -248,13 +248,13 @@ class ClusterSlotRangeMapper implements Mapper<List<ClusterSlotRange>> {
 
   @override
   List<ClusterSlotRange> map(covariant ArrayReply reply, RedisCodec codec) =>
-      reply.array!
+      reply.array
           .map((value) => _mapRange(value as ArrayReply, codec))
           .toList();
 
   /// Maps a [reply] to a [ClusterSlotRange] instance.
   ClusterSlotRange _mapRange(ArrayReply reply, RedisCodec codec) {
-    final array = reply.array!;
+    final array = reply.array;
 
     final start = codec.decode<int>(array[0]);
     final end = codec.decode<int>(array[1]);
@@ -271,7 +271,7 @@ class ClusterSlotRangeMapper implements Mapper<List<ClusterSlotRange>> {
 
   /// Maps a [reply] to a [ClusterNode] instance.
   ClusterNode _mapNode(ArrayReply reply, RedisCodec codec) {
-    final array = reply.array!;
+    final array = reply.array;
 
     final ip = codec.decode<String>(array[0]);
     final port = codec.decode<int>(array[1]);

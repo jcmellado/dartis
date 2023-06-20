@@ -213,7 +213,7 @@ void main() {
         expect(reply, const TypeMatcher<ArrayReply>());
 
         final array = (reply as ArrayReply).array;
-        expect(array![0].value, [65]);
+        expect(array[0].value, [65]);
         expect(array[1].value, [49]);
       }
 
@@ -455,7 +455,7 @@ void main() {
         final array = (reply as ArrayReply).array;
         expect(array, hasLength(3));
 
-        expect(array![0], const TypeMatcher<StringReply>());
+        expect(array[0], const TypeMatcher<StringReply>());
         expect(array[0].value, equals([65]));
 
         expect(array[1], const TypeMatcher<IntReply>());
@@ -486,13 +486,13 @@ void main() {
         final array = (reply as ArrayReply).array;
         expect(array, hasLength(3));
 
-        expect(array![0], const TypeMatcher<StringReply>());
+        expect(array[0], const TypeMatcher<StringReply>());
         expect(array[0].value, equals([65]));
 
         expect(array[1], const TypeMatcher<ArrayReply>());
         final nested = (array[1] as ArrayReply).array;
         expect(nested, hasLength(2));
-        expect(nested![0], const TypeMatcher<StringReply>());
+        expect(nested[0], const TypeMatcher<StringReply>());
         expect(nested[1], const TypeMatcher<IntReply>());
         expect(nested[0].value, equals([66]));
         expect(nested[1].value, equals([54]));

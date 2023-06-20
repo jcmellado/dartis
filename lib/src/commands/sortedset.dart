@@ -273,37 +273,36 @@ class SortedSetScanResult<K> {
 
 /// A mapper for the BZPOPMIN and BZPOPMAX commands.
 class SortedSetPopResultMapper<K, V>
-    implements Mapper<SortedSetPopResult<K?, V?>?> {
+    implements Mapper<SortedSetPopResult<K, V>> {
   @override
-  SortedSetPopResult<K?, V?>? map(
-      covariant ArrayReply reply, RedisCodec codec) {
+  SortedSetPopResult<K, V> map(covariant ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
-    final key = codec.decode<K>(array![0]);
+    final key = codec.decode<K>(array[0]);
     final value = codec.decode<V>(array[1]);
     final score = codec.decode<double>(array[2]);
-    final member = MapEntry<V?, double?>(value, score);
+    final member = MapEntry<V, double>(value, score);
 
-    return SortedSetPopResult<K?, V?>(key, member);
+    return SortedSetPopResult<K, V>(key, member);
   }
 }
 
 /// A mapper for the ZSCAN command.
-class SortedSetScanMapper<K> implements Mapper<SortedSetScanResult<K?>> {
+class SortedSetScanMapper<K> implements Mapper<SortedSetScanResult<K>> {
   @override
   SortedSetScanResult<K> map(covariant ArrayReply reply, RedisCodec codec) {
-    final cursor = codec.decode<int>(reply.array![0]);
-    final members = _mapSet(reply.array![1] as ArrayReply, codec);
+    final cursor = codec.decode<int>(reply.array[0]);
+    final members = _mapSet(reply.array[1] as ArrayReply, codec);
 
     return SortedSetScanResult<K>(cursor, members);
   }
 
   /// Maps a [reply] to a Map<K, double>.
-  Map<K?, double?> _mapSet(ArrayReply reply, RedisCodec codec) {
+  Map<K, double> _mapSet(ArrayReply reply, RedisCodec codec) {
     // ignore: prefer_collection_literals
-    final set = LinkedHashMap<K?, double?>();
+    final set = LinkedHashMap<K, double>();
 
-    final array = reply.array!;
+    final array = reply.array;
     for (var i = 0; i < array.length; i += 2) {
       final member = codec.decode<K>(array[i]);
       final score = codec.decode<double>(array[i + 1]);
@@ -332,11 +331,11 @@ class SortedSetMapper<V> implements Mapper<Map<V, double?>> {
 
     final incr = withScores ? 2 : 1;
 
-    for (var i = 0; i < array!.length; i += incr) {
+    for (var i = 0; i < array.length; i += incr) {
       final member = codec.decode<V>(array[i]);
       final score = withScores ? codec.decode<double>(array[i + 1]) : null;
 
-      set[member!] = score;
+      set[member] = score;
     }
 
     return set;
