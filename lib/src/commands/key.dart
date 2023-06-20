@@ -270,8 +270,8 @@ class KeyScanResult<K> {
 class KeyScanMapper<K> implements Mapper<KeyScanResult<K>> {
   @override
   KeyScanResult<K> map(covariant ArrayReply reply, RedisCodec codec) {
-    final cursor = codec.decode<int>(reply.array![0]);
-    final keys = codec.decode<List<K>>(reply.array![1]);
+    final cursor = codec.decode<int>(reply.array[0]);
+    final keys = codec.decode<List<K>>(reply.array[1]);
 
     return KeyScanResult<K>(cursor, keys);
   }

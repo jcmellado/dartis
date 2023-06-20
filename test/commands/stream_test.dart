@@ -68,10 +68,10 @@ void main() {
 
       var stream = await commands.xrange(key3, '-', '+');
       expect(stream, hasLength(2));
-      expect(stream[0]!.id, equals(id1));
-      expect(stream[0]!.fields, equals({'pressure': '1'}));
-      expect(stream[1]!.id, equals(id2));
-      expect(stream[1]!.fields, equals({'pressure': '2'}));
+      expect(stream[0].id, equals(id1));
+      expect(stream[0].fields, equals({'pressure': '1'}));
+      expect(stream[1].id, equals(id2));
+      expect(stream[1].fields, equals({'pressure': '2'}));
 
       // Add some entries with several fields to a stream.
       final key4 = uuid();
@@ -80,8 +80,8 @@ void main() {
 
       stream = await commands.xrange(key4, '-', '+');
       expect(stream, hasLength(1));
-      expect(stream[0]!.id, equals(result));
-      expect(stream[0]!.fields, equals({'pressure': '1', 'temperature': '2'}));
+      expect(stream[0].id, equals(result));
+      expect(stream[0].fields, equals({'pressure': '1', 'temperature': '2'}));
 
       // Add some entries to a capped stream.
       final key5 = uuid();
@@ -357,10 +357,10 @@ void main() {
       expect(result2.firstEntryId, equals(id1));
       expect(result2.lastEntryId, equals(id2));
       expect(result2.consumers, hasLength(2));
-      expect(result2.consumers![0].name, isNotNull);
-      expect(result2.consumers![0].pendingCount, equals(1));
-      expect(result2.consumers![1].name, isNotNull);
-      expect(result2.consumers![1].pendingCount, equals(1));
+      expect(result2.consumers[0].name, isNotNull);
+      expect(result2.consumers[0].pendingCount, equals(1));
+      expect(result2.consumers[1].name, isNotNull);
+      expect(result2.consumers[1].pendingCount, equals(1));
 
       // Inspect an empty range of a pending entries list.
       final key3 = uuid();
@@ -439,8 +439,8 @@ void main() {
 
       var result = await commands.xrange(key2, '-', '+');
       expect(result, hasLength(1));
-      expect(result[0]!.id, equals('1-0'));
-      expect(result[0]!.fields, equals({'pressure': '1'}));
+      expect(result[0].id, equals('1-0'));
+      expect(result[0].fields, equals({'pressure': '1'}));
 
       // Get partial range from stream.
       final key3 = uuid();
@@ -451,10 +451,10 @@ void main() {
 
       result = await commands.xrange(key3, '1-1', '1-2');
       expect(result, hasLength(2));
-      expect(result[0]!.id, equals('1-1'));
-      expect(result[0]!.fields, equals({'pressure': '2'}));
-      expect(result[1]!.id, equals('1-2'));
-      expect(result[1]!.fields, equals({'pressure': '3'}));
+      expect(result[0].id, equals('1-1'));
+      expect(result[0].fields, equals({'pressure': '2'}));
+      expect(result[1].id, equals('1-2'));
+      expect(result[1].fields, equals({'pressure': '3'}));
 
       // Get capped range from stream.
       final key4 = uuid();
@@ -465,8 +465,8 @@ void main() {
 
       result = await commands.xrange(key4, '1-1', '1-2', count: 1);
       expect(result, hasLength(1));
-      expect(result[0]!.id, equals('1-1'));
-      expect(result[0]!.fields, equals({'pressure': '2'}));
+      expect(result[0].id, equals('1-1'));
+      expect(result[0].fields, equals({'pressure': '2'}));
     });
 
     test('xread', () async {

@@ -194,19 +194,19 @@ class GeoPositionMapper implements Mapper<List<GeoPosition?>> {
 
   @override
   List<GeoPosition?> map(covariant ArrayReply reply, RedisCodec codec) => reply
-      .array!
+      .array
       .map((value) =>
           value is NullReply ? null : _mapPosition(value as ArrayReply, codec))
       .toList();
 
   /// Maps a [reply] to `null` or a [GeoPosition] instance.
-  GeoPosition? _mapPosition(ArrayReply reply, RedisCodec codec) {
+  GeoPosition _mapPosition(ArrayReply reply, RedisCodec codec) {
     final array = reply.array;
 
-    final longitude = codec.decode<double>(array![0]);
+    final longitude = codec.decode<double>(array[0]);
     final latitude = codec.decode<double>(array[1]);
 
-    return GeoPosition(longitude!, latitude!);
+    return GeoPosition(longitude, latitude);
   }
 }
 
@@ -229,12 +229,12 @@ class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V>>> {
   List<GeoradiusResult<V>> map(covariant ArrayReply reply, RedisCodec codec) {
     final results = <GeoradiusResult<V>>[];
 
-    for (final reply in reply.array!) {
+    for (final reply in reply.array) {
       if (withCoord || withDist || withHash) {
         final result = _mapResult(reply as ArrayReply, codec);
         results.add(result);
       } else {
-        final member = codec.decode<V>(reply) as V;
+        final member = codec.decode<V>(reply);
         results.add(GeoradiusResult<V>(member));
       }
     }
@@ -244,10 +244,10 @@ class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V>>> {
 
   /// Maps a [reply] to a [GeoradiusResult] instance.
   GeoradiusResult<V> _mapResult(ArrayReply reply, RedisCodec codec) {
-    final array = reply.array!;
+    final array = reply.array;
     var index = 0;
 
-    final member = codec.decode<V>(array[index++]) as V;
+    final member = codec.decode<V>(array[index++]);
 
     double? distance;
     if (withDist) {
@@ -264,26 +264,26 @@ class GeoRadiusMapper<V> implements Mapper<List<GeoradiusResult<V>>> {
       position = _mapPosition(array[index++] as ArrayReply, codec);
     }
 
-    return GeoradiusResult<V>(member,
+    return GeoradiusResult<V>(member!,
         distance: distance, hash: hash, position: position);
   }
 
   /// Maps a [reply] to a [GeoPosition] instance.
   GeoPosition _mapPosition(ArrayReply reply, RedisCodec codec) {
-    final longitude = codec.decode<double>(reply.array![0]);
-    final latitude = codec.decode<double>(reply.array![1]);
+    final longitude = codec.decode<double>(reply.array[0]);
+    final latitude = codec.decode<double>(reply.array[1]);
 
-    return GeoPosition(longitude!, latitude!);
+    return GeoPosition(longitude, latitude);
   }
 }
 
 /// A mapper to be used with the GEORADIUS family commands.
-class GeoRadiusStoreMapper implements Mapper<int?> {
+class GeoRadiusStoreMapper implements Mapper<int> {
   /// Creates a [GeoRadiusStoreMapper] instance.
   const GeoRadiusStoreMapper();
 
   @override
-  int? map(Reply reply, RedisCodec codec) {
+  int map(Reply reply, RedisCodec codec) {
     if (reply is ArrayReply) {
       return 0;
     }

@@ -9,7 +9,7 @@ import 'package:dartis/dartis.dart';
 class _ReverseMapper implements Mapper<String> {
   @override
   String map(covariant StringReply reply, RedisCodec codec) =>
-      String.fromCharCodes(reply.bytes!.reversed);
+      String.fromCharCodes(reply.bytes.reversed);
 }
 
 void main() {

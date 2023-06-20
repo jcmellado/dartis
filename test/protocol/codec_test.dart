@@ -19,7 +19,7 @@ class _DateTimeEncoder extends Encoder<DateTime> {
 class _DateTimeDecoder extends Decoder<SingleReply, DateTime> {
   @override
   DateTime convert(SingleReply value, RedisCodec codec) =>
-      DateTime.parse(utf8.decode(value.bytes!));
+      DateTime.parse(utf8.decode(value.bytes));
 }
 
 /// A encoder that encodes a [DateTime] to a list of bytes.
@@ -114,7 +114,7 @@ void main() {
         codec.register(decoder: _Int999Decoder());
 
         expect(codec.decode<int>(const IntReply([49, 50, 51])), equals(999));
-      }, skip: 'Wait for tests to be fully null safe to match types correctly');
+      });
     });
 
     group('encode', () {

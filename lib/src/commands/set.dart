@@ -140,8 +140,8 @@ class SetScanResult<V> {
 class SetScanMapper<V> implements Mapper<SetScanResult<V>> {
   @override
   SetScanResult<V> map(covariant ArrayReply reply, RedisCodec codec) {
-    final cursor = codec.decode<int>(reply.array![0]);
-    final members = codec.decode<List<V>>(reply.array![1]);
+    final cursor = codec.decode<int>(reply.array[0]);
+    final members = codec.decode<List<V>>(reply.array[1]);
 
     return SetScanResult<V>(cursor, members);
   }

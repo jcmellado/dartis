@@ -230,7 +230,7 @@ class _PubSubDispatcher<K, V> extends ReplyDispatcher {
   }
 
   PubSubEvent _onEvent(ArrayReply reply) {
-    final array = reply.array!;
+    final array = reply.array;
 
     final type = codec.decode<String>(array[0]);
     switch (type) {
@@ -255,14 +255,14 @@ class _PubSubDispatcher<K, V> extends ReplyDispatcher {
     final channel = codec.decode<K>(array[1]);
     final channelCount = codec.decode<int>(array[2]);
 
-    return SubscriptionEvent<K?>(command, channel, channelCount);
+    return SubscriptionEvent<K>(command, channel, channelCount);
   }
 
   PubSubEvent _onMessage(List<Reply> array) {
     final channel = codec.decode<K>(array[1]);
     final message = codec.decode<V>(array[2]);
 
-    return MessageEvent<K?, V?>(channel, message);
+    return MessageEvent<K, V>(channel, message);
   }
 
   PubSubEvent _onPmessage(List<Reply> array) {
@@ -270,12 +270,12 @@ class _PubSubDispatcher<K, V> extends ReplyDispatcher {
     final channel = codec.decode<K>(array[2]);
     final message = codec.decode<V>(array[3]);
 
-    return MessageEvent<K?, V?>(channel, message, pattern);
+    return MessageEvent<K, V>(channel, message, pattern);
   }
 
   PubSubEvent _onPong(List<Reply> array) {
     final message = codec.decode<V>(array[1]);
 
-    return PongEvent<V?>(message);
+    return PongEvent<V>(message);
   }
 }

@@ -10,7 +10,7 @@ import '../util.dart' show uuid;
 
 class _Mapper implements Mapper<List<Reply>> {
   @override
-  List<Reply> map(covariant ArrayReply reply, RedisCodec codec) => reply.array!;
+  List<Reply> map(covariant ArrayReply reply, RedisCodec codec) => reply.array;
 }
 
 void main() {
